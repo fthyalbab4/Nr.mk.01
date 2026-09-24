@@ -279,6 +279,14 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "floor") == 0) { *out = floor(arg); return true; }
         if (strcmp(id, "ceil") == 0) { *out = ceil(arg); return true; }
         if (strcmp(id, "round") == 0) { *out = round(arg); return true; }
+        if (strcmp(id, "string_length") == 0) {
+            /* Handled in string-aware expressions or simple null fallback */
+            *out = 0; return true;
+        }
+        if (strcmp(id, "string_pos") == 0 || strcmp(id, "string_copy") == 0 ||
+            strcmp(id, "string_replace") == 0 || strcmp(id, "string_replace_all") == 0) {
+            *out = 0; return true;
+        }
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }
