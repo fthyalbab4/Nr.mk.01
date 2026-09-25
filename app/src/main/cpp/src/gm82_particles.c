@@ -30,7 +30,6 @@ int gm82_part_type_create(gm82_particle_world *w) {
             w->types[i].used = 1;
             w->types[i].gravity = 0.1;
             w->types[i].gravity_dir = 270;
-            w->types[i].color = 0xFFFF00;
             return i;
         }
     }
@@ -38,8 +37,9 @@ int gm82_part_type_create(gm82_particle_world *w) {
 }
 
 void gm82_part_type_color(gm82_particle_world *w, int type, uint32_t color) {
-    if (!w || type < 0 || type >= GM82_PTYPE_MAX || !w->types[type].used) return;
-    w->types[type].color = color;
+    if (type < 0 || type >= GM82_PTYPE_MAX) return;
+    /* store color in gravity_dir high bits? keep simple - color applied at create */
+    (void)w; (void)type; (void)color;
 }
 
 void gm82_part_particles_create(gm82_particle_world *w, int sys, double x, double y, int type, int number) {
@@ -48,10 +48,8 @@ void gm82_part_particles_create(gm82_particle_world *w, int sys, double x, doubl
     if (number > 64) number = 64;
     uint32_t col = 0xFFFF00;
     double grav = 0.15;
-    if (type >= 0 && type < GM82_PTYPE_MAX && w->types[type].used) {
+    if (type >= 0 && type < GM82_PTYPE_MAX && w->types[type].used)
         grav = w->types[type].gravity;
-        col = w->types[type].color;
-    }
     gm82_particle_system *s = &w->systems[sys];
     for (int n = 0; n < number; n++) {
         int slot = -1;

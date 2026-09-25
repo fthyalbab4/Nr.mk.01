@@ -17,3 +17,4 @@ NOR Maker is a full-featured retro game creation studio and GameMaker 8.2 IDE po
 - **Platform**: Android SDK 34+
 - **Native Layer**: C/C++ JNI runtime (`gm82_android`) with GML interpreter and GMK parser
 - **UI & Studio**: Multi-document interface (MDI) with touch optimization, virtual gamepad support, and sound engine integration
+Making a new commit to trigger update...

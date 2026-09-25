@@ -124,49 +124,18 @@ static bool aabb_overlap(double ax, double ay, int aw, int ah,
     return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 }
 
-static bool mask_overlap(double ax, double ay, const gm82_decoded_frame *af,
-                         double bx, double by, const gm82_decoded_frame *bf) {
-    if (!af || !bf || !af->mask || !bf->mask)
-        return aabb_overlap(ax, ay, af->width, af->height, bx, by, bf->width, bf->height);
-    int ix1 = (int)ceil(ax > bx ? ax : bx);
-    int ix2 = (int)floor((ax + af->width) < (bx + bf->width) ? (ax + af->width) : (bx + bf->width));
-    int iy1 = (int)ceil(ay > by ? ay : by);
-    int iy2 = (int)floor((ay + af->height) < (by + bf->height) ? (ay + af->height) : (by + bf->height));
-
-    for (int py = iy1; py < iy2; py++) {
-        int ax_p = py - (int)ay;
-        int bx_p = py - (int)by;
-        if (ax_p < 0 || ax_p >= af->height || bx_p < 0 || bx_p >= bf->height) continue;
-        for (int px = ix1; px < ix2; px++) {
-            int ax_x = px - (int)ax;
-            int bx_x = px - (int)bx;
-            if (ax_x < 0 || ax_x >= af->width || bx_x < 0 || bx_x >= bf->width) continue;
-            if (af->mask[ax_p * af->width + ax_x] && bf->mask[bx_p * bf->width + bx_x])
-                return true;
-        }
-    }
-    return false;
-}
-
 double gml_place_meeting(double x, double y, double object_index) {
     if (!g_rt || !g_self) return 0;
     int32_t oi = (int32_t)object_index;
     int32_t sw, sh;
     sprite_size(g_rt, g_self->sprite_index, &sw, &sh);
-    const gm82_decoded_frame *sf = (g_rt->sprites && g_self->sprite_index >= 0 && g_self->sprite_index < g_rt->sprites->count) ? &g_rt->sprites->frames[g_self->sprite_index] : NULL;
-
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
         if (oi >= 0 && o->object_index != oi) continue;
         int32_t ow, oh;
         sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        const gm82_decoded_frame *of = (g_rt->sprites && o->sprite_index >= 0 && o->sprite_index < g_rt->sprites->count) ? &g_rt->sprites->frames[o->sprite_index] : NULL;
-        if (sf && of && sf->mask && of->mask) {
-            if (mask_overlap(x, y, sf, o->x, o->y, of)) return 1;
-        } else {
-            if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 1;
-        }
+        if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 1;
     }
     /* also solid tiles when object_index < 0 (all) */
     if (oi < 0 && g_rt->rooms && g_rt->current_room >= 0 && g_rt->current_room < g_rt->rooms->count) {
@@ -448,31 +417,7 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
 }
 
 double gml_collision_point(double x, double y, double obj, double prec, double notme) {
-    if (!g_rt) return -4;
-    int32_t oi = (int32_t)obj;
-    for (int i = 0; i < g_rt->instance_count; i++) {
-        gm82_instance *o = &g_rt->instances[i];
-        if (!o->alive) continue;
-        if (notme && o == g_self) continue;
-        if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (x >= o->x && x < o->x + ow && y >= o->y && y < o->y + oh) {
-            if (prec && g_rt->sprites && o->sprite_index >= 0 && o->sprite_index < g_rt->sprites->count) {
-                const gm82_decoded_frame *fr = &g_rt->sprites->frames[o->sprite_index];
-                if (fr->mask) {
-                    int px = (int)(x - o->x);
-                    int py = (int)(y - o->y);
-                    if (px >= 0 && px < fr->width && py >= 0 && py < fr->height) {
-                        if (fr->mask[py * fr->width + px]) return (double)o->id;
-                        continue;
-                    }
-                }
-            }
-            return (double)o->id;
-        }
-    }
-    return -4;
+    return gml_collision_rectangle(x, y, x+1, y+1, obj, prec, notme);
 }
 
 double gml_place_free(double x, double y) {
@@ -687,76 +632,6 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     size_t k = 0;
     for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
         if (isdigit((unsigned char)str[i])) out[k++] = str[i];
-    }
-    out[k] = 0;
-    return (double)k;
-}
-
-double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz) {
-    if (!out || out_sz == 0) return 0;
-    out[0] = 0;
-    if (!str) return 0;
-    int idx = (int)index - 1; /* 1-based in GML */
-    int cnt = (int)count;
-    int len = (int)strlen(str);
-    if (idx < 0) idx = 0;
-    if (cnt < 0 || idx >= len) return 0;
-    size_t k = 0;
-    for (int i = idx; i < len && i < idx + cnt && k + 1 < out_sz; i++) {
-        out[k++] = str[i];
-    }
-    out[k] = 0;
-    return (double)k;
-}
-
-double gml_string_replace(const char *str, const char *old_sub, const char *new_sub, char *out, size_t out_sz) {
-    if (!out || out_sz == 0) return 0;
-    out[0] = 0;
-    if (!str) return 0;
-    if (!old_sub || !old_sub[0] || !new_sub) {
-        strncpy(out, str, out_sz - 1);
-        out[out_sz - 1] = 0;
-        return (double)strlen(out);
-    }
-    const char *p = strstr(str, old_sub);
-    if (!p) {
-        strncpy(out, str, out_sz - 1);
-        out[out_sz - 1] = 0;
-        return (double)strlen(out);
-    }
-    size_t head_len = (size_t)(p - str);
-    size_t old_len = strlen(old_sub);
-    size_t new_len = strlen(new_sub);
-
-    size_t k = 0;
-    for (size_t i = 0; i < head_len && k + 1 < out_sz; i++) out[k++] = str[i];
-    for (size_t i = 0; i < new_len && k + 1 < out_sz; i++) out[k++] = new_sub[i];
-    for (size_t i = head_len + old_len; str[i] && k + 1 < out_sz; i++) out[k++] = str[i];
-    out[k] = 0;
-    return (double)k;
-}
-
-double gml_string_replace_all(const char *str, const char *old_sub, const char *new_sub, char *out, size_t out_sz) {
-    if (!out || out_sz == 0) return 0;
-    out[0] = 0;
-    if (!str) return 0;
-    if (!old_sub || !old_sub[0] || !new_sub) {
-        strncpy(out, str, out_sz - 1);
-        out[out_sz - 1] = 0;
-        return (double)strlen(out);
-    }
-    size_t old_len = strlen(old_sub);
-    size_t new_len = strlen(new_sub);
-    size_t k = 0;
-    const char *p = str;
-    while (*p && k + 1 < out_sz) {
-        if (strncmp(p, old_sub, old_len) == 0) {
-            for (size_t i = 0; i < new_len && k + 1 < out_sz; i++)
-                out[k++] = new_sub[i];
-            p += old_len;
-        } else {
-            out[k++] = *p++;
-        }
     }
     out[k] = 0;
     return (double)k;
@@ -1113,11 +988,6 @@ double gml_part_type_create(void) {
     if (!g_particles) return -1;
     return (double)gm82_part_type_create(g_particles);
 }
-double gml_part_type_color(double type, double color) {
-    if (!g_particles) return 0;
-    gm82_part_type_color(g_particles, (int)type, (uint32_t)color);
-    return 1;
-}
 double gml_part_particles_create(double sys, double x, double y, double type, double number) {
     if (!g_particles) return 0;
     gm82_part_particles_create(g_particles, (int)sys, x, y, (int)type, (int)number);
@@ -1463,81 +1333,6 @@ double gml_ds_priority_size(double id) {
 }
 double gml_ds_priority_empty(double id) {
     return gml_ds_priority_size(id) == 0 ? 1.0 : 0.0;
-}
-
-#define GM82_DS_GRID_MAX 16
-typedef struct {
-    int used;
-    int w, h;
-    double *data;
-} gm82_ds_grid;
-static gm82_ds_grid g_ds_grids[GM82_DS_GRID_MAX];
-
-double gml_ds_grid_create(double w, double h) {
-    int iw = (int)w, ih = (int)h;
-    if (iw <= 0 || ih <= 0 || iw > 2048 || ih > 2048) return -1;
-    for (int i = 0; i < GM82_DS_GRID_MAX; i++) {
-        if (g_ds_grids[i].used) continue;
-        double *p = (double *)calloc((size_t)(iw * ih), sizeof(double));
-        if (!p) return -1;
-        g_ds_grids[i].used = 1;
-        g_ds_grids[i].w = iw;
-        g_ds_grids[i].h = ih;
-        g_ds_grids[i].data = p;
-        return (double)i;
-    }
-    return -1;
-}
-
-double gml_ds_grid_destroy(double id) {
-    int i = (int)id;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    free(g_ds_grids[i].data);
-    memset(&g_ds_grids[i], 0, sizeof(g_ds_grids[i]));
-    return 1;
-}
-
-double gml_ds_grid_set(double id, double x, double y, double val) {
-    int i = (int)id, gx = (int)x, gy = (int)y;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
-    g_ds_grids[i].data[gy * g_ds_grids[i].w + gx] = val;
-    return 1;
-}
-
-double gml_ds_grid_get(double id, double x, double y) {
-    int i = (int)id, gx = (int)x, gy = (int)y;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
-    return g_ds_grids[i].data[gy * g_ds_grids[i].w + gx];
-}
-
-double gml_ds_grid_width(double id) {
-    int i = (int)id;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    return (double)g_ds_grids[i].w;
-}
-
-double gml_ds_grid_height(double id) {
-    int i = (int)id;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    return (double)g_ds_grids[i].h;
-}
-
-double gml_ds_grid_clear(double id, double val) {
-    int i = (int)id;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    int total = g_ds_grids[i].w * g_ds_grids[i].h;
-    for (int k = 0; k < total; k++) g_ds_grids[i].data[k] = val;
-    return 1;
-}
-
-double gml_ds_grid_multiply(double id, double x, double y, double val) {
-    int i = (int)id, gx = (int)x, gy = (int)y;
-    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
-    g_ds_grids[i].data[gy * g_ds_grids[i].w + gx] *= val;
-    return 1;
 }
 
 static gm82_mp_grid_world *g_mp = NULL;

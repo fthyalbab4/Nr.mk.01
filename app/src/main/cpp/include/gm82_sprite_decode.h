@@ -15,7 +15,6 @@ typedef struct {
     int32_t  height;
     uint8_t *rgba;       /* width*height*4, caller frees via list_free */
     size_t   rgba_size;
-    uint8_t *mask;       /* 1 bit or byte per pixel mask, size width*height */
 } gm82_decoded_frame;
 
 typedef struct {
