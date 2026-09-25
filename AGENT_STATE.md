@@ -8,6 +8,8 @@ release_tag: HOST_PROTOTYPE
 last_result: PASS
 last_test_log: "Implemented ds_list AST expression evaluator bindings (ds_list_create, destroy, add, find_value, size, clear, delete, find_index, empty). All 11 native test executables PASS."
 last_run_date: 2026-09-24
+last_test_log: "Expanded GML VM (array builtins, string_digits/lower/upper, ini file I/O, collision_circle) tested PASS."
+last_run_date: 2026-09-20
 
 ## rules (لا تُكسر)
 - never claim 100%
