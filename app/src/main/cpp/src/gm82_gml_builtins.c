@@ -1113,6 +1113,11 @@ double gml_part_type_create(void) {
     if (!g_particles) return -1;
     return (double)gm82_part_type_create(g_particles);
 }
+double gml_part_type_color(double type, double color) {
+    if (!g_particles) return 0;
+    gm82_part_type_color(g_particles, (int)type, (uint32_t)color);
+    return 1;
+}
 double gml_part_particles_create(double sys, double x, double y, double type, double number) {
     if (!g_particles) return 0;
     gm82_part_particles_create(g_particles, (int)sys, x, y, (int)type, (int)number);

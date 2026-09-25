@@ -337,6 +337,10 @@ static bool parse_primary(gml_parser *p, double *out) {
             double val = (nargs >= 4) ? args[3] : 1;
             *out = gml_ds_grid_multiply(arg, yarg, garg, val); return true;
         }
+        if (strcmp(id, "part_type_color") == 0) {
+            double carg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_part_type_color(arg, carg); return true;
+        }
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }
