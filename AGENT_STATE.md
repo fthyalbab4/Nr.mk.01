@@ -6,8 +6,8 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "Fixed sound_runtime gml_sound_pan duplicate, memmem POSIX header macro, test_dual_load sample path, and test_gml_ds_collisions sound binding test setup. All native C unit tests PASS."
-last_run_date: 2026-09-24
+last_test_log: "Expanded GML VM (array builtins, string_digits/lower/upper, ini file I/O, collision_circle) tested PASS."
+last_run_date: 2026-09-20
 
 ## rules (لا تُكسر)
 - never claim 100%
