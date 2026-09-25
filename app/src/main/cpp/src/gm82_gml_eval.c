@@ -341,6 +341,37 @@ static bool parse_primary(gml_parser *p, double *out) {
             double carg = (nargs >= 2) ? args[1] : 0;
             *out = gml_part_type_color(arg, carg); return true;
         }
+        if (strcmp(id, "ds_list_create") == 0) {
+            *out = gml_ds_list_create(); return true;
+        }
+        if (strcmp(id, "ds_list_destroy") == 0) {
+            *out = gml_ds_list_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_list_add") == 0) {
+            double val = (nargs >= 2) ? args[1] : 0;
+            *out = gml_ds_list_add(arg, val); return true;
+        }
+        if (strcmp(id, "ds_list_find_value") == 0) {
+            double pos = (nargs >= 2) ? args[1] : 0;
+            *out = gml_ds_list_find_value(arg, pos); return true;
+        }
+        if (strcmp(id, "ds_list_size") == 0) {
+            *out = gml_ds_list_size(arg); return true;
+        }
+        if (strcmp(id, "ds_list_clear") == 0) {
+            *out = gml_ds_list_clear(arg); return true;
+        }
+        if (strcmp(id, "ds_list_delete") == 0) {
+            double pos = (nargs >= 2) ? args[1] : 0;
+            *out = gml_ds_list_delete(arg, pos); return true;
+        }
+        if (strcmp(id, "ds_list_find_index") == 0) {
+            double val = (nargs >= 2) ? args[1] : 0;
+            *out = gml_ds_list_find_index(arg, val); return true;
+        }
+        if (strcmp(id, "ds_list_empty") == 0) {
+            *out = gml_ds_list_empty(arg); return true;
+        }
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }

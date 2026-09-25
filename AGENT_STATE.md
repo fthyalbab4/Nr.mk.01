@@ -6,7 +6,7 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "Implemented particle type color property storage/application and GML AST evaluator binding for part_type_color. All 10 native test executables PASS."
+last_test_log: "Implemented ds_list AST expression evaluator bindings (ds_list_create, destroy, add, find_value, size, clear, delete, find_index, empty). All 11 native test executables PASS."
 last_run_date: 2026-09-24
 
 ## rules (لا تُكسر)
@@ -21,8 +21,8 @@ Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/a
 
 ## required_reply_format
 PROGRESS: 48% (<50% compared to full Windows GM82)
-DONE: Implemented particle type color property application in gm82_particles.c and bound part_type_color to AST expression evaluator with test_gml_particles.c.
-TEST: Native C unit tests passing (test_gml_particles PASS, test_gml_ds_grid_motion PASS, test_gml_precise_collisions PASS, test_full_suite PASS).
+DONE: Implemented AST expression evaluation handlers for ds_list_* functions in gm82_gml_eval.c with test_gml_ds_list_eval.c.
+TEST: Native C unit tests passing (test_gml_ds_list_eval PASS, test_gml_particles PASS, test_gml_ds_grid_motion PASS, test_gml_precise_collisions PASS, test_full_suite PASS).
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio, full GML VM bytecode engine, Android device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
