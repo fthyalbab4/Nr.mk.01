@@ -146,6 +146,16 @@ double gml_ds_priority_find_max(double id);
 double gml_ds_priority_size(double id);
 double gml_ds_priority_empty(double id);
 
+/* ds_grid (2D numeric grid) */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
+
 void gm82_mp_grid_bind(gm82_mp_grid_world *w);
 double gml_mp_grid_create(double left, double top, double hcells, double vcells, double cellw, double cellh);
 double gml_mp_grid_destroy(double id);

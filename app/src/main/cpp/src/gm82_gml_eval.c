@@ -258,13 +258,13 @@ static bool parse_primary(gml_parser *p, double *out) {
         *out = (v == 0) ? 1 : 0;
         return true;
     }
-    /* function call? collect up to 4 args */
+    /* function call? collect up to 8 args */
     if (match(p, '(')) {
-        double args[4] = {0,0,0,0};
+        double args[8] = {0};
         int nargs = 0;
         if (peek(p) != ')') {
             for (;;) {
-                if (nargs >= 4) return false;
+                if (nargs >= 8) return false;
                 if (!parse_expr(p, &args[nargs])) return false;
                 nargs++;
                 if (peek(p) != ',') break;
@@ -286,6 +286,56 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "string_pos") == 0 || strcmp(id, "string_copy") == 0 ||
             strcmp(id, "string_replace") == 0 || strcmp(id, "string_replace_all") == 0) {
             *out = 0; return true;
+        }
+        if (strcmp(id, "motion_set") == 0) {
+            double sarg = (nargs >= 2) ? args[1] : 0;
+            gml_motion_set(arg, sarg);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "motion_add") == 0) {
+            double sarg = (nargs >= 2) ? args[1] : 0;
+            gml_motion_add(arg, sarg);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "move_towards_point") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double sarg = (nargs >= 3) ? args[2] : 0;
+            gml_move_towards_point(arg, yarg, sarg);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "ds_grid_create") == 0) {
+            double harg = (nargs >= 2) ? args[1] : 1;
+            *out = gml_ds_grid_create(arg, harg); return true;
+        }
+        if (strcmp(id, "ds_grid_destroy") == 0) {
+            *out = gml_ds_grid_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_grid_set") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double garg = (nargs >= 3) ? args[2] : 0;
+            double val = (nargs >= 4) ? args[3] : 0;
+            *out = gml_ds_grid_set(arg, yarg, garg, val); return true;
+        }
+        if (strcmp(id, "ds_grid_get") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double garg = (nargs >= 3) ? args[2] : 0;
+            *out = gml_ds_grid_get(arg, yarg, garg); return true;
+        }
+        if (strcmp(id, "ds_grid_width") == 0) {
+            *out = gml_ds_grid_width(arg); return true;
+        }
+        if (strcmp(id, "ds_grid_height") == 0) {
+            *out = gml_ds_grid_height(arg); return true;
+        }
+        if (strcmp(id, "ds_grid_clear") == 0) {
+            double garg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_ds_grid_clear(arg, garg); return true;
+        }
+        if (strcmp(id, "ds_grid_multiply") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double garg = (nargs >= 3) ? args[2] : 0;
+            double val = (nargs >= 4) ? args[3] : 1;
+            *out = gml_ds_grid_multiply(arg, yarg, garg, val); return true;
         }
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;

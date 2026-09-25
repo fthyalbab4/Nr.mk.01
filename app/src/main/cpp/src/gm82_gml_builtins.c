@@ -1460,6 +1460,81 @@ double gml_ds_priority_empty(double id) {
     return gml_ds_priority_size(id) == 0 ? 1.0 : 0.0;
 }
 
+#define GM82_DS_GRID_MAX 16
+typedef struct {
+    int used;
+    int w, h;
+    double *data;
+} gm82_ds_grid;
+static gm82_ds_grid g_ds_grids[GM82_DS_GRID_MAX];
+
+double gml_ds_grid_create(double w, double h) {
+    int iw = (int)w, ih = (int)h;
+    if (iw <= 0 || ih <= 0 || iw > 2048 || ih > 2048) return -1;
+    for (int i = 0; i < GM82_DS_GRID_MAX; i++) {
+        if (g_ds_grids[i].used) continue;
+        double *p = (double *)calloc((size_t)(iw * ih), sizeof(double));
+        if (!p) return -1;
+        g_ds_grids[i].used = 1;
+        g_ds_grids[i].w = iw;
+        g_ds_grids[i].h = ih;
+        g_ds_grids[i].data = p;
+        return (double)i;
+    }
+    return -1;
+}
+
+double gml_ds_grid_destroy(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    free(g_ds_grids[i].data);
+    memset(&g_ds_grids[i], 0, sizeof(g_ds_grids[i]));
+    return 1;
+}
+
+double gml_ds_grid_set(double id, double x, double y, double val) {
+    int i = (int)id, gx = (int)x, gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
+    g_ds_grids[i].data[gy * g_ds_grids[i].w + gx] = val;
+    return 1;
+}
+
+double gml_ds_grid_get(double id, double x, double y) {
+    int i = (int)id, gx = (int)x, gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
+    return g_ds_grids[i].data[gy * g_ds_grids[i].w + gx];
+}
+
+double gml_ds_grid_width(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    return (double)g_ds_grids[i].w;
+}
+
+double gml_ds_grid_height(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    return (double)g_ds_grids[i].h;
+}
+
+double gml_ds_grid_clear(double id, double val) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    int total = g_ds_grids[i].w * g_ds_grids[i].h;
+    for (int k = 0; k < total; k++) g_ds_grids[i].data[k] = val;
+    return 1;
+}
+
+double gml_ds_grid_multiply(double id, double x, double y, double val) {
+    int i = (int)id, gx = (int)x, gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].w || gy < 0 || gy >= g_ds_grids[i].h) return 0;
+    g_ds_grids[i].data[gy * g_ds_grids[i].w + gx] *= val;
+    return 1;
+}
+
 static gm82_mp_grid_world *g_mp = NULL;
 static double g_mp_path_x[256], g_mp_path_y[256];
 static int g_mp_path_n = 0;
