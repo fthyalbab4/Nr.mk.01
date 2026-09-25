@@ -93,6 +93,7 @@ void gm82_particles_bind(gm82_particle_world *w);
 double gml_part_system_create(void);
 double gml_part_system_destroy(double sys);
 double gml_part_type_create(void);
+double gml_part_type_color(double type, double color);
 double gml_part_particles_create(double sys, double x, double y, double type, double number);
 double gml_part_system_update(double sys);
 
@@ -145,6 +146,16 @@ double gml_ds_priority_delete_max(double id);
 double gml_ds_priority_find_max(double id);
 double gml_ds_priority_size(double id);
 double gml_ds_priority_empty(double id);
+
+/* ds_grid (2D numeric grid) */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
 
 void gm82_mp_grid_bind(gm82_mp_grid_world *w);
 double gml_mp_grid_create(double left, double top, double hcells, double vcells, double cellw, double cellh);
@@ -245,6 +256,9 @@ double gml_string_char_at(const char *str, double index);
 double gml_string_digits(const char *str, char *out, size_t out_sz);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
+double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
+double gml_string_replace(const char *str, const char *old_sub, const char *new_sub, char *out, size_t out_sz);
+double gml_string_replace_all(const char *str, const char *old_sub, const char *new_sub, char *out, size_t out_sz);
 double gml_array_length_1d(double array_id);
 double gml_array_height_2d(double array_id);
 double gml_mouse_x(void);

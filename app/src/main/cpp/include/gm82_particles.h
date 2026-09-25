@@ -23,6 +23,7 @@ typedef struct {
 typedef struct {
     int used;
     double gravity, gravity_dir;
+    uint32_t color;
 } gm82_particle_type;
 
 typedef struct {

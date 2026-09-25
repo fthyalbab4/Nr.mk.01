@@ -23,7 +23,10 @@ void gm82_decoded_sprite_list_init(gm82_decoded_sprite_list *L) {
 }
 
 void gm82_decoded_sprite_list_free(gm82_decoded_sprite_list *L) {
-    for (int i = 0; i < L->count; i++) free(L->frames[i].rgba);
+    for (int i = 0; i < L->count; i++) {
+        free(L->frames[i].rgba);
+        free(L->frames[i].mask);
+    }
     free(L->frames);
     memset(L, 0, sizeof(*L));
 }
@@ -79,11 +82,16 @@ static bool list_push(gm82_decoded_sprite_list *L, const char *name,
     f->rgba_size = bgra_len;
     f->rgba = (uint8_t *)malloc(bgra_len);
     if (!f->rgba) return false;
+    f->mask = (uint8_t *)malloc((size_t)(w * h));
+    if (!f->mask) { free(f->rgba); return false; }
+
     for (int32_t i = 0; i < w * h; i++) {
         f->rgba[i*4+0] = bgra[i*4+2];
         f->rgba[i*4+1] = bgra[i*4+1];
         f->rgba[i*4+2] = bgra[i*4+0];
-        f->rgba[i*4+3] = bgra[i*4+3];
+        uint8_t a = bgra[i*4+3];
+        f->rgba[i*4+3] = a;
+        f->mask[i] = (a > 0) ? 1 : 0;
     }
     L->count++;
     return true;
