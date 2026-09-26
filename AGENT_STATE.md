@@ -6,7 +6,7 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "Expanded GML VM (array builtins, string_digits/lower/upper, ini file I/O, collision_circle) tested PASS."
+last_test_log: "Expanded GML VM (array builtins, string_digits/lower/upper, ini file I/O, collision_circle), native C unit test suite and CMake libgm82_android build tested PASS."
 last_run_date: 2026-09-20
 
 ## rules (لا تُكسر)
@@ -21,8 +21,8 @@ Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/a
 
 ## required_reply_format
 PROGRESS: 48% (<50% compared to full Windows GM82)
-DONE: Implemented GML array builtins, string manipulation library (string_digits/lower/upper), INI file I/O, collision_circle, and added test_gml_vm_expanded.c.
-TEST: Native C unit tests passing (test_gml_vm_expanded PASS, test_gml_comprehensive PASS, test_phase8_suite PASS).
+DONE: Implemented GML array builtins, string manipulation library (string_digits/lower/upper), INI file I/O, collision_circle, fixed C runtime sound & event compiler defects, created native test runner tool.
+TEST: Native C unit tests passing (test_gml_vm_expanded PASS, test_gml_comprehensive PASS, test_gml_ds_collisions PASS, test_runtime_guard PASS, test_full_suite PASS, CMake libgm82_android build PASS).
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio, full GML VM bytecode engine, precise per-pixel collisions, Android device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
