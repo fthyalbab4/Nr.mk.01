@@ -26,13 +26,11 @@ jobs:
             echo "المشروع مكتمل 100%."
           fi
 
-      - name: Trigger Jules via REST API
+      - name: Create Issue to Trigger Jules
         if: steps.check_todo.outputs.has_tasks == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          curl -X POST "https://jules.googleapis.com/v1alpha/tasks" \
-            -H "Authorization: Bearer ${{ secrets.JULES_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "repo": "${{ github.repository }}",
-              "prompt": "اقرأ ملف TODO.md ونفذ أول مهمة غير مكتملة [ ]، ثم حدّث الملف إلى [x] واعمل Push إلى main."
-            }'
+          gh issue create \
+            --title "تحديث جديد للمشروع: تنفيذ مهمة من TODO" \
+            --body "يا Jules: اقرأ ملف TODO.md. نفذ أول مهمة غير مكتملة تحتوي على [ ]، وبعد الانتهاء علم عليها بـ [x] واعمل Commit و Push لفرع main."
