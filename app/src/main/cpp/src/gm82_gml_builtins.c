@@ -180,28 +180,6 @@ double gml_instance_place(double x, double y, double object_index) {
     return -4;
 }
 
-double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
-    (void)prec;
-    if (!g_rt) return -4;
-    int32_t oi = (int32_t)obj;
-    int steps = 32;
-    for (int i = 0; i < g_rt->instance_count; i++) {
-        gm82_instance *o = &g_rt->instances[i];
-        if (!o->alive) continue;
-        if (notme && o == g_self) continue;
-        if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        for (int s = 0; s <= steps; s++) {
-            double t = (double)s / (double)steps;
-            double px = x1 + (x2 - x1) * t;
-            double py = y1 + (y2 - y1) * t;
-            if (px >= o->x && px <= o->x + ow && py >= o->y && py <= o->y + oh)
-                return (double)o->id;
-        }
-    }
-    return -4;
-}
 
 void gm82_draw_set_target(uint8_t *rgba, int32_t w, int32_t h) {
     g_draw_buf = rgba; g_draw_w = w; g_draw_h = h;
@@ -719,6 +697,28 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     return (double)k;
 }
 
+double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    if (!substr || !substr[0]) { strncpy(out, str, out_sz - 1); out[out_sz - 1] = 0; return (double)strlen(out); }
+    if (!newstr) newstr = "";
+    size_t sub_len = strlen(substr);
+    size_t new_len = strlen(newstr);
+    size_t k = 0;
+    const char *p = str;
+    while (*p && k + 1 < out_sz) {
+        if (strncmp(p, substr, sub_len) == 0) {
+            for (size_t i = 0; i < new_len && k + 1 < out_sz; i++) out[k++] = newstr[i];
+            p += sub_len;
+        } else {
+            out[k++] = *p++;
+        }
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz) {
     if (!out || out_sz == 0) return 0;
     out[0] = 0;
@@ -728,9 +728,6 @@ double gml_string_copy(const char *str, double index, double count, char *out, s
     int len = (int)strlen(str);
     if (idx < 0) idx = 0;
     if (idx >= len || cnt <= 0) return 0;
-    size_t k = 0;
-    for (int i = 0; i < cnt && idx + i < len && k + 1 < out_sz; i++) {
-        out[k++] = str[idx + i];
     int k = 0;
     for (int i = idx; i < len && i < idx + cnt && (size_t)k + 1 < out_sz; i++) {
         out[k++] = str[i];
@@ -1896,14 +1893,6 @@ double gml_choose(double a, double b) {
     return (rand() & 1) ? a : b;
 }
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 double gml_lengthdir_x(double len, double dir) {
     return len * cos(dir * M_PI / 180.0);

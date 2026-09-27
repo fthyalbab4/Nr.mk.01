@@ -27,8 +27,6 @@
 
 ### المرحلة 5: الأنظمة المتقدمة (Advanced Engine Features)
 - Particles Engine, mp_grid Pathfinding, Timelines, Paths.
-- النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until` والمصفوفات ودوال INI I/O ودوال النصوص والدوائر الصدامية `collision_circle`).
-- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **48%**.
 
 ## ❌ النواقص الأساسية للوصول لـ 100%
 - مفسر GML bytecode كامل لجميع الدوال المعقدة.
