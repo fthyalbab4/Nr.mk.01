@@ -247,6 +247,8 @@ double gml_string_digits(const char *str, char *out, size_t out_sz);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
+double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
+double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
 double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
 double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);

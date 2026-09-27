@@ -439,6 +439,65 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
     return -4;
 }
 
+static bool line_intersects_aabb(double x1, double y1, double x2, double y2, double rx, double ry, double rw, double rh) {
+    double min_x = x1 < x2 ? x1 : x2, max_x = x1 < x2 ? x2 : x1;
+    double min_y = y1 < y2 ? y1 : y2, max_y = y1 < y2 ? y2 : y1;
+    if (max_x < rx || min_x > rx + rw || max_y < ry || min_y > ry + rh) return false;
+    /* Check 16 steps along segment */
+    for (int i = 0; i <= 16; i++) {
+        double t = i / 16.0;
+        double px = x1 + t * (x2 - x1);
+        double py = y1 + t * (y2 - y1);
+        if (px >= rx && px <= rx + rw && py >= ry && py <= ry + rh) return true;
+    }
+    return false;
+}
+
+double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        if (line_intersects_aabb(x1, y1, x2, y2, o->x, o->y, ow, oh))
+            return (double)o->id;
+    }
+    return -4;
+}
+
+double gml_collision_ellipse(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        double ox = o->x + ow / 2.0;
+        double oy = o->y + oh / 2.0;
+        double dx = (ox - cx) / rx;
+        double dy = (oy - cy) / ry;
+        if (dx * dx + dy * dy <= 1.0)
+            return (double)o->id;
+    }
+    return -4;
+}
+
 double gml_collision_point(double x, double y, double obj, double prec, double notme) {
     return gml_collision_rectangle(x, y, x+1, y+1, obj, prec, notme);
 }
@@ -669,6 +728,9 @@ double gml_string_copy(const char *str, double index, double count, char *out, s
     int len = (int)strlen(str);
     if (idx < 0) idx = 0;
     if (idx >= len || cnt <= 0) return 0;
+    size_t k = 0;
+    for (int i = 0; i < cnt && idx + i < len && k + 1 < out_sz; i++) {
+        out[k++] = str[idx + i];
     int k = 0;
     for (int i = idx; i < len && i < idx + cnt && (size_t)k + 1 < out_sz; i++) {
         out[k++] = str[i];
