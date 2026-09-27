@@ -416,6 +416,65 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
     return -4;
 }
 
+static bool line_intersects_aabb(double x1, double y1, double x2, double y2, double rx, double ry, double rw, double rh) {
+    double min_x = x1 < x2 ? x1 : x2, max_x = x1 < x2 ? x2 : x1;
+    double min_y = y1 < y2 ? y1 : y2, max_y = y1 < y2 ? y2 : y1;
+    if (max_x < rx || min_x > rx + rw || max_y < ry || min_y > ry + rh) return false;
+    /* Check 16 steps along segment */
+    for (int i = 0; i <= 16; i++) {
+        double t = i / 16.0;
+        double px = x1 + t * (x2 - x1);
+        double py = y1 + t * (y2 - y1);
+        if (px >= rx && px <= rx + rw && py >= ry && py <= ry + rh) return true;
+    }
+    return false;
+}
+
+double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        if (line_intersects_aabb(x1, y1, x2, y2, o->x, o->y, ow, oh))
+            return (double)o->id;
+    }
+    return -4;
+}
+
+double gml_collision_ellipse(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        double ox = o->x + ow / 2.0;
+        double oy = o->y + oh / 2.0;
+        double dx = (ox - cx) / rx;
+        double dy = (oy - cy) / ry;
+        if (dx * dx + dy * dy <= 1.0)
+            return (double)o->id;
+    }
+    return -4;
+}
+
 double gml_collision_point(double x, double y, double obj, double prec, double notme) {
     return gml_collision_rectangle(x, y, x+1, y+1, obj, prec, notme);
 }
@@ -635,6 +694,89 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     }
     out[k] = 0;
     return (double)k;
+}
+
+double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    int idx = (int)index - 1; /* 1-based index in GML */
+    int cnt = (int)count;
+    int len = (int)strlen(str);
+    if (idx < 0) idx = 0;
+    if (idx >= len || cnt <= 0) return 0;
+    size_t k = 0;
+    for (int i = 0; i < cnt && idx + i < len && k + 1 < out_sz; i++) {
+        out[k++] = str[idx + i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    if (!substr || !substr[0]) {
+        strncpy(out, str, out_sz - 1);
+        out[out_sz - 1] = 0;
+        return (double)strlen(out);
+    }
+    const char *p = strstr(str, substr);
+    if (!p) {
+        strncpy(out, str, out_sz - 1);
+        out[out_sz - 1] = 0;
+        return (double)strlen(out);
+    }
+    size_t prefix_len = (size_t)(p - str);
+    if (prefix_len >= out_sz) prefix_len = out_sz - 1;
+    memcpy(out, str, prefix_len);
+    out[prefix_len] = 0;
+    if (newstr) {
+        strncat(out, newstr, out_sz - prefix_len - 1);
+    }
+    const char *rest = p + strlen(substr);
+    strncat(out, rest, out_sz - strlen(out) - 1);
+    return (double)strlen(out);
+}
+
+double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    if (!substr || !substr[0]) {
+        strncpy(out, str, out_sz - 1);
+        out[out_sz - 1] = 0;
+        return (double)strlen(out);
+    }
+    size_t sub_len = strlen(substr);
+    size_t new_len = newstr ? strlen(newstr) : 0;
+    const char *curr = str;
+    const char *p = NULL;
+    size_t out_pos = 0;
+    while ((p = strstr(curr, substr)) != NULL) {
+        size_t chunk_len = (size_t)(p - curr);
+        if (out_pos + chunk_len >= out_sz - 1) chunk_len = out_sz - 1 - out_pos;
+        memcpy(out + out_pos, curr, chunk_len);
+        out_pos += chunk_len;
+        if (out_pos >= out_sz - 1) break;
+        if (newstr && new_len > 0) {
+            size_t copy_new = new_len;
+            if (out_pos + copy_new >= out_sz - 1) copy_new = out_sz - 1 - out_pos;
+            memcpy(out + out_pos, newstr, copy_new);
+            out_pos += copy_new;
+        }
+        curr = p + sub_len;
+        if (out_pos >= out_sz - 1) break;
+    }
+    if (out_pos < out_sz - 1) {
+        size_t rest_len = strlen(curr);
+        if (out_pos + rest_len >= out_sz - 1) rest_len = out_sz - 1 - out_pos;
+        memcpy(out + out_pos, curr, rest_len);
+        out_pos += rest_len;
+    }
+    out[out_pos] = 0;
+    return (double)out_pos;
 }
 
 double gml_string_lower(const char *str, char *out, size_t out_sz) {

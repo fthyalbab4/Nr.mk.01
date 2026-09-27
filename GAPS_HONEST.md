@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
 تاريخ التحديث: 2026-09-20
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~48% (أقل من 50%)**
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~52% (تجاوزت 50%)**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~62% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~52% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), المصفوفات، الهياكل (`ds_list`, `ds_map`), ودوال النصوص والـ INI I/O |
+| **GML Runtime / Interpreter** | ~58% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), المصفوفات، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`), ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`) والـ INI I/O |
 | **DnD Actions Engine** | ~42% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات |
-| **Physics & Collisions** | ~40% | AABB + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle؛ لا يوجد Precise per-pixel mask |
+| **Physics & Collisions** | ~50% | AABB + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse؛ لا يوجد Precise per-pixel mask |
 | **Graphics & Rendering** | ~35% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~30% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~48%** | **أقل من 50% مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~52%** | **تجاوزت 50% مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
@@ -25,17 +25,17 @@
 2. Soft rendering وإظهار أول إطار بدون شاشة سوداء (`nonzero_pixels > 1000`).
 3. تجربة 4 ألعاب بـ 10 خطوات بدون انهيار (Smoke 4/4 PASS).
 4. محاكاة حركة ماريو 100 إطار مع الجاذبية والمنصات وتتبع الكاميرا (`MARIO_PLAYABLE_PASS_HOST`).
-5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `string_digits`, `string_lower`, `string_upper`, `ini_open/read/write`, `collision_circle`).
+5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `string_digits`, `string_lower`, `string_upper`, `string_copy`, `string_replace`, `string_replace_all`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`).
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
 8. إصلاح الأخطاء التحذيرية والتعريفات المضاعفة في C وبناء `libgm82_android.so` بنجاح عبر CMake.
 
 ---
 
-## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 50%)
+## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 48%)
 
 1. **Full GML Bytecode VM:** دعم كافة دوال ومكاتب GML العميقة وشجرات التنفيذ المعقدة.
-2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB.
+2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
 3. **GLES Hardware Pipeline:** رفع التكستشرات وإطارات الرسم للـ GPU على أندرويد.
 4. **OpenSL ES Audio Backend:** تشغيل الصوت الحقيقي المباشر على الجهاز.
 5. **Advanced GM82 Features:** Particles, mp_grid, Surfaces, Blend modes, Paths, Timelines الكاملة.
@@ -44,4 +44,4 @@
 
 ## التعهد بالشفافية
 
-عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **48%** حقيقية مع التوسع المستمر الصادق.
+عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **52%** حقيقية مع التوسع المستمر الصادق.
