@@ -20,20 +20,19 @@ jobs:
         run: |
           if grep -q "\[ \]" TODO.md; then
             echo "has_tasks=true" >> $GITHUB_OUTPUT
-            echo "يوجد مهام متبقية، سيتم تشغيل Jules..."
+            echo "يوجد مهام متبقية..."
           else
             echo "has_tasks=false" >> $GITHUB_OUTPUT
-            echo "مبروك! تم إنجاز جميع المهام والمشروع مكتمل 100%."
+            echo "المشروع مكتمل 100%."
           fi
 
-      - name: Run Jules for Next Unfinished Task
+      - name: Trigger Jules via REST API
         if: steps.check_todo.outputs.has_tasks == 'true'
-        uses: google-labs-code/jules-action@v1
-        with:
-          jules_api_key: ${{ secrets.JULES_API_KEY }}
-          prompt: |
-            قم بقراءة ملف TODO.md.
-            اختر أول مهمة غير مكتملة تحتوي على [ ].
-            قم بتنفيذ الكود المطلوب لها بالكامل داخل المشروع.
-            بعد الانتهاء، قم بتحديث القائمة في TODO.md وتغيير المربع إلى [x].
-            اعمل Commit و Push التعديلات مباشرة إلى فرع main.
+        run: |
+          curl -X POST "https://jules.googleapis.com/v1alpha/tasks" \
+            -H "Authorization: Bearer ${{ secrets.JULES_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repo": "${{ github.repository }}",
+              "prompt": "اقرأ ملف TODO.md ونفذ أول مهمة غير مكتملة [ ]، ثم حدّث الملف إلى [x] واعمل Push إلى main."
+            }'
