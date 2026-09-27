@@ -180,6 +180,29 @@ double gml_instance_place(double x, double y, double object_index) {
     return -4;
 }
 
+double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)obj;
+    int steps = 32;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        for (int s = 0; s <= steps; s++) {
+            double t = (double)s / (double)steps;
+            double px = x1 + (x2 - x1) * t;
+            double py = y1 + (y2 - y1) * t;
+            if (px >= o->x && px <= o->x + ow && py >= o->y && py <= o->y + oh)
+                return (double)o->id;
+        }
+    }
+    return -4;
+}
+
 void gm82_draw_set_target(uint8_t *rgba, int32_t w, int32_t h) {
     g_draw_buf = rgba; g_draw_w = w; g_draw_h = h;
 }
@@ -633,6 +656,74 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
         if (isdigit((unsigned char)str[i])) out[k++] = str[i];
     }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    int idx = (int)index - 1; /* 1-based index in GML */
+    int cnt = (int)count;
+    int len = (int)strlen(str);
+    if (idx < 0) idx = 0;
+    if (idx >= len || cnt <= 0) return 0;
+    int k = 0;
+    for (int i = idx; i < len && i < idx + cnt && (size_t)k + 1 < out_sz; i++) {
+        out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    int idx = (int)index - 1;
+    int cnt = (int)count;
+    int len = (int)strlen(str);
+    int k = 0;
+    for (int i = 0; i < len && (size_t)k + 1 < out_sz; i++) {
+        if (i >= idx && i < idx + cnt) continue;
+        out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) str = "";
+    if (!substr) substr = "";
+    int idx = (int)index - 1;
+    int len = (int)strlen(str);
+    if (idx < 0) idx = 0;
+    if (idx > len) idx = len;
+    int k = 0;
+    for (int i = 0; i < idx && (size_t)k + 1 < out_sz; i++) out[k++] = str[i];
+    for (int i = 0; substr[i] && (size_t)k + 1 < out_sz; i++) out[k++] = substr[i];
+    for (int i = idx; i < len && (size_t)k + 1 < out_sz; i++) out[k++] = str[i];
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    if (!substr || !substr[0]) { strncpy(out, str, out_sz - 1); out[out_sz - 1] = 0; return (double)strlen(out); }
+    if (!newstr) newstr = "";
+    const char *p = strstr(str, substr);
+    if (!p) { strncpy(out, str, out_sz - 1); out[out_sz - 1] = 0; return (double)strlen(out); }
+    size_t prefix_len = (size_t)(p - str);
+    size_t sub_len = strlen(substr);
+    size_t k = 0;
+    for (size_t i = 0; i < prefix_len && k + 1 < out_sz; i++) out[k++] = str[i];
+    for (size_t i = 0; newstr[i] && k + 1 < out_sz; i++) out[k++] = newstr[i];
+    for (size_t i = prefix_len + sub_len; str[i] && k + 1 < out_sz; i++) out[k++] = str[i];
     out[k] = 0;
     return (double)k;
 }
@@ -1757,6 +1848,19 @@ double gml_lengthdir_x(double len, double dir) {
 }
 double gml_lengthdir_y(double len, double dir) {
     return -len * sin(dir * M_PI / 180.0);
+}
+double gml_arctan2(double y, double x) { return atan2(y, x); }
+double gml_sqr(double v) { return v * v; }
+double gml_sqrt(double v) { return sqrt(v); }
+double gml_power(double base, double exp_val) { return pow(base, exp_val); }
+double gml_log10(double v) { return log10(v); }
+double gml_log2(double v) { return log2(v); }
+double gml_exp(double v) { return exp(v); }
+double gml_mean(double a, double b, double c) { return (a + b + c) / 3.0; }
+double gml_median(double a, double b, double c) {
+    if ((a >= b && a <= c) || (a <= b && a >= c)) return a;
+    if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
+    return c;
 }
 double gml_deg_to_rad(double deg) { return deg * M_PI / 180.0; }
 double gml_rad_to_deg(double rad) { return rad * 180.0 / M_PI; }
