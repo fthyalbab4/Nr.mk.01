@@ -55,7 +55,6 @@ double gml_point_in_rectangle(double px, double py, double x1, double y1, double
 double gml_collision_rectangle(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
 double gml_collision_circle(double xc, double yc, double rad, double obj, double prec, double notme);
 double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
-double gml_collision_ellipse(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
 double gml_collision_point(double x, double y, double obj, double prec, double notme);
 double gml_place_free(double x, double y);
 double gml_place_empty(double x, double y);
@@ -250,6 +249,9 @@ double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
 double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
+double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
+double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
+double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_array_length_1d(double array_id);
 double gml_array_height_2d(double array_id);
 double gml_mouse_x(void);
@@ -326,6 +328,15 @@ double gml_clamp(double v, double lo, double hi);
 double gml_lerp(double a, double b, double t);
 double gml_irandom(double n);
 double gml_random(double n);
+double gml_arctan2(double y, double x);
+double gml_sqr(double v);
+double gml_sqrt(double v);
+double gml_power(double base, double exp_val);
+double gml_log10(double v);
+double gml_log2(double v);
+double gml_exp(double v);
+double gml_mean(double a, double b, double c);
+double gml_median(double a, double b, double c);
 
 #ifdef __cplusplus
 }

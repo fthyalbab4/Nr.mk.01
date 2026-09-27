@@ -28,7 +28,6 @@
 5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `string_digits`, `string_lower`, `string_upper`, `string_copy`, `string_replace`, `string_replace_all`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`).
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
-8. إصلاح الأخطاء التحذيرية والتعريفات المضاعفة في C وبناء `libgm82_android.so` بنجاح عبر CMake.
 
 ---
 
