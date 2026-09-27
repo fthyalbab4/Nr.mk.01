@@ -279,6 +279,27 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "floor") == 0) { *out = floor(arg); return true; }
         if (strcmp(id, "ceil") == 0) { *out = ceil(arg); return true; }
         if (strcmp(id, "round") == 0) { *out = round(arg); return true; }
+        if (strcmp(id, "sqr") == 0) { *out = gml_sqr(arg); return true; }
+        if (strcmp(id, "sqrt") == 0) { *out = gml_sqrt(arg); return true; }
+        if (strcmp(id, "power") == 0) { *out = gml_power(arg, nargs >= 2 ? args[1] : 1); return true; }
+        if (strcmp(id, "log10") == 0) { *out = gml_log10(arg); return true; }
+        if (strcmp(id, "log2") == 0) { *out = gml_log2(arg); return true; }
+        if (strcmp(id, "exp") == 0) { *out = gml_exp(arg); return true; }
+        if (strcmp(id, "arctan2") == 0) { *out = gml_arctan2(arg, nargs >= 2 ? args[1] : 1); return true; }
+        if (strcmp(id, "degtorad") == 0) { *out = gml_deg_to_rad(arg); return true; }
+        if (strcmp(id, "radtodeg") == 0) { *out = gml_rad_to_deg(arg); return true; }
+        if (strcmp(id, "mean") == 0) { *out = gml_mean(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "median") == 0) { *out = gml_median(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "collision_line") == 0) {
+            double x1 = arg;
+            double y1 = nargs >= 2 ? args[1] : 0;
+            double x2 = nargs >= 3 ? args[2] : 0;
+            double y2 = nargs >= 4 ? args[3] : 0;
+            double obj = nargs >= 5 ? args[4] : -1;
+            double prec = nargs >= 6 ? args[5] : 0;
+            double notme = nargs >= 7 ? args[6] : 0;
+            *out = gml_collision_line(x1, y1, x2, y2, obj, prec, notme); return true;
+        }
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }
@@ -607,6 +628,77 @@ bool gm82_gml_eval_stmt(gm82_runtime *rt, gm82_instance *self, const char *stmt)
                 if (inst->alive && (inst->id == target_id || inst->object_index == target_id || target_id == -1 /* all */)) {
                     if (body_buf[0] == '{') gm82_gml_eval_block(rt, inst, body_buf);
                     else gm82_gml_eval_stmt(rt, inst, body_buf);
+                }
+            }
+        }
+        return true;
+    }
+
+    /* switch (expr) { case val: stmt... default: stmt... } */
+    if (strcmp(id, "switch") == 0) {
+        double sw_val = 0;
+        skip_ws(&p);
+        if (peek(&p) == '(') {
+            getc_(&p);
+            if (!parse_expr(&p, &sw_val)) return false;
+            if (!match(&p, ')')) return false;
+        } else {
+            if (!parse_expr(&p, &sw_val)) return false;
+        }
+        skip_ws(&p);
+        const char *body = p.s + p.i;
+        if (*body == '{') {
+            const char *q = body + 1;
+            int matched = 0;
+            int execute = 0;
+            while (*q && *q != '}') {
+                while (*q && isspace((unsigned char)*q)) q++;
+                if (*q == '"' || *q == '\'') {
+                    char quote = *q++;
+                    while (*q && *q != quote) {
+                        if (*q == '\\' && q[1]) q++;
+                        q++;
+                    }
+                    if (*q == quote) q++;
+                    continue;
+                }
+                if (strncmp(q, "case", 4) == 0 && (isspace((unsigned char)q[4]) || q[4] == '(')) {
+                    q += 4;
+                    gml_parser case_p = { q, 0, strlen(q), rt, self, {0} };
+                    double case_val = 0;
+                    if (parse_expr(&case_p, &case_val)) {
+                        q += case_p.i;
+                        if (*q == ':') q++;
+                        if (sw_val == case_val) {
+                            matched = 1;
+                            execute = 1;
+                        } else if (!matched) {
+                            execute = 0;
+                        }
+                    }
+                    continue;
+                }
+                if (strncmp(q, "default", 7) == 0 && (isspace((unsigned char)q[7]) || q[7] == ':')) {
+                    q += 7;
+                    if (*q == ':') q++;
+                    if (!matched) execute = 1;
+                    continue;
+                }
+                if (strncmp(q, "break", 5) == 0 && (isspace((unsigned char)q[5]) || q[5] == ';')) {
+                    if (execute) break;
+                    q += 5;
+                    if (*q == ';') q++;
+                    continue;
+                }
+                char stmt_buf[512];
+                size_t k = 0;
+                while (*q && *q != ';' && *q != '}' && strncmp(q, "case", 4) != 0 && strncmp(q, "default", 7) != 0 && strncmp(q, "break", 5) != 0 && k + 1 < sizeof(stmt_buf)) {
+                    stmt_buf[k++] = *q++;
+                }
+                stmt_buf[k] = 0;
+                if (*q == ';') q++;
+                if (execute && stmt_buf[0]) {
+                    gm82_gml_eval_stmt(rt, self, stmt_buf);
                 }
             }
         }

@@ -29,6 +29,25 @@ int main(void) {
     gml_string_upper("world", buf, sizeof(buf));
     assert(strcmp(buf, "WORLD") == 0);
 
+    gml_string_copy("Hello World", 1, 5, buf, sizeof(buf));
+    assert(strcmp(buf, "Hello") == 0);
+
+    gml_string_delete("Hello World", 6, 6, buf, sizeof(buf));
+    assert(strcmp(buf, "Hello") == 0);
+
+    gml_string_insert(" Beautiful", "Hello World", 6, buf, sizeof(buf));
+    assert(strcmp(buf, "Hello Beautiful World") == 0);
+
+    gml_string_replace("Hello World", "World", "GM82", buf, sizeof(buf));
+    assert(strcmp(buf, "Hello GM82") == 0);
+
+    /* Test Math Functions */
+    assert(gml_sqr(5.0) == 25.0);
+    assert(gml_sqrt(16.0) == 4.0);
+    assert(gml_power(2.0, 3.0) == 8.0);
+    assert(gml_mean(10.0, 20.0, 30.0) == 20.0);
+    assert(gml_median(5.0, 100.0, 20.0) == 20.0);
+
     /* Test INI File I/O */
     const char *ini_path = "/tmp/test_save.ini";
     gml_ini_open(ini_path);
@@ -46,6 +65,13 @@ int main(void) {
     assert(inst != NULL);
     double hit_id = gml_collision_circle(105, 105, 20, 0, 0, 0);
     assert(hit_id == (double)inst->id);
+
+    double line_hit = gml_collision_line(0, 0, 200, 200, 0, 0, 0);
+    assert(line_hit == (double)inst->id);
+
+    /* Test Switch / Case Evaluation */
+    gm82_gml_eval_block(&rt, inst, "x = 10; switch (x) { case 10: y = 42; break; case 20: y = 99; break; }");
+    assert(inst->y == 42.0);
 
     puts("GML_VM_EXPANDED_TEST_PASS");
     return 0;
