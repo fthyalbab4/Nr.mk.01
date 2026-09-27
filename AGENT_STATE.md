@@ -6,7 +6,7 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "Expanded GML VM (array builtins, string_digits/lower/upper, ini file I/O, collision_circle) tested PASS."
+last_test_log: "All 6 native C unit test suites and CMake build verified PASS."
 last_run_date: 2026-09-20
 
 ## rules (لا تُكسر)

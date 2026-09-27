@@ -346,10 +346,10 @@ int gm82_events_autobind_gml_from_gmk(const uint8_t *data, size_t size) {
             }
             if (!good) continue;
             int score = 0;
-            if (memmem(s, (size_t)n, "keyboard_", 9)) score += 2;
-            if (memmem(s, (size_t)n, "if ", 3)) score += 1;
-            if (memmem(s, (size_t)n, "x", 1) && memmem(s, (size_t)n, "=", 1)) score += 1;
-            if (memmem(s, (size_t)n, "image_", 6)) score += 1;
+            for (int k = 0; k <= n - 9; k++) if (memcmp(s + k, "keyboard_", 9) == 0) { score += 2; break; }
+            for (int k = 0; k <= n - 3; k++) if (memcmp(s + k, "if ", 3) == 0) { score += 1; break; }
+            for (int k = 0; k <= n - 1; k++) if (s[k] == 'x') { score += 1; break; }
+            for (int k = 0; k <= n - 6; k++) if (memcmp(s + k, "image_", 6) == 0) { score += 1; break; }
             if (score < 2) continue;
             if (n > best_n) { best_n = n; best = (const char *)s; }
         }
