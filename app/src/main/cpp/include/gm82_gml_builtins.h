@@ -338,6 +338,10 @@ double gml_log2(double v);
 double gml_exp(double v);
 double gml_mean(double a, double b, double c);
 double gml_median(double a, double b, double c);
+double gml_frac(double v);
+double gml_dot_product(double x1, double y1, double x2, double y2);
+double gml_math_min(double a, double b);
+double gml_math_max(double a, double b);
 
 #ifdef __cplusplus
 }

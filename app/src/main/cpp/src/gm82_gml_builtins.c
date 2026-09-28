@@ -1913,6 +1913,18 @@ double gml_median(double a, double b, double c) {
     if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
     return c;
 }
+double gml_frac(double v) {
+    return v - (v >= 0 ? floor(v) : ceil(v));
+}
+double gml_dot_product(double x1, double y1, double x2, double y2) {
+    return x1 * x2 + y1 * y2;
+}
+double gml_math_min(double a, double b) {
+    return a < b ? a : b;
+}
+double gml_math_max(double a, double b) {
+    return a > b ? a : b;
+}
 double gml_deg_to_rad(double deg) { return deg * M_PI / 180.0; }
 double gml_rad_to_deg(double rad) { return rad * 180.0 / M_PI; }
 double gml_angle_difference(double dest, double src) {
