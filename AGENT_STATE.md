@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 52
+plan_B_percent: 53
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 6 native C unit test suites and CMake build verified PASS."
-last_run_date: 2026-09-20
+last_test_log: "All 8 native C unit test suites and CMake build verified PASS."
+last_run_date: 2026-09-28
 
 ## rules (لا تُكسر)
 - never claim 100%
