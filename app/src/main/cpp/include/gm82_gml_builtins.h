@@ -187,6 +187,9 @@ double gml_file_text_writeln(double id);
 double gml_file_text_read_real(double id);
 double gml_file_exists(const char *path);
 double gml_file_delete(const char *path);
+const char *gml_file_find_first(const char *mask, double attr);
+const char *gml_file_find_next(void);
+void gml_file_find_close(void);
 
 double gml_date_current_datetime(void);
 double gml_date_get_year(double datetime);
@@ -251,6 +254,7 @@ double gml_string_copy(const char *str, double index, double count, char *out, s
 double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
+double gml_string_format(double val, double total, double dec, char *out, size_t out_sz);
 double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
 double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_array_length_1d(double array_id);
@@ -342,6 +346,10 @@ double gml_frac(double v);
 double gml_dot_product(double x1, double y1, double x2, double y2);
 double gml_math_min(double a, double b);
 double gml_math_max(double a, double b);
+double gml_make_color_rgb(double r, double g, double b);
+double gml_color_get_red(double col);
+double gml_color_get_green(double col);
+double gml_color_get_blue(double col);
 
 #ifdef __cplusplus
 }
