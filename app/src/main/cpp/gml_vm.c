@@ -77,11 +77,66 @@ else if(!strcmp(n->text,"is_array")&&c==1){r=gml_value_bool(a[0].kind==GML_V_ARR
 else if(!strcmp(n->text,"is_undefined")&&c==1){r=gml_value_bool(a[0].kind==GML_V_UNDEFINED);}
 else if(!strcmp(n->text,"typeof")&&c==1){switch(a[0].kind){case GML_V_REAL:r=gml_value_string("number");break;case GML_V_BOOL:r=gml_value_string("bool");break;case GML_V_STRING:r=gml_value_string("string");break;case GML_V_ARRAY:r=gml_value_string("array");break;default:r=gml_value_string("undefined");break;}}
 else if(!strcmp(n->text,"string_replace_all")&&c==3){const char*src=text_of(a[0]);const char*find=text_of(a[1]);const char*rep=text_of(a[2]);size_t nf=strlen(find),nr=strlen(rep),ns=strlen(src);if(nf==0)r=gml_value_string(src);else{size_t occurrences=0;for(const char*p=src;(p=strstr(p,find));p+=nf)occurrences++;size_t outlen=ns;if(nr>=nf)outlen += occurrences*(nr-nf);else outlen -= occurrences*(nf-nr);char*buf=malloc(outlen+1);if(buf){const char*p=src;char*w=buf;while(*p){const char*q=strstr(p,find);if(!q){strcpy(w,p);break;}size_t n=(size_t)(q-p);memcpy(w,p,n);w+=n;memcpy(w,rep,nr);w+=nr;p=q+nf;}buf[outlen]=0;r=gml_value_string(buf);free(buf);}}}
+else if(!strcmp(n->text,"string_replace")&&c==3){
+    const char*src=text_of(a[0]);
+    const char*find=text_of(a[1]);
+    const char*rep=text_of(a[2]);
+    const char*p=strstr(src,find);
+    if(!p||!find[0]){r=gml_value_string(src);}
+    else{
+        size_t pref=p-src,flen=strlen(find),rlen=strlen(rep),slen=strlen(src);
+        size_t outlen=pref+rlen+(slen-pref-flen);
+        char*buf=malloc(outlen+1);
+        if(buf){
+            memcpy(buf,src,pref);
+            memcpy(buf+pref,rep,rlen);
+            memcpy(buf+pref+rlen,p+flen,slen-pref-flen+1);
+            r=gml_value_string(buf);
+            free(buf);
+        }else r=gml_value_string(src);
+    }
+}
+else if(!strcmp(n->text,"string_byte_at")&&c==2){r=gml_value_real(gml_string_byte_at(text_of(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"string_byte_length")&&c==1){r=gml_value_real(gml_string_byte_length(text_of(a[0])));}
 else if(!strcmp(n->text,"string_format")&&c==3){char out[256];gml_string_format(num(a[0]),num(a[1]),num(a[2]),out,sizeof out);r=gml_value_string(out);}
 else if(!strcmp(n->text,"make_color_rgb")&&c==3){r=gml_value_real(gml_make_color_rgb(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"make_color_hsv")&&c==3){r=gml_value_real(gml_make_color_hsv(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"color_get_red")&&c==1){r=gml_value_real(gml_color_get_red(num(a[0])));}
 else if(!strcmp(n->text,"color_get_green")&&c==1){r=gml_value_real(gml_color_get_green(num(a[0])));}
 else if(!strcmp(n->text,"color_get_blue")&&c==1){r=gml_value_real(gml_color_get_blue(num(a[0])));}
+else if(!strcmp(n->text,"color_get_hue")&&c==1){r=gml_value_real(gml_color_get_hue(num(a[0])));}
+else if(!strcmp(n->text,"color_get_saturation")&&c==1){r=gml_value_real(gml_color_get_saturation(num(a[0])));}
+else if(!strcmp(n->text,"color_get_value")&&c==1){r=gml_value_real(gml_color_get_value(num(a[0])));}
+else if(!strcmp(n->text,"merge_color")&&c==3){r=gml_value_real(gml_merge_color(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_list_create")&&c==0){r=gml_value_real(gml_ds_list_create());}
+else if(!strcmp(n->text,"ds_list_destroy")&&c==1){r=gml_value_real(gml_ds_list_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_add")&&c==2){r=gml_value_real(gml_ds_list_add(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_find_value")&&c==2){r=gml_value_real(gml_ds_list_find_value(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_size")&&c==1){r=gml_value_real(gml_ds_list_size(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_clear")&&c==1){r=gml_value_real(gml_ds_list_clear(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_delete")&&c==2){r=gml_value_real(gml_ds_list_delete(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_find_index")&&c==2){r=gml_value_real(gml_ds_list_find_index(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_empty")&&c==1){r=gml_value_real(gml_ds_list_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_create")&&c==0){r=gml_value_real(gml_ds_map_create());}
+else if(!strcmp(n->text,"ds_map_destroy")&&c==1){r=gml_value_real(gml_ds_map_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_add")&&c==3){r=gml_value_real(gml_ds_map_add(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_map_find_value")&&c==2){r=gml_value_real(gml_ds_map_find_value(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_map_exists")&&c==2){r=gml_value_real(gml_ds_map_exists(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_map_size")&&c==1){r=gml_value_real(gml_ds_map_size(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_clear")&&c==1){r=gml_value_real(gml_ds_map_clear(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_delete")&&c==2){r=gml_value_real(gml_ds_map_delete(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ini_open")&&c==1){r=gml_value_real(gml_ini_open(text_of(a[0])));}
+else if(!strcmp(n->text,"ini_close")&&c==0){r=gml_value_real(gml_ini_close());}
+else if(!strcmp(n->text,"ini_read_real")&&c==3){r=gml_value_real(gml_ini_read_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ini_write_real")&&c==3){r=gml_value_real(gml_ini_write_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ini_key_exists")&&c==2){r=gml_value_real(gml_ini_key_exists(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"collision_circle")&&c==6){r=gml_value_real(gml_collision_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"collision_rectangle")&&c==7){r=gml_value_real(gml_collision_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
+else if(!strcmp(n->text,"collision_line")&&c==7){r=gml_value_real(gml_collision_line(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
+else if(!strcmp(n->text,"collision_ellipse")&&c==7){r=gml_value_real(gml_collision_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
+else if(!strcmp(n->text,"collision_point")&&c==5){r=gml_value_real(gml_collision_point(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"place_meeting")&&c==3){r=gml_value_real(gml_place_meeting(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"place_free")&&c==2){r=gml_value_real(gml_place_free(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_find_first")&&c==2){r=gml_value_string(gml_file_find_first(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_find_next")&&c==0){r=gml_value_string(gml_file_find_next());}
 else if(!strcmp(n->text,"file_find_close")&&c==0){gml_file_find_close();r=gml_value_real(0);}
