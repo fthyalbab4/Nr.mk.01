@@ -1976,6 +1976,86 @@ double gml_color_get_blue(double col) {
     return (double)((c >> 16) & 0xFF);
 }
 
+double gml_make_color_hsv(double h, double s, double v) {
+    double r = 0, g = 0, b = 0;
+    double hh = h / 255.0 * 6.0;
+    double ss = s / 255.0;
+    double vv = v / 255.0;
+    int i = (int)floor(hh);
+    double ff = hh - i;
+    double p = vv * (1.0 - ss);
+    double q = vv * (1.0 - (ss * ff));
+    double t = vv * (1.0 - (ss * (1.0 - ff)));
+    switch (i % 6) {
+        case 0: r = vv; g = t; b = p; break;
+        case 1: r = q; g = vv; b = p; break;
+        case 2: r = p; g = vv; b = t; break;
+        case 3: r = p; g = q; b = vv; break;
+        case 4: r = t; g = p; b = vv; break;
+        case 5: r = vv; g = p; b = q; break;
+    }
+    return gml_make_color_rgb(r * 255.0, g * 255.0, b * 255.0);
+}
+
+double gml_color_get_hue(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    double minv = gml_math_min(r, gml_math_min(g, b));
+    double delta = maxv - minv;
+    if (delta <= 0) return 0;
+    double h = 0;
+    if (maxv == r) h = fmod((g - b) / delta, 6.0);
+    else if (maxv == g) h = (b - r) / delta + 2.0;
+    else h = (r - g) / delta + 4.0;
+    h *= 60.0;
+    if (h < 0) h += 360.0;
+    return (h / 360.0) * 255.0;
+}
+
+double gml_color_get_saturation(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    double minv = gml_math_min(r, gml_math_min(g, b));
+    double delta = maxv - minv;
+    if (maxv <= 0) return 0;
+    return (delta / maxv) * 255.0;
+}
+
+double gml_color_get_value(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    return maxv * 255.0;
+}
+
+double gml_merge_color(double col1, double col2, double amount) {
+    amount = gml_clamp(amount, 0, 1);
+    double r1 = gml_color_get_red(col1), r2 = gml_color_get_red(col2);
+    double g1 = gml_color_get_green(col1), g2 = gml_color_get_green(col2);
+    double b1 = gml_color_get_blue(col1), b2 = gml_color_get_blue(col2);
+    double r = gml_lerp(r1, r2, amount);
+    double g = gml_lerp(g1, g2, amount);
+    double b = gml_lerp(b1, b2, amount);
+    return gml_make_color_rgb(r, g, b);
+}
+
+double gml_string_byte_at(const char *str, double index) {
+    if (!str) return 0;
+    int idx = (int)index - 1;
+    int len = (int)strlen(str);
+    if (idx < 0 || idx >= len) return 0;
+    return (double)(unsigned char)str[idx];
+}
+
+double gml_string_byte_length(const char *str) {
+    return str ? (double)strlen(str) : 0;
+}
+
 static char s_file_find_buffer[256] = {0};
 const char *gml_file_find_first(const char *mask, double attr) {
     (void)mask; (void)attr;

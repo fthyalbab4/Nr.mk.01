@@ -348,9 +348,16 @@ double gml_dot_product(double x1, double y1, double x2, double y2);
 double gml_math_min(double a, double b);
 double gml_math_max(double a, double b);
 double gml_make_color_rgb(double r, double g, double b);
+double gml_make_color_hsv(double h, double s, double v);
 double gml_color_get_red(double col);
 double gml_color_get_green(double col);
 double gml_color_get_blue(double col);
+double gml_color_get_hue(double col);
+double gml_color_get_saturation(double col);
+double gml_color_get_value(double col);
+double gml_merge_color(double col1, double col2, double amount);
+double gml_string_byte_at(const char *str, double index);
+double gml_string_byte_length(const char *str);
 
 #ifdef __cplusplus
 }
