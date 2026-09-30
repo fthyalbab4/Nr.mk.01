@@ -1953,6 +1953,57 @@ double gml_math_min(double a, double b) {
 double gml_math_max(double a, double b) {
     return a > b ? a : b;
 }
+
+double gml_make_color_rgb(double r, double g, double b) {
+    int ir = (int)r; if (ir < 0) ir = 0; if (ir > 255) ir = 255;
+    int ig = (int)g; if (ig < 0) ig = 0; if (ig > 255) ig = 255;
+    int ib = (int)b; if (ib < 0) ib = 0; if (ib > 255) ib = 255;
+    return (double)(ir | (ig << 8) | (ib << 16));
+}
+
+double gml_color_get_red(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)(c & 0xFF);
+}
+
+double gml_color_get_green(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)((c >> 8) & 0xFF);
+}
+
+double gml_color_get_blue(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)((c >> 16) & 0xFF);
+}
+
+static char s_file_find_buffer[256] = {0};
+const char *gml_file_find_first(const char *mask, double attr) {
+    (void)mask; (void)attr;
+    s_file_find_buffer[0] = '\0';
+    return s_file_find_buffer;
+}
+
+const char *gml_file_find_next(void) {
+    s_file_find_buffer[0] = '\0';
+    return s_file_find_buffer;
+}
+
+void gml_file_find_close(void) {
+    s_file_find_buffer[0] = '\0';
+}
+
+double gml_string_format(double val, double total, double dec, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    int tot = (int)total;
+    int d = (int)dec;
+    if (d < 0) d = 0;
+    if (tot < 0) tot = 0;
+    char fmt[32];
+    snprintf(fmt, sizeof(fmt), "%%%d.%df", tot, d);
+    snprintf(out, out_sz, fmt, val);
+    return (double)strlen(out);
+}
+
 double gml_deg_to_rad(double deg) { return deg * M_PI / 180.0; }
 double gml_rad_to_deg(double rad) { return rad * 180.0 / M_PI; }
 double gml_angle_difference(double dest, double src) {

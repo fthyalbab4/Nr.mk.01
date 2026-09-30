@@ -1,4 +1,5 @@
 #include "gml_vm.h"
+#include "gm82_gml_builtins.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -76,6 +77,14 @@ else if(!strcmp(n->text,"is_array")&&c==1){r=gml_value_bool(a[0].kind==GML_V_ARR
 else if(!strcmp(n->text,"is_undefined")&&c==1){r=gml_value_bool(a[0].kind==GML_V_UNDEFINED);}
 else if(!strcmp(n->text,"typeof")&&c==1){switch(a[0].kind){case GML_V_REAL:r=gml_value_string("number");break;case GML_V_BOOL:r=gml_value_string("bool");break;case GML_V_STRING:r=gml_value_string("string");break;case GML_V_ARRAY:r=gml_value_string("array");break;default:r=gml_value_string("undefined");break;}}
 else if(!strcmp(n->text,"string_replace_all")&&c==3){const char*src=text_of(a[0]);const char*find=text_of(a[1]);const char*rep=text_of(a[2]);size_t nf=strlen(find),nr=strlen(rep),ns=strlen(src);if(nf==0)r=gml_value_string(src);else{size_t occurrences=0;for(const char*p=src;(p=strstr(p,find));p+=nf)occurrences++;size_t outlen=ns;if(nr>=nf)outlen += occurrences*(nr-nf);else outlen -= occurrences*(nf-nr);char*buf=malloc(outlen+1);if(buf){const char*p=src;char*w=buf;while(*p){const char*q=strstr(p,find);if(!q){strcpy(w,p);break;}size_t n=(size_t)(q-p);memcpy(w,p,n);w+=n;memcpy(w,rep,nr);w+=nr;p=q+nf;}buf[outlen]=0;r=gml_value_string(buf);free(buf);}}}
+else if(!strcmp(n->text,"string_format")&&c==3){char out[256];gml_string_format(num(a[0]),num(a[1]),num(a[2]),out,sizeof out);r=gml_value_string(out);}
+else if(!strcmp(n->text,"make_color_rgb")&&c==3){r=gml_value_real(gml_make_color_rgb(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"color_get_red")&&c==1){r=gml_value_real(gml_color_get_red(num(a[0])));}
+else if(!strcmp(n->text,"color_get_green")&&c==1){r=gml_value_real(gml_color_get_green(num(a[0])));}
+else if(!strcmp(n->text,"color_get_blue")&&c==1){r=gml_value_real(gml_color_get_blue(num(a[0])));}
+else if(!strcmp(n->text,"file_find_first")&&c==2){r=gml_value_string(gml_file_find_first(text_of(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"file_find_next")&&c==0){r=gml_value_string(gml_file_find_next());}
+else if(!strcmp(n->text,"file_find_close")&&c==0){gml_file_find_close();r=gml_value_real(0);}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
