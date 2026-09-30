@@ -697,6 +697,34 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     return (double)k;
 }
 
+double gml_string_count(const char *substr, const char *str) {
+    if (!substr || !str || !substr[0] || !str[0]) return 0;
+    double count = 0;
+    size_t sub_len = strlen(substr);
+    const char *p = str;
+    while ((p = strstr(p, substr)) != NULL) {
+        count += 1.0;
+        p += sub_len;
+    }
+    return count;
+}
+
+double gml_string_repeat(const char *str, double count, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str || count <= 0) return 0;
+    size_t slen = strlen(str);
+    if (slen == 0) return 0;
+    int times = (int)count;
+    size_t pos = 0;
+    for (int i = 0; i < times && pos + slen < out_sz; i++) {
+        memcpy(out + pos, str, slen);
+        pos += slen;
+    }
+    out[pos] = 0;
+    return (double)pos;
+}
+
 double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
     if (!out || out_sz == 0) return 0;
     out[0] = 0;
