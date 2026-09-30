@@ -18,6 +18,12 @@ static void test_string_expansions(void) {
     gml_string_replace_all("foo bar foo baz foo", "foo", "qux", buf, sizeof(buf));
     assert(strcmp(buf, "qux bar qux baz qux") == 0);
 
+    assert(gml_string_count("na", "banana") == 2.0);
+    assert(gml_string_count("xyz", "banana") == 0.0);
+
+    gml_string_repeat("ha", 3, buf, sizeof(buf));
+    assert(strcmp(buf, "hahaha") == 0);
+
     puts("test_string_expansions PASS");
 }
 

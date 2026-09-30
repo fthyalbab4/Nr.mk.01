@@ -1,6 +1,6 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 53
+plan_B_percent: 54
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE

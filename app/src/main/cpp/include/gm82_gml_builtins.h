@@ -252,7 +252,8 @@ double gml_string_replace(const char *str, const char *substr, const char *newst
 double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
 double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
 double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
-double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
+double gml_string_count(const char *substr, const char *str);
+double gml_string_repeat(const char *str, double count, char *out, size_t out_sz);
 double gml_array_length_1d(double array_id);
 double gml_array_height_2d(double array_id);
 double gml_mouse_x(void);
