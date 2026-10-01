@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 54
+plan_B_percent: 56
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 8 native C unit test suites and CMake build verified PASS."
-last_run_date: 2026-09-28
+last_test_log: "All 9 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-09-30
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -16,7 +16,7 @@ last_run_date: 2026-09-28
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~53%.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~56%.
 Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/array libraries (including string_format, string_copy, string_replace, string_replace_all), color helpers (make_color_rgb, color_get_red/green/blue), file search stubs (file_find_first/next/close), INI file I/O, bounding boxes, data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and spatial collisions (point, circle, rectangle, line, ellipse) work on host. Android debug APK compilation is fully verified.
 
 ## required_reply_format
