@@ -1,17 +1,17 @@
 # تقدم مشروع NOR Maker / GM82
 
-تاريخ التحديث: 2026-09-30
-النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~56%**
+تاريخ التحديث: 2026-10-01
+النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~58%**
 
 ## 📌 ملخص الوضع الحالي
 - النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until` والمصفوفات ودوال INI I/O ودوال النصوص ودوال الأشكال الصدامية `collision_circle`, `collision_line`, `collision_ellipse`).
-- تم إصلاح الأخطاء المصدرية في C (`gm82_sound_runtime.c`, `gm82_events.c`) واجتياز كافة الاختبارات الناتيف واختبار بناء `libgm82_android.so` عبر CMake.
-- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **52%**.
+- تم إضافة وتوسيع دوال GML للـ Data Structures (`ds_map_exists`, `ds_map_delete`, `ds_map_clear`) ودوال الألوان (`make_color_hsv`, `merge_color`) ودوال النصوص (`string_letters`, `string_replace_all`) واجتياز كافة الاختبارات الناتيف (9 مجموعات اختبار) واختبار بناء `app-debug.apk` المكتمل عبر Gradle.
+- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **58%**.
 
 ## 🗺️ خطة التطوير الشاملة للوصول لـ Core & GML Full Support
 
 ### المرحلة 1: مفسر وVM الـ GML (GML Bytecode VM Engine)
-- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`).
+- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`, `string_letters`).
 - تحسين التعامل مع المصفوفات ثنائية الأبعاد والبُنى البياناتية المتعددة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`).
 
 ### المرحلة 2: الاصطدامات الدقيقة (Precise Collision Masking)
