@@ -91,6 +91,47 @@ static void test_gml_vm_ds_structures(void) {
     printf("test_gml_vm_ds_structures PASS\n");
 }
 
+static void test_gml_vm_ds_grid(void) {
+    gml_vm vm;
+    gml_vm_init(&vm);
+    char err[256];
+    gml_ast *ast = NULL;
+
+    assert(gml_parse_program(
+        "grid = ds_grid_create(4, 4);"
+        "w = ds_grid_width(grid);"
+        "h = ds_grid_height(grid);"
+        "ds_grid_clear(grid, 5);"
+        "ds_grid_set(grid, 2, 3, 42);"
+        "ds_grid_add(grid, 2, 3, 8);"
+        "v_clear = ds_grid_get(grid, 0, 0);"
+        "v_cell = ds_grid_get(grid, 2, 3);"
+        "ds_grid_destroy(grid);",
+        &ast, err, sizeof(err)));
+    assert(ast != NULL);
+    assert(gml_vm_execute(&vm, ast));
+
+    gml_value w_val = gml_vm_get(&vm, "w");
+    assert(w_val.real == 4.0);
+
+    gml_value h_val = gml_vm_get(&vm, "h");
+    assert(h_val.real == 4.0);
+
+    gml_value vc_val = gml_vm_get(&vm, "v_clear");
+    assert(vc_val.real == 5.0);
+
+    gml_value vcell_val = gml_vm_get(&vm, "v_cell");
+    assert(vcell_val.real == 50.0);
+
+    gml_value_free(&w_val);
+    gml_value_free(&h_val);
+    gml_value_free(&vc_val);
+    gml_value_free(&vcell_val);
+    gml_ast_free(ast);
+
+    printf("test_gml_vm_ds_grid PASS\n");
+}
+
 static void test_gml_vm_ini_io(void) {
     gml_vm vm;
     gml_vm_init(&vm);
@@ -120,6 +161,7 @@ int main(void) {
     test_hsv_and_merge_colors();
     test_string_replace_and_bytes();
     test_gml_vm_ds_structures();
+    test_gml_vm_ds_grid();
     test_gml_vm_ini_io();
     printf("GML_FULL_SUPPORT_TEST_PASS\n");
     return 0;

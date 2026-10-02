@@ -139,6 +139,16 @@ double gml_ds_queue_size(double id);
 double gml_ds_queue_empty(double id);
 double gml_ds_queue_clear(double id);
 
+/* ds_grid */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+
 /* ds_priority (numeric priority, higher first) */
 double gml_ds_priority_create(void);
 double gml_ds_priority_destroy(double id);
