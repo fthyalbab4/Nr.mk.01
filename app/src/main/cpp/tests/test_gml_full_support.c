@@ -46,21 +46,26 @@ static void test_string_replace_and_bytes(void) {
     char err[256];
     gml_ast *ast = NULL;
 
-    assert(gml_parse_program("s = string_replace(\"Hello World\", \"World\", \"NOR Maker\"); blen = string_byte_length(s); b1 = string_byte_at(s, 1);", &ast, err, sizeof(err)));
+    assert(gml_parse_program("s = string_replace_all(\"Hello World World\", \"World\", \"NOR\"); letters = string_letters(\"123ABC456!\"); blen = string_byte_length(s); b1 = string_byte_at(s, 1);", &ast, err, sizeof(err)));
     assert(ast != NULL);
     assert(gml_vm_execute(&vm, ast));
 
     gml_value s_val = gml_vm_get(&vm, "s");
     assert(s_val.kind == GML_V_STRING);
-    assert(strcmp(s_val.string, "Hello NOR Maker") == 0);
+    assert(strcmp(s_val.string, "Hello NOR NOR") == 0);
+
+    gml_value let_val = gml_vm_get(&vm, "letters");
+    assert(let_val.kind == GML_V_STRING);
+    assert(strcmp(let_val.string, "ABC") == 0);
 
     gml_value blen_val = gml_vm_get(&vm, "blen");
-    assert(blen_val.real == 15.0);
+    assert(blen_val.real == 13.0);
 
     gml_value b1_val = gml_vm_get(&vm, "b1");
     assert(b1_val.real == (double)'H');
 
     gml_value_free(&s_val);
+    gml_value_free(&let_val);
     gml_value_free(&blen_val);
     gml_value_free(&b1_val);
     gml_ast_free(ast);
@@ -74,18 +79,20 @@ static void test_gml_vm_ds_structures(void) {
     char err[256];
     gml_ast *ast = NULL;
 
-    assert(gml_parse_program("lst = ds_list_create(); ds_list_add(lst, 42); ds_list_add(lst, 99); sz = ds_list_size(lst); v0 = ds_list_find_value(lst, 0); ds_list_destroy(lst);", &ast, err, sizeof(err)));
+    assert(gml_parse_program("m = ds_map_create(); ds_map_add(m, 10, 500); ex1 = ds_map_exists(m, 10); ex2 = ds_map_exists(m, 99); ds_map_delete(m, 10); ex3 = ds_map_exists(m, 10); ds_map_destroy(m);", &ast, err, sizeof(err)));
     assert(ast != NULL);
     assert(gml_vm_execute(&vm, ast));
 
-    gml_value sz_val = gml_vm_get(&vm, "sz");
-    assert(sz_val.real == 2.0);
+    gml_value ex1 = gml_vm_get(&vm, "ex1");
+    gml_value ex2 = gml_vm_get(&vm, "ex2");
+    gml_value ex3 = gml_vm_get(&vm, "ex3");
+    assert(ex1.real == 1.0);
+    assert(ex2.real == 0.0);
+    assert(ex3.real == 0.0);
 
-    gml_value v0_val = gml_vm_get(&vm, "v0");
-    assert(v0_val.real == 42.0);
-
-    gml_value_free(&sz_val);
-    gml_value_free(&v0_val);
+    gml_value_free(&ex1);
+    gml_value_free(&ex2);
+    gml_value_free(&ex3);
     gml_ast_free(ast);
 
     printf("test_gml_vm_ds_structures PASS\n");
