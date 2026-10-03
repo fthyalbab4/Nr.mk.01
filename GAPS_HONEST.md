@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-09-30
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~58%**
+تاريخ التحديث: 2026-10-03
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~62%**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~65% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~62% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), متغرات `xstart/ystart/xprevious/yprevious/gravity/friction` المخصصة، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`), ودوال النصوص والـ INI I/O |
+| **GML Runtime / Interpreter** | ~68% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات (`dsin`, `dcos`, `dtan`, `darcsin`, `darccos`, `darctan`, `darctan2`), دوال النصوص (`string_letters`, `string_lettersdigits`, `string_width`, `string_height`), متغيرات `xstart/ystart/xprevious/yprevious/gravity/friction` المخصصة، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`), ودوال النصوص والـ INI I/O |
 | **DnD Actions Engine** | ~48% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
-| **Physics & Collisions** | ~58% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse |
+| **Physics & Collisions** | ~62% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + distance_to_point |
 | **Graphics & Rendering** | ~38% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~32% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~58%** | **تجاوزت 58% مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~62%** | **تجاوزت 62% مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
@@ -25,13 +25,14 @@
 2. Soft rendering وإظهار أول إطار بدون شاشة سوداء (`nonzero_pixels > 1000`).
 3. تجربة 4 ألعاب بـ 10 خطوات بدون انهيار (Smoke 4/4 PASS).
 4. محاكاة حركة ماريو 100 إطار مع الجاذبية والمنصات وتتبع الكاميرا (`MARIO_PLAYABLE_PASS_HOST`).
-5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `string_digits`, `string_lower`, `string_upper`, `string_copy`, `string_replace`, `string_replace_all`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`).
+5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `dsin`, `dcos`, `dtan`, `string_letters`, `string_lettersdigits`, `string_width`, `string_height`, `distance_to_point`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`).
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
+8. اجتياز 11 مجموعة اختبارات ذاتية ناتيف C بالكامل واختبار CMake libgm82_android بنجاح.
 
 ---
 
-## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 48%)
+## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 38%)
 
 1. **Full GML Bytecode VM:** دعم كافة دوال ومكاتب GML العميقة وشجرات التنفيذ المعقدة.
 2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
@@ -43,4 +44,4 @@
 
 ## التعهد بالشفافية
 
-عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **52%** حقيقية مع التوسع المستمر الصادق.
+عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **62%** حقيقية مع التوسع المستمر الصادق.

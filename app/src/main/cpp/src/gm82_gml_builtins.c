@@ -703,6 +703,44 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     return (double)k;
 }
 
+double gml_string_letters(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (isalpha((unsigned char)str[i])) out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_lettersdigits(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (isalnum((unsigned char)str[i])) out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_width(const char *str) {
+    if (!str) return 0;
+    return (double)(strlen(str) * 8);
+}
+
+double gml_string_height(const char *str) {
+    if (!str) return 0;
+    int lines = 1;
+    for (size_t i = 0; str[i]; i++) {
+        if (str[i] == '\n') lines++;
+    }
+    return (double)(lines * 16);
+}
+
 double gml_string_count(const char *substr, const char *str) {
     if (!substr || !str || !substr[0] || !str[0]) return 0;
     double count = 0;
@@ -1935,6 +1973,19 @@ double gml_lengthdir_y(double len, double dir) {
     return -len * sin(dir * M_PI / 180.0);
 }
 double gml_arctan2(double y, double x) { return atan2(y, x); }
+double gml_dsin(double deg) { return sin(deg * 0.017453292519943295); }
+double gml_dcos(double deg) { return cos(deg * 0.017453292519943295); }
+double gml_dtan(double deg) { return tan(deg * 0.017453292519943295); }
+double gml_darcsin(double val) { return asin(val) * 57.29577951308232; }
+double gml_darccos(double val) { return acos(val) * 57.29577951308232; }
+double gml_darctan(double val) { return atan(val) * 57.29577951308232; }
+double gml_darctan2(double y, double x) { return atan2(y, x) * 57.29577951308232; }
+double gml_distance_to_point(double x, double y) {
+    if (!g_self) return 0;
+    double dx = x - g_self->x;
+    double dy = y - g_self->y;
+    return sqrt(dx*dx + dy*dy);
+}
 double gml_sqr(double v) { return v * v; }
 double gml_sqrt(double v) { return sqrt(v); }
 double gml_power(double base, double exp_val) { return pow(base, exp_val); }
