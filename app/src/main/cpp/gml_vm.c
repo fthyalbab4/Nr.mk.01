@@ -73,8 +73,15 @@ else if(!strcmp(n->text,"ord")&&c==1){const char*s=text_of(a[0]);r=gml_value_rea
 else if(!strcmp(n->text,"chr")&&c==1){char ch[2]={(char)(unsigned char)num(a[0]),0};r=gml_value_string(ch);}
 else if(!strcmp(n->text,"is_string")&&c==1){r=gml_value_bool(a[0].kind==GML_V_STRING);}
 else if(!strcmp(n->text,"is_real")&&c==1){r=gml_value_bool(a[0].kind==GML_V_REAL);}
+else if(!strcmp(n->text,"is_bool")&&c==1){r=gml_value_bool(a[0].kind==GML_V_BOOL);}
 else if(!strcmp(n->text,"is_array")&&c==1){r=gml_value_bool(a[0].kind==GML_V_ARRAY);}
 else if(!strcmp(n->text,"is_undefined")&&c==1){r=gml_value_bool(a[0].kind==GML_V_UNDEFINED);}
+else if(!strcmp(n->text,"is_ptr")&&c==1){r=gml_value_bool(0);}
+else if(!strcmp(n->text,"is_int32")&&c==1){r=gml_value_bool(a[0].kind==GML_V_REAL&&floor(num(a[0]))==num(a[0]));}
+else if(!strcmp(n->text,"is_int64")&&c==1){r=gml_value_bool(a[0].kind==GML_V_REAL&&floor(num(a[0]))==num(a[0]));}
+else if(!strcmp(n->text,"is_nan")&&c==1){r=gml_value_bool(a[0].kind==GML_V_REAL&&isnan(num(a[0])));}
+else if(!strcmp(n->text,"is_infinity")&&c==1){r=gml_value_bool(a[0].kind==GML_V_REAL&&isinf(num(a[0])));}
+else if(!strcmp(n->text,"string_pos_ext")&&c==3){const char*needle=text_of(a[0]);const char*haystack=text_of(a[1]);int start_pos=(int)num(a[2]);size_t hlen=strlen(haystack);if(start_pos<1)start_pos=1;if((size_t)start_pos>hlen)r=gml_value_real(0);else{const char*found=needle[0]?strstr(haystack+start_pos-1,needle):haystack+start_pos-1;r=gml_value_real(found?(double)(found-haystack+1):0);}}
 else if(!strcmp(n->text,"typeof")&&c==1){switch(a[0].kind){case GML_V_REAL:r=gml_value_string("number");break;case GML_V_BOOL:r=gml_value_string("bool");break;case GML_V_STRING:r=gml_value_string("string");break;case GML_V_ARRAY:r=gml_value_string("array");break;default:r=gml_value_string("undefined");break;}}
 else if(!strcmp(n->text,"string_replace_all")&&c==3){const char*src=text_of(a[0]);const char*find=text_of(a[1]);const char*rep=text_of(a[2]);size_t nf=strlen(find),nr=strlen(rep),ns=strlen(src);if(nf==0)r=gml_value_string(src);else{size_t occurrences=0;for(const char*p=src;(p=strstr(p,find));p+=nf)occurrences++;size_t outlen=ns;if(nr>=nf)outlen += occurrences*(nr-nf);else outlen -= occurrences*(nf-nr);char*buf=malloc(outlen+1);if(buf){const char*p=src;char*w=buf;while(*p){const char*q=strstr(p,find);if(!q){strcpy(w,p);break;}size_t n=(size_t)(q-p);memcpy(w,p,n);w+=n;memcpy(w,rep,nr);w+=nr;p=q+nf;}buf[outlen]=0;r=gml_value_string(buf);free(buf);}}}
 else if(!strcmp(n->text,"string_replace")&&c==3){
