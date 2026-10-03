@@ -110,6 +110,19 @@ double gml_point_direction(double x1, double y1, double x2, double y2) {
     return atan2(-(y2 - y1), (x2 - x1)) * 180.0 / M_PI;
 }
 
+static bool sprite_size_ext(gm82_runtime *rt, gm82_instance *inst, int32_t *w, int32_t *h) {
+    int32_t base_w = 16, base_h = 16;
+    if (rt && inst && rt->sprites && inst->sprite_index >= 0 && inst->sprite_index < rt->sprites->count) {
+        base_w = rt->sprites->frames[inst->sprite_index].width;
+        base_h = rt->sprites->frames[inst->sprite_index].height;
+    }
+    double xs = (inst && inst->image_xscale != 0) ? fabs(inst->image_xscale) : 1.0;
+    double ys = (inst && inst->image_yscale != 0) ? fabs(inst->image_yscale) : 1.0;
+    *w = (int32_t)(base_w * xs); if (*w < 1) *w = 1;
+    *h = (int32_t)(base_h * ys); if (*h < 1) *h = 1;
+    return true;
+}
+
 static bool sprite_size(gm82_runtime *rt, int32_t sprite_index, int32_t *w, int32_t *h) {
     *w = 16; *h = 16;
     if (!rt || !rt->sprites || sprite_index < 0 || sprite_index >= rt->sprites->count)
@@ -128,23 +141,15 @@ double gml_place_meeting(double x, double y, double object_index) {
     if (!g_rt || !g_self) return 0;
     int32_t oi = (int32_t)object_index;
     int32_t sw, sh;
-    sprite_size(g_rt, g_self->sprite_index, &sw, &sh);
+    sprite_size_ext(g_rt, g_self, &sw, &sh);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
-        if (oi >= 0 && o->object_index != oi) continue;
+        if (oi >= 100000) { if (o->id != oi) continue; }
+        else if (oi >= 0) { if (o->object_index != oi) continue; }
         int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        sprite_size_ext(g_rt, o, &ow, &oh);
         if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 1;
-    }
-    /* also solid tiles when object_index < 0 (all) */
-    if (oi < 0 && g_rt->rooms && g_rt->current_room >= 0 && g_rt->current_room < g_rt->rooms->count) {
-        const gm82_decoded_room *room = &g_rt->rooms->items[g_rt->current_room];
-        for (int ti = 0; ti < room->tile_count; ti++) {
-            const gm82_decoded_tile *tile = &room->tiles[ti];
-            if (aabb_overlap(x, y, sw, sh, tile->x, tile->y, tile->width, tile->height))
-                return 1;
-        }
     }
     return 0;
 }
@@ -167,13 +172,14 @@ double gml_instance_place(double x, double y, double object_index) {
     if (!g_rt || !g_self) return -4; /* noone */
     int32_t oi = (int32_t)object_index;
     int32_t sw, sh;
-    sprite_size(g_rt, g_self->sprite_index, &sw, &sh);
+    sprite_size_ext(g_rt, g_self, &sw, &sh);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
-        if (oi >= 0 && o->object_index != oi) continue;
+        if (oi >= 100000) { if (o->id != oi) continue; }
+        else if (oi >= 0) { if (o->object_index != oi) continue; }
         int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        sprite_size_ext(g_rt, o, &ow, &oh);
         if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh))
             return (double)o->id;
     }
