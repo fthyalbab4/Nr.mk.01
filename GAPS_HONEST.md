@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-09-20
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~52% (تجاوزت 50%)**
+تاريخ التحديث: 2026-10-02
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~58%**
 
 ---
 
@@ -10,7 +10,7 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~62% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~58% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), المصفوفات، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`), ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`) والـ INI I/O |
+| **GML Runtime / Interpreter** | ~64% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`, `for`, `switch`), المصفوفات، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid`), ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`) والـ INI I/O |
 | **DnD Actions Engine** | ~42% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات |
 | **Physics & Collisions** | ~50% | AABB + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse؛ لا يوجد Precise per-pixel mask |
 | **Graphics & Rendering** | ~35% | Software Renderer على المضيف + هيكل GLES مبدئي |

@@ -125,6 +125,14 @@ else if(!strcmp(n->text,"ds_map_exists")&&c==2){r=gml_value_real(gml_ds_map_exis
 else if(!strcmp(n->text,"ds_map_size")&&c==1){r=gml_value_real(gml_ds_map_size(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_clear")&&c==1){r=gml_value_real(gml_ds_map_clear(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_delete")&&c==2){r=gml_value_real(gml_ds_map_delete(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_grid_create")&&c==2){r=gml_value_real(gml_ds_grid_create(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_grid_destroy")&&c==1){r=gml_value_real(gml_ds_grid_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_width")&&c==1){r=gml_value_real(gml_ds_grid_width(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_height")&&c==1){r=gml_value_real(gml_ds_grid_height(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_set")&&c==4){r=gml_value_real(gml_ds_grid_set(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get")&&c==3){r=gml_value_real(gml_ds_grid_get(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_grid_clear")&&c==2){r=gml_value_real(gml_ds_grid_clear(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_grid_add")&&c==4){r=gml_value_real(gml_ds_grid_add(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"ini_open")&&c==1){r=gml_value_real(gml_ini_open(text_of(a[0])));}
 else if(!strcmp(n->text,"ini_close")&&c==0){r=gml_value_real(gml_ini_close());}
 else if(!strcmp(n->text,"ini_read_real")&&c==3){r=gml_value_real(gml_ini_read_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
