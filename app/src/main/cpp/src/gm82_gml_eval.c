@@ -75,6 +75,13 @@ static bool get_var(gml_parser *p, const char *name, double *out) {
     }
     if (strcmp(name, "x") == 0) { *out = s ? s->x : 0; return true; }
     if (strcmp(name, "y") == 0) { *out = s ? s->y : 0; return true; }
+    if (strcmp(name, "xstart") == 0) { *out = s ? s->xstart : 0; return true; }
+    if (strcmp(name, "ystart") == 0) { *out = s ? s->ystart : 0; return true; }
+    if (strcmp(name, "xprevious") == 0) { *out = s ? s->xprevious : 0; return true; }
+    if (strcmp(name, "yprevious") == 0) { *out = s ? s->yprevious : 0; return true; }
+    if (strcmp(name, "gravity") == 0) { *out = s ? s->gravity : 0; return true; }
+    if (strcmp(name, "gravity_direction") == 0) { *out = s ? s->gravity_direction : 270; return true; }
+    if (strcmp(name, "friction") == 0) { *out = s ? s->friction : 0; return true; }
     if (strcmp(name, "bbox_left") == 0) { *out = gml_get_bbox_left(); return true; }
     if (strcmp(name, "bbox_right") == 0) { *out = gml_get_bbox_right(); return true; }
     if (strcmp(name, "bbox_top") == 0) { *out = gml_get_bbox_top(); return true; }
@@ -184,6 +191,13 @@ static bool set_var(gml_parser *p, const char *name, double v) {
         return false;
     if (strcmp(name, "x") == 0) { s->x = v; return true; }
     if (strcmp(name, "y") == 0) { s->y = v; return true; }
+    if (strcmp(name, "xstart") == 0) { s->xstart = v; return true; }
+    if (strcmp(name, "ystart") == 0) { s->ystart = v; return true; }
+    if (strcmp(name, "xprevious") == 0) { s->xprevious = v; return true; }
+    if (strcmp(name, "yprevious") == 0) { s->yprevious = v; return true; }
+    if (strcmp(name, "gravity") == 0) { s->gravity = v; return true; }
+    if (strcmp(name, "gravity_direction") == 0) { s->gravity_direction = v; return true; }
+    if (strcmp(name, "friction") == 0) { s->friction = v; return true; }
     if (strcmp(name, "hspeed") == 0) { s->hspeed = v; return true; }
     if (strcmp(name, "vspeed") == 0) { s->vspeed = v; return true; }
     if (strcmp(name, "speed") == 0) { s->speed = v; return true; }
