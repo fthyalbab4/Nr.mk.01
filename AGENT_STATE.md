@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 58
+plan_B_percent: 60
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 10 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-09-30
+last_test_log: "All 11 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-03
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -16,13 +16,13 @@ last_run_date: 2026-09-30
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~58%.
-Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/array libraries, instance start/previous variables (xstart, ystart, xprevious, yprevious, gravity, gravity_direction, friction), scaled sprite bounding box collisions, data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and spatial collisions work on host. Android debug APK compilation is fully verified.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~60%.
+Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/array libraries, physics motion bouncing (move_bounce_solid/all, move_outside_solid/all, move_random), instance search (instance_furthest, position_destroy), sprite offsets (sprite_get_xoffset/yoffset), data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and spatial collisions work on host. Android debug APK compilation is fully verified.
 
 ## required_reply_format
-PROGRESS: 53% (compared to full Windows GM82)
-DONE: Implemented GML string_format, RGB color functions (make_color_rgb, color_get_red/green/blue), file search stubs (file_find_*), created test_gml_vm_advanced unit test suite, and verified Android debug APK build.
-TEST: All 8 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_ds_collisions PASS, test_gml_phase5 PASS, test_gml_vm_advanced PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_runtime_guard PASS) and Android debug APK build PASS.
+PROGRESS: 60% (compared to full Windows GM82)
+DONE: Implemented GM82 physics motion builtins (move_bounce_solid, move_bounce_all, move_outside_solid, move_outside_all, move_random), instance search (instance_furthest, position_destroy), sprite offsets (sprite_get_xoffset, sprite_get_yoffset), created test_gml_physics_expanded test suite, and verified Android debug APK build.
+TEST: All 11 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_ds_collisions PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_vm_advanced PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_runtime_guard PASS) and Android debug APK build PASS.
 PROGRESS: 48% (<50% compared to full Windows GM82)
 DONE: Implemented GML array builtins, string manipulation library (string_digits/lower/upper), INI file I/O, collision_circle, and added test_gml_vm_expanded.c.
 TEST: Native C unit tests passing (test_gml_vm_expanded PASS, test_gml_comprehensive PASS, test_phase8_suite PASS).

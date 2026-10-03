@@ -357,6 +357,39 @@ static bool parse_primary(gml_parser *p, double *out) {
             double yarg = (nargs >= 2) ? args[1] : (p->self ? p->self->y : 0);
             *out = gml_place_empty(arg, yarg); return true;
         }
+        if (strcmp(id, "move_outside_solid") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_solid(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_outside_all") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_all(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_bounce_solid") == 0) {
+            *out = gml_move_bounce_solid(arg); return true;
+        }
+        if (strcmp(id, "move_bounce_all") == 0) {
+            *out = gml_move_bounce_all(arg); return true;
+        }
+        if (strcmp(id, "move_random") == 0) {
+            double vsnap = (nargs >= 2) ? args[1] : 1;
+            *out = gml_move_random(arg, vsnap); return true;
+        }
+        if (strcmp(id, "sprite_get_xoffset") == 0) {
+            *out = gml_sprite_get_xoffset(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_yoffset") == 0) {
+            *out = gml_sprite_get_yoffset(arg); return true;
+        }
+        if (strcmp(id, "instance_furthest") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_furthest(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "position_destroy") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_position_destroy(arg, yarg); return true;
+        }
         if (strcmp(id, "instance_number") == 0) {
             *out = gml_instance_number(arg); return true;
         }

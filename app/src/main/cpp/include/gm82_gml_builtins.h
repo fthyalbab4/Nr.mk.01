@@ -33,8 +33,10 @@ void   gml_instance_destroy(void); /* destroys self */
 double gml_instance_number(double object_index); /* -1 = all */
 double gml_instance_exists(double id_or_object);
 double gml_instance_nearest(double x, double y, double object_index);
+double gml_instance_furthest(double x, double y, double object_index);
 double gml_instance_find(double object_index, double n);
 double gml_distance_to_object(double object_index);
+double gml_position_destroy(double x, double y);
 
 /* ---- Motion ---- */
 void   gml_motion_set(double dir, double spd);
@@ -60,9 +62,16 @@ double gml_collision_point(double x, double y, double obj, double prec, double n
 double gml_place_free(double x, double y);
 double gml_place_empty(double x, double y);
 double gml_move_contact_solid(double dir, double maxdist);
+double gml_move_outside_solid(double dir, double maxdist);
+double gml_move_outside_all(double dir, double maxdist);
+double gml_move_bounce_solid(double advanced);
+double gml_move_bounce_all(double advanced);
+double gml_move_random(double hsnap, double vsnap);
 double gml_sprite_get_width(double sprite);
 double gml_sprite_get_height(double sprite);
 double gml_sprite_get_number(double sprite);
+double gml_sprite_get_xoffset(double sprite);
+double gml_sprite_get_yoffset(double sprite);
 double gml_sprite_exists(double sprite);
 double gml_object_exists(double object_index);
 double gml_object_get_sprite(double object_index);

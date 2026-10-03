@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-09-30
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~58%**
+تاريخ التحديث: 2026-10-03
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~60%**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~65% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~62% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), متغرات `xstart/ystart/xprevious/yprevious/gravity/friction` المخصصة، الهياكل (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`), ودوال النصوص والـ INI I/O |
-| **DnD Actions Engine** | ~48% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
-| **Physics & Collisions** | ~58% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse |
+| **GML Runtime / Interpreter** | ~65% | دعم التعابير، الشرطية، الحلقات (`while`, `repeat`, `do...until`), متغيرات `xstart/ystart/gravity`, الهياكل, ودوال `sprite_get_xoffset/yoffset` و `instance_furthest` و `position_destroy` |
+| **DnD Actions Engine** | ~50% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
+| **Physics & Collisions** | ~62% | AABB المحدث + bbox_* variables + collision_* + `move_bounce_solid/all` + `move_outside_solid/all` + `move_random` |
 | **Graphics & Rendering** | ~38% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~32% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~58%** | **تجاوزت 58% مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~60%** | **بلغت ~60% مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 

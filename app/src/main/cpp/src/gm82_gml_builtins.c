@@ -347,6 +347,45 @@ double gml_instance_nearest(double x, double y, double object_index) {
     return (double)best_id;
 }
 
+double gml_instance_furthest(double x, double y, double object_index) {
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)object_index;
+    double worst = -1.0;
+    int32_t worst_id = -4;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        double dx = o->x - x, dy = o->y - y;
+        double d = dx*dx + dy*dy;
+        if (d > worst) { worst = d; worst_id = o->id; }
+    }
+    return (double)worst_id;
+}
+
+double gml_position_destroy(double x, double y) {
+    if (!g_rt) return 0;
+    double destroyed = 0;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        int32_t ow = 16, oh = 16, xo = 0, yo = 0;
+        if (g_rt->sprites && o->sprite_index >= 0 && o->sprite_index < g_rt->sprites->count) {
+            ow = g_rt->sprites->frames[o->sprite_index].width;
+            oh = g_rt->sprites->frames[o->sprite_index].height;
+            xo = g_rt->sprites->frames[o->sprite_index].xoffset;
+            yo = g_rt->sprites->frames[o->sprite_index].yoffset;
+        }
+        double left = o->x - xo;
+        double top = o->y - yo;
+        if (x >= left && x < left + ow && y >= top && y < top + oh) {
+            gm82_runtime_instance_destroy(g_rt, o);
+            destroyed += 1.0;
+        }
+    }
+    return destroyed;
+}
+
 double gml_instance_find(double object_index, double n) {
     if (!g_rt) return -4;
     int32_t oi = (int32_t)object_index;
@@ -533,6 +572,87 @@ double gml_move_contact_solid(double dir, double maxdist) {
     return moved;
 }
 
+double gml_move_outside_solid(double dir, double maxdist) {
+    if (!g_rt || !g_self) return 0;
+    if (maxdist < 0) maxdist = 1000;
+    if (gml_place_free(g_self->x, g_self->y)) return 0;
+    double rad = dir * M_PI / 180.0;
+    double dx = cos(rad), dy = -sin(rad);
+    double step = 1.0;
+    double moved = 0;
+    while (moved < maxdist) {
+        g_self->x += dx * step;
+        g_self->y += dy * step;
+        moved += step;
+        if (gml_place_free(g_self->x, g_self->y)) break;
+    }
+    return moved;
+}
+
+double gml_move_outside_all(double dir, double maxdist) {
+    if (!g_rt || !g_self) return 0;
+    if (maxdist < 0) maxdist = 1000;
+    if (gml_place_empty(g_self->x, g_self->y)) return 0;
+    double rad = dir * M_PI / 180.0;
+    double dx = cos(rad), dy = -sin(rad);
+    double step = 1.0;
+    double moved = 0;
+    while (moved < maxdist) {
+        g_self->x += dx * step;
+        g_self->y += dy * step;
+        moved += step;
+        if (gml_place_empty(g_self->x, g_self->y)) break;
+    }
+    return moved;
+}
+
+double gml_move_bounce_solid(double advanced) {
+    (void)advanced;
+    if (!g_rt || !g_self) return 0;
+    bool col_h = !gml_place_free(g_self->x + g_self->hspeed, g_self->y);
+    bool col_v = !gml_place_free(g_self->x, g_self->y + g_self->vspeed);
+    if (col_h) { g_self->hspeed = -g_self->hspeed; }
+    if (col_v) { g_self->vspeed = -g_self->vspeed; }
+    if (col_h || col_v) {
+        g_self->speed = sqrt(g_self->hspeed * g_self->hspeed + g_self->vspeed * g_self->vspeed);
+        if (g_self->speed > 0.0001)
+            g_self->direction = atan2(-g_self->vspeed, g_self->hspeed) * 180.0 / M_PI;
+        return 1;
+    }
+    return 0;
+}
+
+double gml_move_bounce_all(double advanced) {
+    (void)advanced;
+    if (!g_rt || !g_self) return 0;
+    bool col_h = !gml_place_empty(g_self->x + g_self->hspeed, g_self->y);
+    bool col_v = !gml_place_empty(g_self->x, g_self->y + g_self->vspeed);
+    if (col_h) { g_self->hspeed = -g_self->hspeed; }
+    if (col_v) { g_self->vspeed = -g_self->vspeed; }
+    if (col_h || col_v) {
+        g_self->speed = sqrt(g_self->hspeed * g_self->hspeed + g_self->vspeed * g_self->vspeed);
+        if (g_self->speed > 0.0001)
+            g_self->direction = atan2(-g_self->vspeed, g_self->hspeed) * 180.0 / M_PI;
+        return 1;
+    }
+    return 0;
+}
+
+double gml_move_random(double hsnap, double vsnap) {
+    if (!g_rt || !g_self) return 0;
+    double rw = gml_room_width();
+    double rh = gml_room_height();
+    if (rw <= 0) rw = 640;
+    if (rh <= 0) rh = 480;
+    double nx = gml_random(rw);
+    double ny = gml_random(rh);
+    if (hsnap > 1) nx = floor(nx / hsnap) * hsnap;
+    if (vsnap > 1) ny = floor(ny / vsnap) * vsnap;
+    g_self->x = nx;
+    g_self->y = ny;
+    return 1;
+}
+
 double gml_sprite_get_width(double sprite) {
     if (!g_rt || !g_rt->sprites) return 0;
     int si = (int)sprite;
@@ -544,6 +664,18 @@ double gml_sprite_get_height(double sprite) {
     int si = (int)sprite;
     if (si < 0 || si >= g_rt->sprites->count) return 0;
     return (double)g_rt->sprites->frames[si].height;
+}
+double gml_sprite_get_xoffset(double sprite) {
+    if (!g_rt || !g_rt->sprites) return 0;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return 0;
+    return (double)g_rt->sprites->frames[si].xoffset;
+}
+double gml_sprite_get_yoffset(double sprite) {
+    if (!g_rt || !g_rt->sprites) return 0;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return 0;
+    return (double)g_rt->sprites->frames[si].yoffset;
 }
 double gml_sprite_get_number(double sprite) {
     (void)sprite;
