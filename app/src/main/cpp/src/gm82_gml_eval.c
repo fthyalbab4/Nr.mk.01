@@ -258,13 +258,13 @@ static bool parse_primary(gml_parser *p, double *out) {
         *out = (v == 0) ? 1 : 0;
         return true;
     }
-    /* function call? collect up to 4 args */
+    /* function call? collect up to 8 args */
     if (match(p, '(')) {
-        double args[4] = {0,0,0,0};
+        double args[8] = {0,0,0,0,0,0,0,0};
         int nargs = 0;
         if (peek(p) != ')') {
             for (;;) {
-                if (nargs >= 4) return false;
+                if (nargs >= 8) return false;
                 if (!parse_expr(p, &args[nargs])) return false;
                 nargs++;
                 if (peek(p) != ',') break;
@@ -279,6 +279,24 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "floor") == 0) { *out = floor(arg); return true; }
         if (strcmp(id, "ceil") == 0) { *out = ceil(arg); return true; }
         if (strcmp(id, "round") == 0) { *out = round(arg); return true; }
+        if (strcmp(id, "frac") == 0) { *out = gml_frac(arg); return true; }
+        if (strcmp(id, "dot_product") == 0) { *out = gml_dot_product(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0, nargs >= 4 ? args[3] : 0); return true; }
+        if (strcmp(id, "min") == 0) {
+            double m = nargs > 0 ? args[0] : 0;
+            for (int k = 1; k < nargs; k++) { if (args[k] < m) m = args[k]; }
+            *out = m; return true;
+        }
+        if (strcmp(id, "max") == 0) {
+            double m = nargs > 0 ? args[0] : 0;
+            for (int k = 1; k < nargs; k++) { if (args[k] > m) m = args[k]; }
+            *out = m; return true;
+        }
+        if (strcmp(id, "clamp") == 0) { *out = gml_clamp(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "lerp") == 0) { *out = gml_lerp(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "point_distance") == 0) { *out = gml_point_distance(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0, nargs >= 4 ? args[3] : 0); return true; }
+        if (strcmp(id, "point_direction") == 0) { *out = gml_point_direction(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0, nargs >= 4 ? args[3] : 0); return true; }
+        if (strcmp(id, "lengthdir_x") == 0) { *out = gml_lengthdir_x(arg, nargs >= 2 ? args[1] : 0); return true; }
+        if (strcmp(id, "lengthdir_y") == 0) { *out = gml_lengthdir_y(arg, nargs >= 2 ? args[1] : 0); return true; }
         if (strcmp(id, "sqr") == 0) { *out = gml_sqr(arg); return true; }
         if (strcmp(id, "sqrt") == 0) { *out = gml_sqrt(arg); return true; }
         if (strcmp(id, "power") == 0) { *out = gml_power(arg, nargs >= 2 ? args[1] : 1); return true; }

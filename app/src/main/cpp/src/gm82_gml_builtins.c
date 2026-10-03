@@ -180,28 +180,6 @@ double gml_instance_place(double x, double y, double object_index) {
     return -4;
 }
 
-double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
-    (void)prec;
-    if (!g_rt) return -4;
-    int32_t oi = (int32_t)obj;
-    int steps = 32;
-    for (int i = 0; i < g_rt->instance_count; i++) {
-        gm82_instance *o = &g_rt->instances[i];
-        if (!o->alive) continue;
-        if (notme && o == g_self) continue;
-        if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        for (int s = 0; s <= steps; s++) {
-            double t = (double)s / (double)steps;
-            double px = x1 + (x2 - x1) * t;
-            double py = y1 + (y2 - y1) * t;
-            if (px >= o->x && px <= o->x + ow && py >= o->y && py <= o->y + oh)
-                return (double)o->id;
-        }
-    }
-    return -4;
-}
 
 void gm82_draw_set_target(uint8_t *rgba, int32_t w, int32_t h) {
     g_draw_buf = rgba; g_draw_w = w; g_draw_h = h;
@@ -439,6 +417,65 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
     return -4;
 }
 
+static bool line_intersects_aabb(double x1, double y1, double x2, double y2, double rx, double ry, double rw, double rh) {
+    double min_x = x1 < x2 ? x1 : x2, max_x = x1 < x2 ? x2 : x1;
+    double min_y = y1 < y2 ? y1 : y2, max_y = y1 < y2 ? y2 : y1;
+    if (max_x < rx || min_x > rx + rw || max_y < ry || min_y > ry + rh) return false;
+    /* Check 16 steps along segment */
+    for (int i = 0; i <= 16; i++) {
+        double t = i / 16.0;
+        double px = x1 + t * (x2 - x1);
+        double py = y1 + t * (y2 - y1);
+        if (px >= rx && px <= rx + rw && py >= ry && py <= ry + rh) return true;
+    }
+    return false;
+}
+
+double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        if (line_intersects_aabb(x1, y1, x2, y2, o->x, o->y, ow, oh))
+            return (double)o->id;
+    }
+    return -4;
+}
+
+double gml_collision_ellipse(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
+    (void)prec;
+    if (!g_rt) return -4;
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return -4;
+    int32_t oi = (int32_t)obj;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (notme && o == g_self) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow, oh;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        double ox = o->x + ow / 2.0;
+        double oy = o->y + oh / 2.0;
+        double dx = (ox - cx) / rx;
+        double dy = (oy - cy) / ry;
+        if (dx * dx + dy * dy <= 1.0)
+            return (double)o->id;
+    }
+    return -4;
+}
+
 double gml_collision_point(double x, double y, double obj, double prec, double notme) {
     return gml_collision_rectangle(x, y, x+1, y+1, obj, prec, notme);
 }
@@ -655,6 +692,56 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     size_t k = 0;
     for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
         if (isdigit((unsigned char)str[i])) out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_count(const char *substr, const char *str) {
+    if (!substr || !str || !substr[0] || !str[0]) return 0;
+    double count = 0;
+    size_t sub_len = strlen(substr);
+    const char *p = str;
+    while ((p = strstr(p, substr)) != NULL) {
+        count += 1.0;
+        p += sub_len;
+    }
+    return count;
+}
+
+double gml_string_repeat(const char *str, double count, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str || count <= 0) return 0;
+    size_t slen = strlen(str);
+    if (slen == 0) return 0;
+    int times = (int)count;
+    size_t pos = 0;
+    for (int i = 0; i < times && pos + slen < out_sz; i++) {
+        memcpy(out + pos, str, slen);
+        pos += slen;
+    }
+    out[pos] = 0;
+    return (double)pos;
+}
+
+double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    if (!substr || !substr[0]) { strncpy(out, str, out_sz - 1); out[out_sz - 1] = 0; return (double)strlen(out); }
+    if (!newstr) newstr = "";
+    size_t sub_len = strlen(substr);
+    size_t new_len = strlen(newstr);
+    size_t k = 0;
+    const char *p = str;
+    while (*p && k + 1 < out_sz) {
+        if (strncmp(p, substr, sub_len) == 0) {
+            for (size_t i = 0; i < new_len && k + 1 < out_sz; i++) out[k++] = newstr[i];
+            p += sub_len;
+        } else {
+            out[k++] = *p++;
+        }
     }
     out[k] = 0;
     return (double)k;
@@ -1358,6 +1445,91 @@ double gml_ds_queue_clear(double id) {
     return 1;
 }
 
+#define GM82_DS_GRID_MAX 16
+typedef struct {
+    int used;
+    int width;
+    int height;
+    double *data;
+} gm82_ds_grid;
+static gm82_ds_grid g_ds_grids[GM82_DS_GRID_MAX];
+
+double gml_ds_grid_create(double w, double h) {
+    int width = (int)w;
+    int height = (int)h;
+    if (width <= 0 || height <= 0) return -1;
+    for (int i = 0; i < GM82_DS_GRID_MAX; i++) {
+        if (!g_ds_grids[i].used) {
+            g_ds_grids[i].data = (double *)calloc((size_t)width * (size_t)height, sizeof(double));
+            if (!g_ds_grids[i].data) return -1;
+            g_ds_grids[i].used = 1;
+            g_ds_grids[i].width = width;
+            g_ds_grids[i].height = height;
+            return (double)i;
+        }
+    }
+    return -1;
+}
+
+double gml_ds_grid_destroy(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (g_ds_grids[i].data) free(g_ds_grids[i].data);
+    memset(&g_ds_grids[i], 0, sizeof(g_ds_grids[i]));
+    return 1;
+}
+
+double gml_ds_grid_width(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    return (double)g_ds_grids[i].width;
+}
+
+double gml_ds_grid_height(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    return (double)g_ds_grids[i].height;
+}
+
+double gml_ds_grid_set(double id, double x, double y, double val) {
+    int i = (int)id;
+    int gx = (int)x;
+    int gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].width || gy < 0 || gy >= g_ds_grids[i].height) return 0;
+    g_ds_grids[i].data[gy * g_ds_grids[i].width + gx] = val;
+    return 1;
+}
+
+double gml_ds_grid_get(double id, double x, double y) {
+    int i = (int)id;
+    int gx = (int)x;
+    int gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].width || gy < 0 || gy >= g_ds_grids[i].height) return 0;
+    return g_ds_grids[i].data[gy * g_ds_grids[i].width + gx];
+}
+
+double gml_ds_grid_clear(double id, double val) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    size_t total = (size_t)g_ds_grids[i].width * (size_t)g_ds_grids[i].height;
+    for (size_t k = 0; k < total; k++) {
+        g_ds_grids[i].data[k] = val;
+    }
+    return 1;
+}
+
+double gml_ds_grid_add(double id, double x, double y, double val) {
+    int i = (int)id;
+    int gx = (int)x;
+    int gy = (int)y;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    if (gx < 0 || gx >= g_ds_grids[i].width || gy < 0 || gy >= g_ds_grids[i].height) return 0;
+    g_ds_grids[i].data[gy * g_ds_grids[i].width + gx] += val;
+    return 1;
+}
+
 #define GM82_DS_PRIO_MAX 16
 #define GM82_DS_PRIO_CAP 128
 typedef struct {
@@ -1834,14 +2006,6 @@ double gml_choose(double a, double b) {
     return (rand() & 1) ? a : b;
 }
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 double gml_lengthdir_x(double len, double dir) {
     return len * cos(dir * M_PI / 180.0);
@@ -1862,6 +2026,149 @@ double gml_median(double a, double b, double c) {
     if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
     return c;
 }
+double gml_frac(double v) {
+    return v - (v >= 0 ? floor(v) : ceil(v));
+}
+double gml_dot_product(double x1, double y1, double x2, double y2) {
+    return x1 * x2 + y1 * y2;
+}
+double gml_math_min(double a, double b) {
+    return a < b ? a : b;
+}
+double gml_math_max(double a, double b) {
+    return a > b ? a : b;
+}
+
+double gml_make_color_rgb(double r, double g, double b) {
+    int ir = (int)r; if (ir < 0) ir = 0; if (ir > 255) ir = 255;
+    int ig = (int)g; if (ig < 0) ig = 0; if (ig > 255) ig = 255;
+    int ib = (int)b; if (ib < 0) ib = 0; if (ib > 255) ib = 255;
+    return (double)(ir | (ig << 8) | (ib << 16));
+}
+
+double gml_color_get_red(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)(c & 0xFF);
+}
+
+double gml_color_get_green(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)((c >> 8) & 0xFF);
+}
+
+double gml_color_get_blue(double col) {
+    uint32_t c = (uint32_t)col;
+    return (double)((c >> 16) & 0xFF);
+}
+
+double gml_make_color_hsv(double h, double s, double v) {
+    double r = 0, g = 0, b = 0;
+    double hh = h / 255.0 * 6.0;
+    double ss = s / 255.0;
+    double vv = v / 255.0;
+    int i = (int)floor(hh);
+    double ff = hh - i;
+    double p = vv * (1.0 - ss);
+    double q = vv * (1.0 - (ss * ff));
+    double t = vv * (1.0 - (ss * (1.0 - ff)));
+    switch (i % 6) {
+        case 0: r = vv; g = t; b = p; break;
+        case 1: r = q; g = vv; b = p; break;
+        case 2: r = p; g = vv; b = t; break;
+        case 3: r = p; g = q; b = vv; break;
+        case 4: r = t; g = p; b = vv; break;
+        case 5: r = vv; g = p; b = q; break;
+    }
+    return gml_make_color_rgb(r * 255.0, g * 255.0, b * 255.0);
+}
+
+double gml_color_get_hue(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    double minv = gml_math_min(r, gml_math_min(g, b));
+    double delta = maxv - minv;
+    if (delta <= 0) return 0;
+    double h = 0;
+    if (maxv == r) h = fmod((g - b) / delta, 6.0);
+    else if (maxv == g) h = (b - r) / delta + 2.0;
+    else h = (r - g) / delta + 4.0;
+    h *= 60.0;
+    if (h < 0) h += 360.0;
+    return (h / 360.0) * 255.0;
+}
+
+double gml_color_get_saturation(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    double minv = gml_math_min(r, gml_math_min(g, b));
+    double delta = maxv - minv;
+    if (maxv <= 0) return 0;
+    return (delta / maxv) * 255.0;
+}
+
+double gml_color_get_value(double col) {
+    double r = gml_color_get_red(col) / 255.0;
+    double g = gml_color_get_green(col) / 255.0;
+    double b = gml_color_get_blue(col) / 255.0;
+    double maxv = gml_math_max(r, gml_math_max(g, b));
+    return maxv * 255.0;
+}
+
+double gml_merge_color(double col1, double col2, double amount) {
+    amount = gml_clamp(amount, 0, 1);
+    double r1 = gml_color_get_red(col1), r2 = gml_color_get_red(col2);
+    double g1 = gml_color_get_green(col1), g2 = gml_color_get_green(col2);
+    double b1 = gml_color_get_blue(col1), b2 = gml_color_get_blue(col2);
+    double r = gml_lerp(r1, r2, amount);
+    double g = gml_lerp(g1, g2, amount);
+    double b = gml_lerp(b1, b2, amount);
+    return gml_make_color_rgb(r, g, b);
+}
+
+double gml_string_byte_at(const char *str, double index) {
+    if (!str) return 0;
+    int idx = (int)index - 1;
+    int len = (int)strlen(str);
+    if (idx < 0 || idx >= len) return 0;
+    return (double)(unsigned char)str[idx];
+}
+
+double gml_string_byte_length(const char *str) {
+    return str ? (double)strlen(str) : 0;
+}
+
+static char s_file_find_buffer[256] = {0};
+const char *gml_file_find_first(const char *mask, double attr) {
+    (void)mask; (void)attr;
+    s_file_find_buffer[0] = '\0';
+    return s_file_find_buffer;
+}
+
+const char *gml_file_find_next(void) {
+    s_file_find_buffer[0] = '\0';
+    return s_file_find_buffer;
+}
+
+void gml_file_find_close(void) {
+    s_file_find_buffer[0] = '\0';
+}
+
+double gml_string_format(double val, double total, double dec, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    int tot = (int)total;
+    int d = (int)dec;
+    if (d < 0) d = 0;
+    if (tot < 0) tot = 0;
+    char fmt[32];
+    snprintf(fmt, sizeof(fmt), "%%%d.%df", tot, d);
+    snprintf(out, out_sz, fmt, val);
+    return (double)strlen(out);
+}
+
 double gml_deg_to_rad(double deg) { return deg * M_PI / 180.0; }
 double gml_rad_to_deg(double rad) { return rad * 180.0 / M_PI; }
 double gml_angle_difference(double dest, double src) {

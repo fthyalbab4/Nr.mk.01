@@ -54,6 +54,7 @@ double gml_draw_clear(double color);
 double gml_point_in_rectangle(double px, double py, double x1, double y1, double x2, double y2);
 double gml_collision_rectangle(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
 double gml_collision_circle(double xc, double yc, double rad, double obj, double prec, double notme);
+double gml_collision_ellipse(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
 double gml_collision_line(double x1, double y1, double x2, double y2, double obj, double prec, double notme);
 double gml_collision_point(double x, double y, double obj, double prec, double notme);
 double gml_place_free(double x, double y);
@@ -138,6 +139,16 @@ double gml_ds_queue_size(double id);
 double gml_ds_queue_empty(double id);
 double gml_ds_queue_clear(double id);
 
+/* ds_grid */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+
 /* ds_priority (numeric priority, higher first) */
 double gml_ds_priority_create(void);
 double gml_ds_priority_destroy(double id);
@@ -186,6 +197,9 @@ double gml_file_text_writeln(double id);
 double gml_file_text_read_real(double id);
 double gml_file_exists(const char *path);
 double gml_file_delete(const char *path);
+const char *gml_file_find_first(const char *mask, double attr);
+const char *gml_file_find_next(void);
+void gml_file_find_close(void);
 
 double gml_date_current_datetime(void);
 double gml_date_get_year(double datetime);
@@ -247,9 +261,13 @@ double gml_string_digits(const char *str, char *out, size_t out_sz);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
-double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
-double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
 double gml_string_replace(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
+double gml_string_replace_all(const char *str, const char *substr, const char *newstr, char *out, size_t out_sz);
+double gml_string_delete(const char *str, double index, double count, char *out, size_t out_sz);
+double gml_string_format(double val, double total, double dec, char *out, size_t out_sz);
+double gml_string_insert(const char *substr, const char *str, double index, char *out, size_t out_sz);
+double gml_string_count(const char *substr, const char *str);
+double gml_string_repeat(const char *str, double count, char *out, size_t out_sz);
 double gml_array_length_1d(double array_id);
 double gml_array_height_2d(double array_id);
 double gml_mouse_x(void);
@@ -335,6 +353,21 @@ double gml_log2(double v);
 double gml_exp(double v);
 double gml_mean(double a, double b, double c);
 double gml_median(double a, double b, double c);
+double gml_frac(double v);
+double gml_dot_product(double x1, double y1, double x2, double y2);
+double gml_math_min(double a, double b);
+double gml_math_max(double a, double b);
+double gml_make_color_rgb(double r, double g, double b);
+double gml_make_color_hsv(double h, double s, double v);
+double gml_color_get_red(double col);
+double gml_color_get_green(double col);
+double gml_color_get_blue(double col);
+double gml_color_get_hue(double col);
+double gml_color_get_saturation(double col);
+double gml_color_get_value(double col);
+double gml_merge_color(double col1, double col2, double amount);
+double gml_string_byte_at(const char *str, double index);
+double gml_string_byte_length(const char *str);
 
 #ifdef __cplusplus
 }
