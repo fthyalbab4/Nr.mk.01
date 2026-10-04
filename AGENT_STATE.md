@@ -1,12 +1,12 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 56
+plan_B_percent: 58
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 9 native C unit test suites and Android Debug APK build verified PASS."
+last_test_log: "All 10 native C unit test suites verified PASS."
 last_run_date: 2026-09-30
 
 ## rules (لا تُكسر)
@@ -16,8 +16,8 @@ last_run_date: 2026-09-30
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~56%.
-Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/array libraries (including string_format, string_copy, string_replace, string_replace_all), color helpers (make_color_rgb, color_get_red/green/blue), file search stubs (file_find_first/next/close), INI file I/O, bounding boxes, data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and spatial collisions (point, circle, rectangle, line, ellipse) work on host. Android debug APK compilation is fully verified.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~58%.
+Control loops (while, repeat, do...until, if), AST GML evaluation, string/math/array libraries (including string_format, string_copy, string_replace, string_replace_all, string_pos_ext), color helpers (make_color_rgb, color_get_red/green/blue), file search stubs (file_find_first/next/close), type checkers (is_bool, is_nan, is_infinity, is_int32, is_int64, is_ptr), INI file I/O, bounding boxes, data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and spatial collisions (point, circle, rectangle, line, ellipse) work on host. Android debug APK compilation is fully verified.
 
 ## required_reply_format
 PROGRESS: 53% (compared to full Windows GM82)
