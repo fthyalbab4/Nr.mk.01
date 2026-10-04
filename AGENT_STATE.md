@@ -17,15 +17,12 @@ last_run_date: 2026-10-04
 
 ## progress reality
 Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~65%.
-Dispatched 58+ additional GML built-in functions in AST evaluator (gm82_gml_eval.c) covering instance control (instance_destroy/nearest/find/change/copy), motion (motion_set/add, move_towards_point, move_contact_solid), sound, drawing (draw_sprite_ext, draw_set_color/alpha, draw_rectangle/circle/line/text), room/game control (room_goto/restart, game_end/restart), ds_list/ds_map, paths, timelines, and random range functions. Created test_gml_eval_builtins test suite.
+Control loops (while, repeat, do...until, if), AST GML evaluation, degree trig functions (dsin, dcos, dtan, darcsin, darccos, darctan, darctan2), string helpers (string_letters, string_lettersdigits, string_width, string_height, string_ord_at), distance calculations (distance_to_point, distance_to_object), directory & file helpers (directory_exists, directory_create, file_copy, file_move), buffer I/O evaluation (buffer_create, write, read, seek, poke, peek, tell), instance start/previous variables, scaled sprite bounding box collisions, shape collisions (collision_circle, collision_rectangle, collision_ellipse, collision_line, collision_point), data structures (ds_list, ds_map, ds_stack, ds_queue, ds_priority), and CMake library build work on host.
 
 ## required_reply_format
 PROGRESS: 65% (compared to full Windows GM82)
-DONE: Expanded AST GML Evaluator (gm82_gml_eval.c) with dispatch for 58+ built-in functions (instance_destroy, instance_nearest, instance_find, instance_change, motion_set/add, move_towards_point, move_contact_solid, sound_play/stop/loop, draw_sprite_ext, draw_set_color/alpha, room_goto, ds_list/ds_map, paths, timelines), created test_gml_eval_builtins test suite, and verified Android debug APK build.
-TEST: All 12 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_vm_advanced PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_runtime_guard PASS) and Android debug APK build PASS.
-PROGRESS: 48% (<50% compared to full Windows GM82)
-DONE: Implemented GML array builtins, string manipulation library (string_digits/lower/upper), INI file I/O, collision_circle, and added test_gml_vm_expanded.c.
-TEST: Native C unit tests passing (test_gml_vm_expanded PASS, test_gml_comprehensive PASS, test_phase8_suite PASS).
+DONE: Implemented string_ord_at, directory_exists, directory_create, file_copy, file_move, added evaluator dispatches for buffer operations (seek, poke, peek, tell) and alarms, created test_gml_core_expansion_v2.c, and verified native CMake compilation (libgm82_android.so).
+TEST: All 12 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_ds_collisions PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_simulation PASS, test_gml_vm_advanced PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_runtime_guard PASS) and CMake native runtime build PASS.
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio, full GML VM bytecode engine, precise per-pixel collisions, Android device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.

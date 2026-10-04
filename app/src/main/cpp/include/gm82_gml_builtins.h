@@ -257,6 +257,10 @@ double gml_real(const char *s);
 double gml_string_pos(const char *sub, const char *str);
 double gml_string_char_at(const char *str, double index);
 double gml_string_digits(const char *str, char *out, size_t out_sz);
+double gml_string_letters(const char *str, char *out, size_t out_sz);
+double gml_string_lettersdigits(const char *str, char *out, size_t out_sz);
+double gml_string_width(const char *str);
+double gml_string_height(const char *str);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
@@ -344,6 +348,14 @@ double gml_lerp(double a, double b, double t);
 double gml_irandom(double n);
 double gml_random(double n);
 double gml_arctan2(double y, double x);
+double gml_dsin(double deg);
+double gml_dcos(double deg);
+double gml_dtan(double deg);
+double gml_darcsin(double val);
+double gml_darccos(double val);
+double gml_darctan(double val);
+double gml_darctan2(double y, double x);
+double gml_distance_to_point(double x, double y);
 double gml_sqr(double v);
 double gml_sqrt(double v);
 double gml_power(double base, double exp_val);
@@ -367,6 +379,11 @@ double gml_color_get_value(double col);
 double gml_merge_color(double col1, double col2, double amount);
 double gml_string_byte_at(const char *str, double index);
 double gml_string_byte_length(const char *str);
+double gml_string_ord_at(const char *str, double index);
+double gml_directory_exists(const char *path);
+double gml_directory_create(const char *path);
+double gml_file_copy(const char *fname, const char *newname);
+double gml_file_move(const char *fname, const char *newname);
 
 #ifdef __cplusplus
 }
