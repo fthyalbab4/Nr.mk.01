@@ -45,6 +45,13 @@ else if(!strcmp(n->text,"clamp")&&c==3){double x=num(a[0]),lo=num(a[1]),hi=num(a
 else if(!strcmp(n->text,"power")&&c==2)r=gml_value_real(pow(num(a[0]),num(a[1])));
 else if(!strcmp(n->text,"degtorad")&&c==1)r=gml_value_real(num(a[0])*3.14159265358979323846/180.0);
 else if(!strcmp(n->text,"radtodeg")&&c==1)r=gml_value_real(num(a[0])*180.0/3.14159265358979323846);
+else if(!strcmp(n->text,"dsin")&&c==1)r=gml_value_real(gml_dsin(num(a[0])));
+else if(!strcmp(n->text,"dcos")&&c==1)r=gml_value_real(gml_dcos(num(a[0])));
+else if(!strcmp(n->text,"dtan")&&c==1)r=gml_value_real(gml_dtan(num(a[0])));
+else if(!strcmp(n->text,"darcsin")&&c==1)r=gml_value_real(gml_darcsin(num(a[0])));
+else if(!strcmp(n->text,"darccos")&&c==1)r=gml_value_real(gml_darccos(num(a[0])));
+else if(!strcmp(n->text,"darctan")&&c==1)r=gml_value_real(gml_darctan(num(a[0])));
+else if(!strcmp(n->text,"darctan2")&&c==2)r=gml_value_real(gml_darctan2(num(a[0]),num(a[1])));
 else if(!strcmp(n->text,"lerp")&&c==3)r=gml_value_real(num(a[0])+(num(a[1])-num(a[0]))*num(a[2]));
 else if(!strcmp(n->text,"random")&&c==1)r=gml_value_real(((double)rand()/(double)RAND_MAX)*num(a[0]));
 else if(!strcmp(n->text,"random_range")&&c==2){double lo=num(a[0]),hi=num(a[1]);r=gml_value_real(lo+((double)rand()/(double)RAND_MAX)*(hi-lo));}
