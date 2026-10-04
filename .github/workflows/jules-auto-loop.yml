@@ -1,0 +1,36 @@
+name: Autonomous Jules Execution Loop
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  auto-development:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Check if Project is 100% Completed
+        id: check_todo
+        run: |
+          if grep -q "\[ \]" TODO.md; then
+            echo "has_tasks=true" >> $GITHUB_OUTPUT
+            echo "يوجد مهام متبقية..."
+          else
+            echo "has_tasks=false" >> $GITHUB_OUTPUT
+            echo "المشروع مكتمل 100%."
+          fi
+
+      - name: Create Issue to Trigger Jules
+        if: steps.check_todo.outputs.has_tasks == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh issue create \
+            --title "تحديث جديد للمشروع: تنفيذ مهمة من TODO" \
+            --body "يا Jules: اقرأ ملف TODO.md. نفذ أول مهمة غير مكتملة تحتوي على [ ]، وبعد الانتهاء علم عليها بـ [x] واعمل Commit و Push لفرع main."
