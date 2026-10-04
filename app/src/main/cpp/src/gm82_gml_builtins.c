@@ -23,6 +23,8 @@ static double g_draw_alpha = 1.0;
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <ctype.h>
 
 #ifndef M_PI
@@ -701,6 +703,44 @@ double gml_string_digits(const char *str, char *out, size_t out_sz) {
     }
     out[k] = 0;
     return (double)k;
+}
+
+double gml_string_letters(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (isalpha((unsigned char)str[i])) out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_lettersdigits(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (isalnum((unsigned char)str[i])) out[k++] = str[i];
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_string_width(const char *str) {
+    if (!str) return 0;
+    return (double)(strlen(str) * 8);
+}
+
+double gml_string_height(const char *str) {
+    if (!str) return 0;
+    int lines = 1;
+    for (size_t i = 0; str[i]; i++) {
+        if (str[i] == '\n') lines++;
+    }
+    return (double)(lines * 16);
 }
 
 double gml_string_count(const char *substr, const char *str) {
@@ -1935,6 +1975,19 @@ double gml_lengthdir_y(double len, double dir) {
     return -len * sin(dir * M_PI / 180.0);
 }
 double gml_arctan2(double y, double x) { return atan2(y, x); }
+double gml_dsin(double deg) { return sin(deg * 0.017453292519943295); }
+double gml_dcos(double deg) { return cos(deg * 0.017453292519943295); }
+double gml_dtan(double deg) { return tan(deg * 0.017453292519943295); }
+double gml_darcsin(double val) { return asin(val) * 57.29577951308232; }
+double gml_darccos(double val) { return acos(val) * 57.29577951308232; }
+double gml_darctan(double val) { return atan(val) * 57.29577951308232; }
+double gml_darctan2(double y, double x) { return atan2(y, x) * 57.29577951308232; }
+double gml_distance_to_point(double x, double y) {
+    if (!g_self) return 0;
+    double dx = x - g_self->x;
+    double dy = y - g_self->y;
+    return sqrt(dx*dx + dy*dy);
+}
 double gml_sqr(double v) { return v * v; }
 double gml_sqrt(double v) { return sqrt(v); }
 double gml_power(double base, double exp_val) { return pow(base, exp_val); }
@@ -2076,6 +2129,56 @@ const char *gml_file_find_next(void) {
 
 void gml_file_find_close(void) {
     s_file_find_buffer[0] = '\0';
+}
+
+double gml_string_ord_at(const char *str, double index) {
+    if (!str) return 0;
+    int idx = (int)index - 1;
+    int len = (int)strlen(str);
+    if (idx < 0 || idx >= len) return 0;
+    return (double)(unsigned char)str[idx];
+}
+
+double gml_directory_exists(const char *path) {
+    if (!path) return 0;
+    struct stat st;
+    if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) return 1.0;
+    return 0.0;
+}
+
+double gml_directory_create(const char *path) {
+    if (!path) return 0;
+#ifdef _WIN32
+    return _mkdir(path) == 0 ? 1.0 : 0.0;
+#else
+    return mkdir(path, 0755) == 0 ? 1.0 : 0.0;
+#endif
+}
+
+double gml_file_copy(const char *fname, const char *newname) {
+    if (!fname || !newname) return 0;
+    FILE *src = fopen(fname, "rb");
+    if (!src) return 0;
+    FILE *dst = fopen(newname, "wb");
+    if (!dst) { fclose(src); return 0; }
+    char buf[4096];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof(buf), src)) > 0) {
+        fwrite(buf, 1, n, dst);
+    }
+    fclose(src);
+    fclose(dst);
+    return 1.0;
+}
+
+double gml_file_move(const char *fname, const char *newname) {
+    if (!fname || !newname) return 0;
+    if (rename(fname, newname) == 0) return 1.0;
+    if (gml_file_copy(fname, newname) == 1.0) {
+        remove(fname);
+        return 1.0;
+    }
+    return 0.0;
 }
 
 double gml_string_format(double val, double total, double dec, char *out, size_t out_sz) {
