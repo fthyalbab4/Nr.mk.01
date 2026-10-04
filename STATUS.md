@@ -1,18 +1,18 @@
 # تقدم مشروع NOR Maker / GM82
 
 تاريخ التحديث: 2026-10-03
-النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~62%**
+النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~65%**
 
 ## 📌 ملخص الوضع الحالي
-- النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, ودوال المثلثات بالدرجات `dsin`, `dcos`, `dtan`, `darcsin`, `darccos`, `darctan`, `darctan2`, ودوال النصوص `string_letters`, `string_lettersdigits`, `string_width`, `string_height`, وحساب المسافات `distance_to_point`, وتتبع متغيرات الملاحة والفيزياء `xstart`, `ystart`, `xprevious`, `yprevious`, `gravity`, `friction` وحساب أحجام السبرايت المجمعة `image_xscale/yscale` باصطدامات الأشكال والحجم المتقدم).
-- اجتياز 11 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake بنجاح 100%.
-- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **62%**.
+- النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, ودوال المثلثات بالدرجات `dsin`, `dcos`, `dtan`, `darcsin`, `darccos`, `darctan`, `darctan2`, ودوال النصوص `string_letters`, `string_lettersdigits`, `string_width`, `string_height`, `string_ord_at`, وإدارة الملفات والمجلدات `directory_exists`, `directory_create`, `file_copy`, `file_move`, وحساب المسافات `distance_to_point`, وتتبع متغيرات الملاحة والفيزياء `xstart`, `ystart`, `xprevious`, `yprevious`, `gravity`, `friction` وحساب أحجام السبرايت المجمعة `image_xscale/yscale` باصطدامات الأشكال وحزم البافرات `buffer_seek`, `buffer_write`, `buffer_read`).
+- اجتياز 12 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake بنجاح 100%.
+- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **65%**.
 
 ## 🗺️ خطة التطوير الشاملة للوصول لـ Core & GML Full Support
 
 ### المرحلة 1: مفسر وVM الـ GML (GML Bytecode VM Engine)
-- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال المثلثات والنصوص بالدرجات.
-- تحسين التعامل مع المصفوفات ثنائية الأبعاد والبُنى البياناتية المتعددة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`).
+- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال المثلثات والنصوص بالدرجات ورمز المحارف `string_ord_at`.
+- تحسين التعامل مع المصفوفات ثنائية الأبعاد والبُنى البياناتية المتعددة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`) والـ Buffers (`buffer_write`, `buffer_read`, `buffer_seek`).
 
 ### المرحلة 2: الاصطدامات الدقيقة (Precise Collision Masking)
 - دعم الأشكال الصدامية `collision_line` و`collision_ellipse` و`collision_circle` و`collision_rectangle` و`collision_point` و`distance_to_point`.

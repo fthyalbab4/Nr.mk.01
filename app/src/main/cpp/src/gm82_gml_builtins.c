@@ -23,6 +23,8 @@ static double g_draw_alpha = 1.0;
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <ctype.h>
 
 #ifndef M_PI
@@ -2127,6 +2129,56 @@ const char *gml_file_find_next(void) {
 
 void gml_file_find_close(void) {
     s_file_find_buffer[0] = '\0';
+}
+
+double gml_string_ord_at(const char *str, double index) {
+    if (!str) return 0;
+    int idx = (int)index - 1;
+    int len = (int)strlen(str);
+    if (idx < 0 || idx >= len) return 0;
+    return (double)(unsigned char)str[idx];
+}
+
+double gml_directory_exists(const char *path) {
+    if (!path) return 0;
+    struct stat st;
+    if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) return 1.0;
+    return 0.0;
+}
+
+double gml_directory_create(const char *path) {
+    if (!path) return 0;
+#ifdef _WIN32
+    return _mkdir(path) == 0 ? 1.0 : 0.0;
+#else
+    return mkdir(path, 0755) == 0 ? 1.0 : 0.0;
+#endif
+}
+
+double gml_file_copy(const char *fname, const char *newname) {
+    if (!fname || !newname) return 0;
+    FILE *src = fopen(fname, "rb");
+    if (!src) return 0;
+    FILE *dst = fopen(newname, "wb");
+    if (!dst) { fclose(src); return 0; }
+    char buf[4096];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof(buf), src)) > 0) {
+        fwrite(buf, 1, n, dst);
+    }
+    fclose(src);
+    fclose(dst);
+    return 1.0;
+}
+
+double gml_file_move(const char *fname, const char *newname) {
+    if (!fname || !newname) return 0;
+    if (rename(fname, newname) == 0) return 1.0;
+    if (gml_file_copy(fname, newname) == 1.0) {
+        remove(fname);
+        return 1.0;
+    }
+    return 0.0;
 }
 
 double gml_string_format(double val, double total, double dec, char *out, size_t out_sz) {

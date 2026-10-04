@@ -350,6 +350,18 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "ds_map_create") == 0) { *out = gml_ds_map_create(); return true; }
         if (strcmp(id, "ds_map_add") == 0) { *out = gml_ds_map_add(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
         if (strcmp(id, "ds_map_find_value") == 0) { *out = gml_ds_map_find_value(arg, nargs >= 2 ? args[1] : 0); return true; }
+        if (strcmp(id, "buffer_create") == 0) { *out = gml_buffer_create(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 1); return true; }
+        if (strcmp(id, "buffer_delete") == 0) { *out = gml_buffer_delete(arg); return true; }
+        if (strcmp(id, "buffer_write") == 0) { *out = gml_buffer_write(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "buffer_read") == 0) { *out = gml_buffer_read(arg, nargs >= 2 ? args[1] : 0); return true; }
+        if (strcmp(id, "buffer_seek") == 0) { *out = gml_buffer_seek(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "buffer_poke") == 0) { *out = gml_buffer_poke(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0, nargs >= 4 ? args[3] : 0); return true; }
+        if (strcmp(id, "buffer_peek") == 0) { *out = gml_buffer_peek(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "buffer_tell") == 0) { *out = gml_buffer_tell(arg); return true; }
+        if (strcmp(id, "buffer_get_size") == 0) { *out = gml_buffer_get_size(arg); return true; }
+        if (strcmp(id, "buffer_sizeof") == 0) { *out = gml_buffer_sizeof(arg); return true; }
+        if (strcmp(id, "alarm_get") == 0) { *out = gml_alarm_get(arg); return true; }
+        if (strcmp(id, "alarm_set") == 0) { *out = gml_alarm_set(arg, nargs >= 2 ? args[1] : 0); return true; }
         if (strcmp(id, "mean") == 0) { *out = gml_mean(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
         if (strcmp(id, "median") == 0) { *out = gml_median(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
         if (strcmp(id, "collision_line") == 0) {

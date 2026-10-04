@@ -370,6 +370,11 @@ double gml_color_get_value(double col);
 double gml_merge_color(double col1, double col2, double amount);
 double gml_string_byte_at(const char *str, double index);
 double gml_string_byte_length(const char *str);
+double gml_string_ord_at(const char *str, double index);
+double gml_directory_exists(const char *path);
+double gml_directory_create(const char *path);
+double gml_file_copy(const char *fname, const char *newname);
+double gml_file_move(const char *fname, const char *newname);
 
 #ifdef __cplusplus
 }
