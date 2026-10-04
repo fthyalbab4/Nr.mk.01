@@ -1,6 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
 تاريخ التحديث: 2026-10-03
+تاريخ التحديث: 2026-10-04
 النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~65%**
 
 ---
@@ -16,6 +17,12 @@
 | **Graphics & Rendering** | ~38% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~32% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
 | **النسبة الكلية** | **~65%** | **تجاوزت 65% مقارنة بنواة ويندوز GM82 الكاملة** |
+| **GML Runtime / Interpreter** | ~72% | تم توجيه 58+ دالة أساسية (instance_destroy/nearest/find, motion_set/add, draw_sprite_ext, sound_play, room_goto, ds_list, paths, timelines) |
+| **DnD Actions Engine** | ~55% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
+| **Physics & Collisions** | ~65% | AABB المحدث + bbox_* variables + collision_* + `move_bounce_solid/all` + `move_outside_solid/all` + `move_random` |
+| **Graphics & Rendering** | ~40% | Software Renderer على المضيف + هيكل GLES مبدئي |
+| **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
+| **النسبة الكلية** | **~65%** | **بلغت ~65% مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 

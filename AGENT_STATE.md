@@ -6,8 +6,8 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 12 native C unit test suites, test_full_suite, and CMake libgm82_android build verified PASS."
-last_run_date: 2026-10-03
+last_test_log: "All 12 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-04
 
 ## rules (لا تُكسر)
 - never claim 100%

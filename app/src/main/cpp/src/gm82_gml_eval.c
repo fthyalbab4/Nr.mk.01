@@ -399,6 +399,56 @@ static bool parse_primary(gml_parser *p, double *out) {
             double yarg = (nargs >= 2) ? args[1] : (p->self ? p->self->y : 0);
             *out = gml_place_empty(arg, yarg); return true;
         }
+        if (strcmp(id, "move_outside_solid") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_solid(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_outside_all") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_all(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_bounce_solid") == 0) {
+            *out = gml_move_bounce_solid(arg); return true;
+        }
+        if (strcmp(id, "move_bounce_all") == 0) {
+            *out = gml_move_bounce_all(arg); return true;
+        }
+        if (strcmp(id, "move_random") == 0) {
+            double vsnap = (nargs >= 2) ? args[1] : 1;
+            *out = gml_move_random(arg, vsnap); return true;
+        }
+        if (strcmp(id, "sprite_get_xoffset") == 0) {
+            *out = gml_sprite_get_xoffset(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_yoffset") == 0) {
+            *out = gml_sprite_get_yoffset(arg); return true;
+        }
+        if (strcmp(id, "instance_furthest") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_furthest(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "position_destroy") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_position_destroy(arg, yarg); return true;
+        }
+        if (strcmp(id, "position_meeting") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_position_meeting(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "collision_rectangle") == 0) {
+            *out = gml_collision_rectangle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:-1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0); return true;
+        }
+        if (strcmp(id, "collision_circle") == 0) {
+            *out = gml_collision_circle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:-1, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0); return true;
+        }
+        if (strcmp(id, "collision_ellipse") == 0) {
+            *out = gml_collision_ellipse(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:-1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0); return true;
+        }
+        if (strcmp(id, "collision_point") == 0) {
+            *out = gml_collision_point(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:-1, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0); return true;
+        }
         if (strcmp(id, "instance_number") == 0) {
             *out = gml_instance_number(arg); return true;
         }
@@ -410,6 +460,186 @@ static bool parse_primary(gml_parser *p, double *out) {
             double yarg = (nargs >= 2) ? args[1] : 0;
             double oarg = (nargs >= 3) ? args[2] : 0;
             *out = gml_instance_create(xarg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "instance_destroy") == 0) {
+            gml_instance_destroy();
+            *out = 1; return true;
+        }
+        if (strcmp(id, "instance_nearest") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_nearest(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "instance_find") == 0) {
+            double oarg = arg;
+            double narg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_instance_find(oarg, narg); return true;
+        }
+        if (strcmp(id, "instance_change") == 0) {
+            *out = gml_instance_change(arg, (nargs >= 2) ? args[1] : 1); return true;
+        }
+        if (strcmp(id, "instance_copy") == 0) {
+            *out = gml_instance_copy(arg); return true;
+        }
+        if (strcmp(id, "motion_set") == 0) {
+            gml_motion_set(arg, (nargs >= 2) ? args[1] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "motion_add") == 0) {
+            gml_motion_add(arg, (nargs >= 2) ? args[1] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "move_towards_point") == 0) {
+            gml_move_towards_point(arg, (nargs >= 2) ? args[1] : 0, (nargs >= 3) ? args[2] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "move_contact_solid") == 0) {
+            *out = gml_move_contact_solid(arg, (nargs >= 2) ? args[1] : 1000); return true;
+        }
+        if (strcmp(id, "sound_play") == 0) {
+            *out = gml_sound_play(arg); return true;
+        }
+        if (strcmp(id, "sound_stop") == 0) {
+            *out = gml_sound_stop(arg); return true;
+        }
+        if (strcmp(id, "sound_isplaying") == 0) {
+            *out = gml_sound_isplaying(arg); return true;
+        }
+        if (strcmp(id, "sound_loop") == 0) {
+            *out = gml_sound_play(arg); return true;
+        }
+        if (strcmp(id, "draw_sprite") == 0) {
+            gml_draw_sprite(arg, (nargs >= 2) ? args[1] : (p->self ? p->self->x : 0), (nargs >= 3) ? args[2] : (p->self ? p->self->y : 0));
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_ext") == 0) {
+            gml_draw_sprite_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:1, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:16777215, (nargs>=9)?args[8]:1.0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_set_color") == 0) {
+            gml_draw_set_color(arg); *out = 1; return true;
+        }
+        if (strcmp(id, "draw_set_alpha") == 0) {
+            gml_draw_set_alpha(arg); *out = 1; return true;
+        }
+        if (strcmp(id, "draw_get_color") == 0) {
+            *out = gml_draw_get_color(); return true;
+        }
+        if (strcmp(id, "draw_get_alpha") == 0) {
+            *out = gml_draw_get_alpha(); return true;
+        }
+        if (strcmp(id, "draw_rectangle") == 0) {
+            gml_draw_rectangle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_circle") == 0) {
+            gml_draw_circle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_line") == 0) {
+            gml_draw_line(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_text") == 0) {
+            char numbuf[32];
+            snprintf(numbuf, sizeof(numbuf), "%.2f", (nargs >= 3) ? args[2] : 0.0);
+            gml_draw_text(arg, (nargs>=2)?args[1]:0, numbuf);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "room_goto") == 0) {
+            *out = gml_room_goto(arg); return true;
+        }
+        if (strcmp(id, "room_goto_next") == 0) {
+            *out = gml_room_goto_next(); return true;
+        }
+        if (strcmp(id, "room_goto_previous") == 0) {
+            *out = gml_room_goto_previous(); return true;
+        }
+        if (strcmp(id, "room_restart") == 0) {
+            *out = gml_room_restart(); return true;
+        }
+        if (strcmp(id, "game_end") == 0) {
+            *out = gml_game_end(); return true;
+        }
+        if (strcmp(id, "game_restart") == 0) {
+            *out = gml_game_restart(); return true;
+        }
+        if (strcmp(id, "sprite_get_width") == 0) {
+            *out = gml_sprite_get_width(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_height") == 0) {
+            *out = gml_sprite_get_height(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_number") == 0) {
+            *out = gml_sprite_get_number(arg); return true;
+        }
+        if (strcmp(id, "sprite_exists") == 0) {
+            *out = gml_sprite_exists(arg); return true;
+        }
+        if (strcmp(id, "object_exists") == 0) {
+            *out = gml_object_exists(arg); return true;
+        }
+        if (strcmp(id, "object_get_sprite") == 0) {
+            *out = gml_object_get_sprite(arg); return true;
+        }
+        if (strcmp(id, "object_get_solid") == 0) {
+            *out = gml_object_get_solid(arg); return true;
+        }
+        if (strcmp(id, "ds_list_create") == 0) {
+            *out = gml_ds_list_create(); return true;
+        }
+        if (strcmp(id, "ds_list_destroy") == 0) {
+            *out = gml_ds_list_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_list_add") == 0) {
+            *out = gml_ds_list_add(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "ds_list_find_value") == 0) {
+            *out = gml_ds_list_find_value(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "ds_list_size") == 0) {
+            *out = gml_ds_list_size(arg); return true;
+        }
+        if (strcmp(id, "ds_map_create") == 0) {
+            *out = gml_ds_map_create(); return true;
+        }
+        if (strcmp(id, "ds_map_destroy") == 0) {
+            *out = gml_ds_map_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_map_add") == 0) {
+            *out = gml_ds_map_add(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0); return true;
+        }
+        if (strcmp(id, "ds_map_find_value") == 0) {
+            *out = gml_ds_map_find_value(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "path_start") == 0) {
+            *out = gml_path_start(arg, (nargs>=2)?args[1]:1, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0); return true;
+        }
+        if (strcmp(id, "path_end") == 0) {
+            *out = gml_path_end(); return true;
+        }
+        if (strcmp(id, "timeline_start") == 0) {
+            *out = gml_timeline_start(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:1, (nargs>=4)?args[3]:1); return true;
+        }
+        if (strcmp(id, "timeline_stop") == 0) {
+            *out = gml_timeline_stop(); return true;
+        }
+        if (strcmp(id, "random") == 0) {
+            *out = gml_random(arg); return true;
+        }
+        if (strcmp(id, "random_range") == 0) {
+            *out = gml_random_range(arg, (nargs>=2)?args[1]:arg); return true;
+        }
+        if (strcmp(id, "irandom_range") == 0) {
+            *out = gml_irandom_range(arg, (nargs>=2)?args[1]:arg); return true;
+        }
+        if (strcmp(id, "choose") == 0) {
+            if (nargs > 0) {
+                *out = args[rand() % nargs];
+            } else {
+                *out = arg;
+            }
+            return true;
         }
         if (strcmp(id, "draw_self") == 0) {
             if (p->self) gml_draw_sprite((double)p->self->sprite_index, p->self->x, p->self->y);
