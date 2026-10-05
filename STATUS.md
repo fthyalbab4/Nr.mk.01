@@ -1,12 +1,12 @@
 # تقدم مشروع NOR Maker / GM82
 
-تاريخ التحديث: 2026-10-03
-النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~65%**
+تاريخ التحديث: 2026-10-05
+النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~72%**
 
 ## 📌 ملخص الوضع الحالي
-- النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, ودوال المثلثات بالدرجات `dsin`, `dcos`, `dtan`, `darcsin`, `darccos`, `darctan`, `darctan2`, ودوال النصوص `string_letters`, `string_lettersdigits`, `string_width`, `string_height`, `string_ord_at`, وإدارة الملفات والمجلدات `directory_exists`, `directory_create`, `file_copy`, `file_move`, وحساب المسافات `distance_to_point`, وتتبع متغيرات الملاحة والفيزياء `xstart`, `ystart`, `xprevious`, `yprevious`, `gravity`, `friction` وحساب أحجام السبرايت المجمعة `image_xscale/yscale` باصطدامات الأشكال وحزم البافرات `buffer_seek`, `buffer_write`, `buffer_read`).
-- اجتياز 12 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake بنجاح 100%.
-- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **65%**.
+- النواة تتطور كنسخة أولية على Host و Android (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, والتعابير النصية المقتبسة `"..."` والربط النصي `+` وثوابت الألوان المعيارية `c_black..c_olive` ومتغيرات الكاميرا `view_xview/yview/wview/hview/enabled` والمنبهات `alarm0..11`, ودوال المثلثات بالدرجات `dsin`, `dcos`, `dtan`, ودوال النصوص, وإدارة الملفات والمجلدات, وحساب المسافات, ومتغيرات الفيزياء وحزم البافرات `buffer_seek`, `buffer_write`, `buffer_read`).
+- اجتياز 16 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake وتجميع تطبيق الأندرويد `app-debug.apk` عبر Gradle بنجاح 100%.
+- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **72%**.
 
 ## 🗺️ خطة التطوير الشاملة للوصول لـ Core & GML Full Support
 

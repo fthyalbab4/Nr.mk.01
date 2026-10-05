@@ -133,6 +133,45 @@ static bool get_var(gml_parser *p, const char *name, double *out) {
     if (strcmp(name, "room_speed") == 0) { *out = p->rt ? (double)p->rt->room_speed : 30; return true; }
     if (strcmp(name, "mouse_x") == 0) { *out = gml_mouse_x(); return true; }
     if (strcmp(name, "mouse_y") == 0) { *out = gml_mouse_y(); return true; }
+
+    /* View / Camera variables */
+    if (strcmp(name, "view_enabled") == 0) { *out = p->rt ? (double)p->rt->view_enabled : 0; return true; }
+    if (strcmp(name, "view_xview") == 0 || strcmp(name, "view_x") == 0) { *out = p->rt ? p->rt->view_x : 0; return true; }
+    if (strcmp(name, "view_yview") == 0 || strcmp(name, "view_y") == 0) { *out = p->rt ? p->rt->view_y : 0; return true; }
+    if (strcmp(name, "view_wview") == 0 || strcmp(name, "view_w") == 0) { *out = p->rt ? p->rt->view_w : 0; return true; }
+    if (strcmp(name, "view_hview") == 0 || strcmp(name, "view_h") == 0) { *out = p->rt ? p->rt->view_h : 0; return true; }
+    if (strcmp(name, "view_visible") == 0) { *out = 1.0; return true; }
+
+    /* Alarm variables alarm0 .. alarm11 */
+    if (strncmp(name, "alarm", 5) == 0 && isdigit((unsigned char)name[5])) {
+        int idx = atoi(name + 5);
+        if (idx >= 0 && idx < 12 && s) {
+            *out = (double)s->alarms[idx];
+            return true;
+        }
+    }
+
+    /* Color constants */
+    if (strcmp(name, "c_black") == 0) { *out = 0; return true; }
+    if (strcmp(name, "c_white") == 0) { *out = 16777215; return true; }
+    if (strcmp(name, "c_red") == 0) { *out = 255; return true; }
+    if (strcmp(name, "c_green") == 0) { *out = 32768; return true; }
+    if (strcmp(name, "c_lime") == 0) { *out = 65280; return true; }
+    if (strcmp(name, "c_blue") == 0) { *out = 16711680; return true; }
+    if (strcmp(name, "c_yellow") == 0) { *out = 65535; return true; }
+    if (strcmp(name, "c_orange") == 0) { *out = 42355; return true; }
+    if (strcmp(name, "c_purple") == 0) { *out = 8388736; return true; }
+    if (strcmp(name, "c_fuchsia") == 0) { *out = 16711935; return true; }
+    if (strcmp(name, "c_aqua") == 0) { *out = 16776960; return true; }
+    if (strcmp(name, "c_gray") == 0) { *out = 8421504; return true; }
+    if (strcmp(name, "c_silver") == 0) { *out = 12632256; return true; }
+    if (strcmp(name, "c_dkgray") == 0) { *out = 4210752; return true; }
+    if (strcmp(name, "c_ltgray") == 0) { *out = 12632256; return true; }
+    if (strcmp(name, "c_navy") == 0) { *out = 8388608; return true; }
+    if (strcmp(name, "c_maroon") == 0) { *out = 128; return true; }
+    if (strcmp(name, "c_teal") == 0) { *out = 8421376; return true; }
+    if (strcmp(name, "c_olive") == 0) { *out = 32896; return true; }
+
     /* vk_ constants (GM key codes) */
     if (strcmp(name, "vk_left") == 0) { *out = 37; return true; }
     if (strcmp(name, "vk_right") == 0) { *out = 39; return true; }
@@ -212,6 +251,22 @@ static bool set_var(gml_parser *p, const char *name, double v) {
     if (strcmp(name, "lives") == 0) { gml_set_lives(v); return true; }
     if (strcmp(name, "health") == 0) { gml_set_health(v); return true; }
 
+    /* View camera setting */
+    if (strcmp(name, "view_enabled") == 0) { if (p->rt) p->rt->view_enabled = (int32_t)v; return true; }
+    if (strcmp(name, "view_xview") == 0 || strcmp(name, "view_x") == 0) { if (p->rt) p->rt->view_x = v; return true; }
+    if (strcmp(name, "view_yview") == 0 || strcmp(name, "view_y") == 0) { if (p->rt) p->rt->view_y = v; return true; }
+    if (strcmp(name, "view_wview") == 0 || strcmp(name, "view_w") == 0) { if (p->rt) p->rt->view_w = v; return true; }
+    if (strcmp(name, "view_hview") == 0 || strcmp(name, "view_h") == 0) { if (p->rt) p->rt->view_h = v; return true; }
+
+    /* Alarm setting alarm0 .. alarm11 */
+    if (strncmp(name, "alarm", 5) == 0 && isdigit((unsigned char)name[5])) {
+        int idx = atoi(name + 5);
+        if (idx >= 0 && idx < 12 && s) {
+            s->alarms[idx] = (int32_t)v;
+            return true;
+        }
+    }
+
     /* Set custom instance variable */
     if (s) {
         for (int k = 0; k < s->var_count; k++) {
@@ -233,10 +288,54 @@ static bool set_var(gml_parser *p, const char *name, double v) {
     return false;
 }
 
+#define GML_STR_SLOT_BASE 1000000.0
+
+static char g_str_pool[32][256];
+static int g_str_pool_idx = 0;
+
+static double alloc_str_slot(const char *s) {
+    int slot = (g_str_pool_idx++) % 32;
+    strncpy(g_str_pool[slot], s ? s : "", 255);
+    g_str_pool[slot][255] = 0;
+    return -GML_STR_SLOT_BASE - (double)slot;
+}
+
+static bool is_str_slot(double v) {
+    return (v <= -GML_STR_SLOT_BASE && v >= -GML_STR_SLOT_BASE - 32.0);
+}
+
+static const char *get_str_val(double v, char *fallback_buf, size_t fallback_sz) {
+    if (is_str_slot(v)) {
+        int slot = (int)(-v - GML_STR_SLOT_BASE);
+        if (slot >= 0 && slot < 32) return g_str_pool[slot];
+    }
+    if (fallback_buf && fallback_sz > 0) {
+        if (floor(v) == v) snprintf(fallback_buf, fallback_sz, "%.0f", v);
+        else snprintf(fallback_buf, fallback_sz, "%.2f", v);
+        return fallback_buf;
+    }
+    return "";
+}
+
 static bool parse_primary(gml_parser *p, double *out) {
     skip_ws(p);
     if (p->i >= p->n) return false;
     char c = p->s[p->i];
+    if (c == '"' || c == '\'') {
+        char quote = c;
+        p->i++;
+        char sbuf[256];
+        size_t k = 0;
+        while (p->i < p->n && p->s[p->i] != quote) {
+            if (p->s[p->i] == '\\' && p->i + 1 < p->n) p->i++;
+            if (k + 1 < sizeof(sbuf)) sbuf[k++] = p->s[p->i];
+            p->i++;
+        }
+        sbuf[k] = 0;
+        if (p->i < p->n && p->s[p->i] == quote) p->i++;
+        *out = alloc_str_slot(sbuf);
+        return true;
+    }
     if (c == '(') {
         p->i++;
         if (!parse_expr(p, out)) return false;
@@ -540,11 +639,77 @@ static bool parse_primary(gml_parser *p, double *out) {
             gml_draw_line(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
             *out = 1; return true;
         }
+        if (strcmp(id, "string") == 0) {
+            char tmp[128];
+            const char *str = get_str_val(arg, tmp, sizeof(tmp));
+            *out = alloc_str_slot(str); return true;
+        }
+        if (strcmp(id, "ini_open") == 0) {
+            char tmp[256];
+            *out = gml_ini_open(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "file_exists") == 0) {
+            char tmp[256];
+            *out = gml_file_exists(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "file_delete") == 0) {
+            char tmp[256];
+            *out = gml_file_delete(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "directory_exists") == 0) {
+            char tmp[256];
+            *out = gml_directory_exists(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "directory_create") == 0) {
+            char tmp[256];
+            *out = gml_directory_create(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
         if (strcmp(id, "draw_text") == 0) {
-            char numbuf[32];
-            snprintf(numbuf, sizeof(numbuf), "%.2f", (nargs >= 3) ? args[2] : 0.0);
-            gml_draw_text(arg, (nargs>=2)?args[1]:0, numbuf);
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text(arg, (nargs>=2)?args[1]:0, txt);
             *out = 1; return true;
+        }
+        if (strcmp(id, "draw_text_color") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text_color(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:16777215, (nargs>=5)?args[4]:16777215, (nargs>=6)?args[5]:16777215, (nargs>=7)?args[6]:16777215);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "string_length") == 0) {
+            char tmp[256];
+            *out = gml_string_length(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "string_pos") == 0) {
+            char t1[256], t2[256];
+            *out = gml_string_pos(get_str_val(arg, t1, sizeof(t1)), get_str_val((nargs>=2)?args[1]:0, t2, sizeof(t2))); return true;
+        }
+        if (strcmp(id, "string_copy") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_copy(get_str_val(arg, t1, sizeof(t1)), (nargs>=2)?args[1]:1, (nargs>=3)?args[2]:1, outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_letters") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_letters(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_digits") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_digits(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_lower") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_lower(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_upper") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_upper(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
         }
         if (strcmp(id, "room_goto") == 0) {
             *out = gml_room_goto(arg); return true;
@@ -689,8 +854,19 @@ static bool parse_additive(gml_parser *p, double *out) {
         getc_(p);
         double r;
         if (!parse_term(p, &r)) return false;
-        if (c == '+') *out += r;
-        else *out -= r;
+        if (c == '+') {
+            if (is_str_slot(*out) || is_str_slot(r)) {
+                char t1[256], t2[256], res[512];
+                const char *s1 = get_str_val(*out, t1, sizeof(t1));
+                const char *s2 = get_str_val(r, t2, sizeof(t2));
+                snprintf(res, sizeof(res), "%s%s", s1, s2);
+                *out = alloc_str_slot(res);
+            } else {
+                *out += r;
+            }
+        } else {
+            *out -= r;
+        }
     }
     return true;
 }
