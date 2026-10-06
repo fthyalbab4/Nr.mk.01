@@ -181,12 +181,15 @@ void test_retro_rom_suite(void) {
     printf("[PASS] Retro ROM Suite\n");
 }
 
+extern void test_gml_vm_expanded_v3(void);
+
 int main(void) {
     printf("--- Running Native Host Comprehensive Test Suite ---\n");
     test_gmk_probe_suite();
     test_gml_vm_suite();
     test_gml_builtins_suite();
     test_retro_rom_suite();
+    test_gml_vm_expanded_v3();
     printf("--- All Native Host Tests Passed! ---\n");
     return 0;
 }

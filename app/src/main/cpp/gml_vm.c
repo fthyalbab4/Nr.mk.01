@@ -41,6 +41,7 @@ else if(!strcmp(n->text,"sign")&&c==1)r=gml_value_real(num(a[0])>0?1:(num(a[0])<
 else if(!strcmp(n->text,"min")&&c>=1){double v=num(a[0]);for(size_t i=1;i<c;i++)if(num(a[i])<v)v=num(a[i]);r=gml_value_real(v);}
 else if(!strcmp(n->text,"max")&&c>=1){double v=num(a[0]);for(size_t i=1;i<c;i++)if(num(a[i])>v)v=num(a[i]);r=gml_value_real(v);}
 else if(!strcmp(n->text,"mean")&&c>=1){double sum=0;for(size_t i=0;i<c;i++)sum+=num(a[i]);r=gml_value_real(c>0?sum/(double)c:0.0);}
+else if(!strcmp(n->text,"median")&&c==3){r=gml_value_real(gml_median(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"clamp")&&c==3){double x=num(a[0]),lo=num(a[1]),hi=num(a[2]);r=gml_value_real(x<lo?lo:(x>hi?hi:x));}
 else if(!strcmp(n->text,"power")&&c==2)r=gml_value_real(pow(num(a[0]),num(a[1])));
 else if(!strcmp(n->text,"degtorad")&&c==1)r=gml_value_real(num(a[0])*3.14159265358979323846/180.0);
@@ -159,6 +160,13 @@ else if(!strcmp(n->text,"ds_priority_find_max")&&c==1){r=gml_value_real(gml_ds_p
 else if(!strcmp(n->text,"ds_priority_delete_max")&&c==1){r=gml_value_real(gml_ds_priority_delete_max(num(a[0])));}
 else if(!strcmp(n->text,"ds_priority_size")&&c==1){r=gml_value_real(gml_ds_priority_size(num(a[0])));}
 else if(!strcmp(n->text,"ds_priority_empty")&&c==1){r=gml_value_real(gml_ds_priority_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_create")&&c==2){r=gml_value_real(gml_ds_grid_create(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_grid_destroy")&&c==1){r=gml_value_real(gml_ds_grid_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_width")&&c==1){r=gml_value_real(gml_ds_grid_width(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_height")&&c==1){r=gml_value_real(gml_ds_grid_height(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_set")&&c==4){r=gml_value_real(gml_ds_grid_set(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get")&&c==3){r=gml_value_real(gml_ds_grid_get(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_grid_clear")&&c==2){r=gml_value_real(gml_ds_grid_clear(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ini_open")&&c==1){r=gml_value_real(gml_ini_open(text_of(a[0])));}
 else if(!strcmp(n->text,"ini_close")&&c==0){r=gml_value_real(gml_ini_close());}
 else if(!strcmp(n->text,"ini_read_real")&&c==3){r=gml_value_real(gml_ini_read_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
