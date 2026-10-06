@@ -137,6 +137,17 @@ else if(!strcmp(n->text,"ini_close")&&c==0){r=gml_value_real(gml_ini_close());}
 else if(!strcmp(n->text,"ini_read_real")&&c==3){r=gml_value_real(gml_ini_read_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ini_write_real")&&c==3){r=gml_value_real(gml_ini_write_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ini_key_exists")&&c==2){r=gml_value_real(gml_ini_key_exists(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"file_exists")&&c==1){r=gml_value_real(gml_file_exists(text_of(a[0])));}
+else if(!strcmp(n->text,"file_delete")&&c==1){r=gml_value_real(gml_file_delete(text_of(a[0])));}
+else if(!strcmp(n->text,"directory_exists")&&c==1){r=gml_value_real(gml_directory_exists(text_of(a[0])));}
+else if(!strcmp(n->text,"buffer_create")&&c>=1){r=gml_value_real(gml_buffer_create(num(a[0]),c>=2?num(a[1]):0,c>=3?num(a[2]):1));}
+else if(!strcmp(n->text,"buffer_delete")&&c==1){r=gml_value_real(gml_buffer_delete(num(a[0])));}
+else if(!strcmp(n->text,"buffer_write")&&c==3){r=gml_value_real(gml_buffer_write(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"buffer_read")&&c==2){r=gml_value_real(gml_buffer_read(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"buffer_seek")&&c==3){r=gml_value_real(gml_buffer_seek(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"buffer_tell")&&c==1){r=gml_value_real(gml_buffer_tell(num(a[0])));}
+else if(!strcmp(n->text,"buffer_get_size")&&c==1){r=gml_value_real(gml_buffer_get_size(num(a[0])));}
+else if(!strcmp(n->text,"buffer_sizeof")&&c==1){r=gml_value_real(gml_buffer_sizeof(num(a[0])));}
 else if(!strcmp(n->text,"collision_circle")&&c==6){r=gml_value_real(gml_collision_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"collision_rectangle")&&c==7){r=gml_value_real(gml_collision_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
 else if(!strcmp(n->text,"collision_line")&&c==7){r=gml_value_real(gml_collision_line(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
