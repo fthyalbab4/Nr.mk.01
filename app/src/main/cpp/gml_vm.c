@@ -75,6 +75,10 @@ else if(!strcmp(n->text,"string_repeat")&&c==2){const char*s=text_of(a[0]);int c
 else if(!strcmp(n->text,"string_count")&&c==2){const char*substr=text_of(a[0]);const char*str=text_of(a[1]);size_t sublen=strlen(substr);double cnt=0;if(sublen>0){const char*p=str;while((p=strstr(p,substr))){cnt++;p+=sublen;}}r=gml_value_real(cnt);}
 else if(!strcmp(n->text,"string_digits")&&c==1){const char*s=text_of(a[0]);size_t len=strlen(s);char*buf=malloc(len+1);if(buf){size_t out_idx=0;for(size_t i=0;i<len;i++)if(isdigit((unsigned char)s[i]))buf[out_idx++]=s[i];buf[out_idx]=0;r=gml_value_string(buf);free(buf);}}
 else if(!strcmp(n->text,"string_letters")&&c==1){const char*s=text_of(a[0]);size_t len=strlen(s);char*buf=malloc(len+1);if(buf){size_t out_idx=0;for(size_t i=0;i<len;i++)if(isalpha((unsigned char)s[i]))buf[out_idx++]=s[i];buf[out_idx]=0;r=gml_value_string(buf);free(buf);}}
+else if(!strcmp(n->text,"string_lettersdigits")&&c==1){char outbuf[512];gml_string_lettersdigits(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"string_ord_at")&&c==2){r=gml_value_real(gml_string_ord_at(text_of(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"angle_difference")&&c==2){r=gml_value_real(gml_angle_difference(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"dot_product")&&c==4){r=gml_value_real(gml_dot_product(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"real")&&c==1){r=gml_value_real(a[0].kind==GML_V_STRING?atof(text_of(a[0])):num(a[0]));}
 else if(!strcmp(n->text,"ord")&&c==1){const char*s=text_of(a[0]);r=gml_value_real(s&&s[0]?(double)(unsigned char)s[0]:0.0);}
 else if(!strcmp(n->text,"chr")&&c==1){char ch[2]={(char)(unsigned char)num(a[0]),0};r=gml_value_string(ch);}
@@ -132,6 +136,29 @@ else if(!strcmp(n->text,"ds_map_exists")&&c==2){r=gml_value_real(gml_ds_map_exis
 else if(!strcmp(n->text,"ds_map_size")&&c==1){r=gml_value_real(gml_ds_map_size(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_clear")&&c==1){r=gml_value_real(gml_ds_map_clear(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_delete")&&c==2){r=gml_value_real(gml_ds_map_delete(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_stack_create")&&c==0){r=gml_value_real(gml_ds_stack_create());}
+else if(!strcmp(n->text,"ds_stack_destroy")&&c==1){r=gml_value_real(gml_ds_stack_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_stack_push")&&c==2){r=gml_value_real(gml_ds_stack_push(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_stack_pop")&&c==1){r=gml_value_real(gml_ds_stack_pop(num(a[0])));}
+else if(!strcmp(n->text,"ds_stack_top")&&c==1){r=gml_value_real(gml_ds_stack_top(num(a[0])));}
+else if(!strcmp(n->text,"ds_stack_size")&&c==1){r=gml_value_real(gml_ds_stack_size(num(a[0])));}
+else if(!strcmp(n->text,"ds_stack_empty")&&c==1){r=gml_value_real(gml_ds_stack_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_create")&&c==0){r=gml_value_real(gml_ds_queue_create());}
+else if(!strcmp(n->text,"ds_queue_destroy")&&c==1){r=gml_value_real(gml_ds_queue_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_enqueue")&&c==2){r=gml_value_real(gml_ds_queue_enqueue(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_queue_dequeue")&&c==1){r=gml_value_real(gml_ds_queue_dequeue(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_head")&&c==1){r=gml_value_real(gml_ds_queue_head(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_tail")&&c==1){r=gml_value_real(gml_ds_queue_tail(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_size")&&c==1){r=gml_value_real(gml_ds_queue_size(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_empty")&&c==1){r=gml_value_real(gml_ds_queue_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_queue_clear")&&c==1){r=gml_value_real(gml_ds_queue_clear(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_create")&&c==0){r=gml_value_real(gml_ds_priority_create());}
+else if(!strcmp(n->text,"ds_priority_destroy")&&c==1){r=gml_value_real(gml_ds_priority_destroy(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_add")&&c==3){r=gml_value_real(gml_ds_priority_add(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_priority_find_max")&&c==1){r=gml_value_real(gml_ds_priority_find_max(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_delete_max")&&c==1){r=gml_value_real(gml_ds_priority_delete_max(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_size")&&c==1){r=gml_value_real(gml_ds_priority_size(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_empty")&&c==1){r=gml_value_real(gml_ds_priority_empty(num(a[0])));}
 else if(!strcmp(n->text,"ini_open")&&c==1){r=gml_value_real(gml_ini_open(text_of(a[0])));}
 else if(!strcmp(n->text,"ini_close")&&c==0){r=gml_value_real(gml_ini_close());}
 else if(!strcmp(n->text,"ini_read_real")&&c==3){r=gml_value_real(gml_ini_read_real(text_of(a[0]),text_of(a[1]),num(a[2])));}
@@ -144,6 +171,11 @@ else if(!strcmp(n->text,"buffer_create")&&c>=1){r=gml_value_real(gml_buffer_crea
 else if(!strcmp(n->text,"buffer_delete")&&c==1){r=gml_value_real(gml_buffer_delete(num(a[0])));}
 else if(!strcmp(n->text,"buffer_write")&&c==3){r=gml_value_real(gml_buffer_write(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"buffer_read")&&c==2){r=gml_value_real(gml_buffer_read(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"buffer_poke")&&c==4){r=gml_value_real(gml_buffer_poke(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"buffer_peek")&&c==3){r=gml_value_real(gml_buffer_peek(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"directory_create")&&c==1){r=gml_value_real(gml_directory_create(text_of(a[0])));}
+else if(!strcmp(n->text,"file_copy")&&c==2){r=gml_value_real(gml_file_copy(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"file_move")&&c==2){r=gml_value_real(gml_file_move(text_of(a[0]),text_of(a[1])));}
 else if(!strcmp(n->text,"buffer_seek")&&c==3){r=gml_value_real(gml_buffer_seek(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"buffer_tell")&&c==1){r=gml_value_real(gml_buffer_tell(num(a[0])));}
 else if(!strcmp(n->text,"buffer_get_size")&&c==1){r=gml_value_real(gml_buffer_get_size(num(a[0])));}
