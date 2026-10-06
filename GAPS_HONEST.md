@@ -1,8 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-10-03
 تاريخ التحديث: 2026-10-05
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~72%**
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~74%**
 
 ---
 
@@ -11,18 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~75% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~80% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال النصوص, العمليات على الملفات والمجلدات, متغيرات الفيزياء, الهياكل, الـ Buffers, ودوال INI |
+| **GML Runtime / Interpreter** | ~82% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`), العمليات على الملفات والمجلدات (`file_exists`, `file_delete`, `directory_exists`), متغيرات الفيزياء, الهياكل, الـ Buffers (`buffer_create`, `buffer_write`, `buffer_read`, `buffer_get_size`), ودوال INI |
 | **DnD Actions Engine** | ~58% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
 | **Physics & Collisions** | ~68% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + distance_to_point |
 | **Graphics & Rendering** | ~42% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~72%** | **بلغت ~72% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
-| **GML Runtime / Interpreter** | ~72% | تم توجيه 58+ دالة أساسية (instance_destroy/nearest/find, motion_set/add, draw_sprite_ext, sound_play, room_goto, ds_list, paths, timelines) |
-| **DnD Actions Engine** | ~55% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
-| **Physics & Collisions** | ~65% | AABB المحدث + bbox_* variables + collision_* + `move_bounce_solid/all` + `move_outside_solid/all` + `move_random` |
-| **Graphics & Rendering** | ~40% | Software Renderer على المضيف + هيكل GLES مبدئي |
-| **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~65%** | **بلغت ~65% مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~74%** | **بلغت ~74% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
@@ -35,11 +28,11 @@
 5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `dsin`, `dcos`, `dtan`, `string_letters`, `string_lettersdigits`, `string_width`, `string_height`, `string_ord_at`, `directory_exists`, `directory_create`, `file_copy`, `file_move`, `buffer_seek`, `buffer_write`, `buffer_read`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`).
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
-8. اجتياز 12 مجموعة اختبارات ذاتية ناتيف C بالكامل واختبار CMake libgm82_android بنجاح.
+8. اجتياز 17 مجموعة اختبارات ذاتية ناتيف C بالكامل واختبار CMake libgm82_android وبناء APK الأندرويد Debug بنجاح.
 
 ---
 
-## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 35%)
+## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 25%)
 
 1. **Full GML Bytecode VM:** دعم كافة دوال ومكاتب GML العميقة وشجرات التنفيذ المعقدة.
 2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
@@ -51,4 +44,4 @@
 
 ## التعهد بالشفافية
 
-عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **65%** حقيقية مع التوسع المستمر الصادق.
+عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **74%** حقيقية مع التوسع المستمر الصادق.
