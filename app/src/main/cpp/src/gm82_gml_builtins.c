@@ -225,8 +225,85 @@ void gml_draw_sprite(double sprite, double x, double y) {
 
 void gml_draw_sprite_ext(double sprite, double subimg, double x, double y,
                          double xscale, double yscale, double rot, double color, double alpha) {
-    (void)sprite; (void)subimg; (void)x; (void)y;
-    (void)xscale; (void)yscale; (void)rot; (void)color; (void)alpha;
+    (void)subimg; (void)rot;
+    if (!g_draw_buf || !g_rt || !g_rt->sprites) return;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return;
+    const gm82_decoded_frame *fr = &g_rt->sprites->frames[si];
+    if (!fr->rgba) return;
+
+    int base_w = fr->width;
+    int base_h = fr->height;
+    int dw = (int)(base_w * (xscale != 0 ? fabs(xscale) : 1.0));
+    int dh = (int)(base_h * (yscale != 0 ? fabs(yscale) : 1.0));
+    if (dw < 1) dw = 1;
+    if (dh < 1) dh = 1;
+
+    int dx0 = (int)x;
+    int dy0 = (int)y;
+    double a = alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha);
+    uint32_t c = (uint32_t)color;
+    uint8_t cr = (c >> 16) & 255;
+    uint8_t cg = (c >> 8) & 255;
+    uint8_t cb = c & 255;
+
+    for (int dy_idx = 0; dy_idx < dh; dy_idx++) {
+        int dy = dy0 + dy_idx;
+        if (dy < 0 || dy >= g_draw_h) continue;
+        int sy = (dy_idx * base_h) / dh;
+        for (int dx_idx = 0; dx_idx < dw; dx_idx++) {
+            int dx = dx0 + dx_idx;
+            if (dx < 0 || dx >= g_draw_w) continue;
+            int sx = (dx_idx * base_w) / dw;
+            const uint8_t *s = fr->rgba + ((size_t)sy * (size_t)base_w + (size_t)sx) * 4;
+            if (s[3] == 0) continue;
+            uint8_t *d = g_draw_buf + ((size_t)dy * (size_t)g_draw_w + (size_t)dx) * 4;
+
+            uint8_t sr = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[0] * cr) / 255) : s[0];
+            uint8_t sg_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[1] * cg) / 255) : s[1];
+            uint8_t sb_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[2] * cb) / 255) : s[2];
+
+            d[0] = (uint8_t)(d[0] * (1.0 - a) + sr * a);
+            d[1] = (uint8_t)(d[1] * (1.0 - a) + sg_val * a);
+            d[2] = (uint8_t)(d[2] * (1.0 - a) + sb_val * a);
+            d[3] = 255;
+        }
+    }
+}
+
+void gml_draw_self(void) {
+    if (!g_self) return;
+    gml_draw_sprite_ext(g_self->sprite_index, g_self->image_index, g_self->x, g_self->y,
+                        g_self->image_xscale, g_self->image_yscale, 0, 0xFFFFFF, 1.0);
+}
+
+double gml_move_snap(double hsnap, double vsnap) {
+    if (!g_self) return 0;
+    if (hsnap > 1.0) g_self->x = floor((g_self->x + hsnap / 2.0) / hsnap) * hsnap;
+    if (vsnap > 1.0) g_self->y = floor((g_self->y + vsnap / 2.0) / vsnap) * vsnap;
+    return 1.0;
+}
+
+double gml_place_snapped(double hsnap, double vsnap) {
+    if (!g_self) return 0;
+    int snapped_x = (hsnap <= 1.0) || (fmod(g_self->x, hsnap) == 0.0);
+    int snapped_y = (vsnap <= 1.0) || (fmod(g_self->y, vsnap) == 0.0);
+    return (snapped_x && snapped_y) ? 1.0 : 0.0;
+}
+
+double gml_instance_position(double x, double y, double object_index) {
+    if (!g_rt) return -4;
+    int32_t oi = (int32_t)object_index;
+    for (int i = 0; i < g_rt->instance_count; i++) {
+        gm82_instance *o = &g_rt->instances[i];
+        if (!o->alive) continue;
+        if (oi >= 0 && o->object_index != oi) continue;
+        int32_t ow = 16, oh = 16;
+        sprite_size(g_rt, o->sprite_index, &ow, &oh);
+        if (x >= o->x && x < o->x + ow && y >= o->y && y < o->y + oh)
+            return (double)o->id;
+    }
+    return -4;
 }
 
 double gml_get_x(void) { return g_self ? g_self->x : 0; }
@@ -1754,6 +1831,66 @@ double gml_ds_grid_clear(double id, double val) {
     int count = g_ds_grids[i].w * g_ds_grids[i].h;
     for (int j = 0; j < count; j++) g_ds_grids[i].data[j] = val;
     return 1;
+}
+
+double gml_ds_grid_get_sum(double id, double x1, double y1, double x2, double y2) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    double sum = 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            sum += g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+        }
+    }
+    return sum;
+}
+
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    double max_v = -1e300;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            double v = g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+            if (v > max_v) max_v = v;
+        }
+    }
+    return max_v == -1e300 ? 0 : max_v;
+}
+
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    double min_v = 1e300;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            double v = g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+            if (v < min_v) min_v = v;
+        }
+    }
+    return min_v == 1e300 ? 0 : min_v;
+}
+
+double gml_ds_grid_get_mean(double id, double x1, double y1, double x2, double y2) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    double sum = 0;
+    int count = 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            sum += g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+            count++;
+        }
+    }
+    return count > 0 ? sum / (double)count : 0;
 }
 
 static gm82_mp_grid_world *g_mp = NULL;

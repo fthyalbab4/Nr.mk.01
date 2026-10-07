@@ -301,6 +301,14 @@ double gml_timeline_stop(void);
 void gm82_timeline_step_instance(gm82_runtime *rt, gm82_instance *inst);
 void gml_draw_sprite_ext(double sprite, double subimg, double x, double y,
                          double xscale, double yscale, double rot, double color, double alpha);
+void gml_draw_self(void);
+double gml_move_snap(double hsnap, double vsnap);
+double gml_place_snapped(double hsnap, double vsnap);
+double gml_instance_position(double x, double y, double object_index);
+double gml_ds_grid_get_sum(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_mean(double id, double x1, double y1, double x2, double y2);
 
 /* ---- Built-in variable access on self ---- */
 double gml_get_x(void);
