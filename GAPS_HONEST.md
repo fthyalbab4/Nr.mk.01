@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-10-06
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~78%**
+تاريخ التحديث: 2026-10-07
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~80%**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~75% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~86% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat`, `string_count`), العمليات على الملفات والمجلدات (`file_exists`, `file_delete`, `directory_exists`, `directory_create`, `file_copy`, `file_move`), متغيرات الفيزياء, الهياكل الكاملة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid`), الـ Buffers (`buffer_create`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `buffer_get_size`), ودوال INI |
+| **GML Runtime / Interpreter** | ~88% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), الرياضيات ثلاثية الأبعاد (`point_distance_3d`, `dot_product_3d`), دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_trim`, `string_repeat`, `string_count`), العمليات على الملفات والمجلدات (`file_exists`, `file_delete`, `directory_exists`, `directory_create`, `file_copy`, `file_move`), متغيرات الفيزياء, الهياكل الكاملة والاحصائيات (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid_add`, `ds_grid_multiply`, `ds_grid_get_max`, `ds_grid_get_min`), الـ Buffers (`buffer_create`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `buffer_get_size`), ودوال INI |
 | **DnD Actions Engine** | ~58% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
 | **Physics & Collisions** | ~68% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + distance_to_point |
 | **Graphics & Rendering** | ~42% | Software Renderer على المضيف + هيكل GLES مبدئي |
 | **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~78%** | **بلغت ~78% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~80%** | **بلغت ~80% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
