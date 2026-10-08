@@ -424,6 +424,9 @@ double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2
 double gml_string_trim(const char *str, char *out, size_t out_sz);
 double gml_instance_deactivate_object(double object_index);
 double gml_instance_activate_object(double object_index);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
+double gml_math_hypot(double a, double b);
 
 #ifdef __cplusplus
 }

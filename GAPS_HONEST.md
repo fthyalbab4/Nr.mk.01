@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-10-06
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~80%**
+تاريخ التحديث: 2026-10-08
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~83%**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~75% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~88% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال الرسم (`draw_self`, `draw_sprite_ext` بـ scale و color alpha), المحاذاة والشبكة (`move_snap`, `place_snapped`), دوال الكائنات (`instance_position`, `instance_find`, `instance_number`), المصفوفات 2D (`array_length_2d`, `array_height_2d`), دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat`, `string_count`), العمليات على الملفات والمجلدات, الهياكل الكاملة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid` مع `ds_grid_get_sum/max/min/mean`), الـ Buffers, ودوال INI |
+| **GML Runtime / Interpreter** | ~89% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال الرسم (`draw_self`, `draw_sprite_ext` بـ scale و color alpha), المحاذاة والشبكة (`move_snap`, `place_snapped`), دوال الكائنات (`instance_position`, `instance_find`, `instance_number`), المصفوفات 2D (`array_length_2d`, `array_height_2d`), دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat_ext`, `string_trim`), العمليات على الملفات والمجلدات, الهياكل الكاملة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid` مع `ds_grid_set_region`, `ds_grid_get_sum/max/min/mean`), الـ Buffers, ودوال INI |
 | **DnD Actions Engine** | ~58% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
 | **Physics & Collisions** | ~70% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + distance_to_point + move_snap + place_snapped |
 | **Graphics & Rendering** | ~45% | Software Renderer مع رسم السبرايت والتوسعة `draw_sprite_ext` و`draw_self` + هيكل GLES مبدئي |
 | **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~80%** | **بلغت ~80% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~83%** | **بلغت ~83% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
@@ -28,11 +28,11 @@
 5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `dsin`, `dcos`, `dtan`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat`, `string_count`, `string_width`, `string_height`, `directory_exists`, `directory_create`, `file_copy`, `file_move`, `buffer_seek`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`, `ds_stack_*`, `ds_queue_*`, `ds_priority_*`, `ds_grid_*`, `median`, `angle_difference`, `dot_product`).
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
-8. اجتياز 19 مجموعة اختبارات ذاتية ناتيف C بالكامل واختبار CMake libgm82_android وبناء APK الأندرويد Debug بنجاح.
+8. اجتياز 21 مجموعة اختبارات ذاتية ناتيف C بالكامل وااختبار CMake libgm82_android وبناء APK الأندرويد Debug بنجاح.
 
 ---
 
-## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 20%)
+## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 17%)
 
 1. **Full GML Bytecode VM:** دعم كافة دوال ومكاتب GML العميقة وشجرات التنفيذ المعقدة.
 2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
@@ -44,4 +44,4 @@
 
 ## التعهد بالشفافية
 
-عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **78%** حقيقية مع التوسع المستمر الصادق.
+عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **83%** حقيقية مع التوسع المستمر الصادق.
