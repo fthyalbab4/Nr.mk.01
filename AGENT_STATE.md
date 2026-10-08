@@ -1,5 +1,6 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
+plan_B_percent: 82
 plan_B_percent: 80
 is_100: false
 claim_100_percent_allowed: false
@@ -7,6 +8,7 @@ release_tag: HOST_PROTOTYPE
 
 last_result: PASS
 last_test_log: "All 20 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-06
 last_run_date: 2026-10-07
 
 ## rules (لا تُكسر)
@@ -24,6 +26,6 @@ PROGRESS: 80% (compared to full Windows GM82)
 DONE: Expanded GML AST VM handlers and C builtins for 3D math, ds_grid stats/operations, string_trim, instance activation controls, added test_gml_vm_expanded_v4.c, and verified native compilation and Gradle Android debug APK build.
 TEST: All 20 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
 RESULT: PASS
-REMAINING: GLES Hardware Rendering, OpenSL Audio, full GML VM bytecode engine, precise per-pixel collisions, Android device testing.
+REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
 CLAIM_100: no

@@ -1,3 +1,10 @@
+#include "gm82_runtime.h"
+#include "gm82_sound_runtime.h"
+#include "gm82_gml_builtins.h"
+#include "gm82_gml_eval.h"
+#include "gm82_input.h"
+#include "gml_frontend.h"
+#include "gml_vm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
