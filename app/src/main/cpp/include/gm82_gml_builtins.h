@@ -394,6 +394,19 @@ double gml_directory_create(const char *path);
 double gml_file_copy(const char *fname, const char *newname);
 double gml_file_move(const char *fname, const char *newname);
 
+double gml_point_distance_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_ds_list_insert(double id, double pos, double val);
+double gml_ds_list_replace(double id, double pos, double val);
+double gml_ds_map_replace(double id, double key, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_string_trim(const char *str, char *out, size_t out_sz);
+double gml_instance_deactivate_object(double object_index);
+double gml_instance_activate_object(double object_index);
+
 #ifdef __cplusplus
 }
 #endif
