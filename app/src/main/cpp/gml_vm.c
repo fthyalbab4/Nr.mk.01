@@ -195,6 +195,16 @@ else if(!strcmp(n->text,"collision_ellipse")&&c==7){r=gml_value_real(gml_collisi
 else if(!strcmp(n->text,"collision_point")&&c==5){r=gml_value_real(gml_collision_point(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"place_meeting")&&c==3){r=gml_value_real(gml_place_meeting(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"place_free")&&c==2){r=gml_value_real(gml_place_free(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"keyboard_check_direct")&&c==1){r=gml_value_real(gml_keyboard_check_direct(num(a[0])));}
+else if(!strcmp(n->text,"keyboard_clear")&&c==1){r=gml_value_real(gml_keyboard_clear(num(a[0])));}
+else if(!strcmp(n->text,"io_clear")&&c==0){r=gml_value_real(gml_io_clear());}
+else if(!strcmp(n->text,"sound_volume")&&c==2){r=gml_value_real(gml_sound_volume(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"sound_pan")&&c==2){r=gml_value_real(gml_sound_pan(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"sound_pitch")&&c==2){r=gml_value_real(gml_sound_pitch(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"instance_change")&&c==2){r=gml_value_real(gml_instance_change(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"instance_copy")&&c==1){r=gml_value_real(gml_instance_copy(num(a[0])));}
+else if(!strcmp(n->text,"instance_deactivate_all")&&c==1){r=gml_value_real(gml_instance_deactivate_all(num(a[0])));}
+else if(!strcmp(n->text,"instance_activate_all")&&c==0){r=gml_value_real(gml_instance_activate_all());}
 else if(!strcmp(n->text,"file_find_first")&&c==2){r=gml_value_string(gml_file_find_first(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_find_next")&&c==0){r=gml_value_string(gml_file_find_next());}
 else if(!strcmp(n->text,"file_find_close")&&c==0){gml_file_find_close();r=gml_value_real(0);}

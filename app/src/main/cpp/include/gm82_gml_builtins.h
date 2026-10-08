@@ -344,10 +344,20 @@ double gml_get_lives(void);
 void   gml_set_lives(double v);
 double gml_get_health(void);
 void   gml_set_health(double v);
-/* Audio stubs – no device playback yet */
+/* Audio stubs and parameter controls */
 double gml_sound_play(double sound_index);
 double gml_sound_stop(double sound_index);
 double gml_sound_isplaying(double sound_index);
+double gml_sound_volume(double sound_index, double volume);
+double gml_sound_pan(double sound_index, double pan);
+double gml_sound_pitch(double sound_index, double pitch);
+
+/* Keyboard and Input state helpers */
+double gml_keyboard_check_direct(double key);
+double gml_keyboard_clear(double key);
+double gml_io_clear(void);
+double gml_keyboard_key(void);
+double gml_keyboard_lastchar(void);
 
 /* ---- Math helpers common in GML ---- */
 double gml_abs(double v);

@@ -476,6 +476,33 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }
+        if (strcmp(id, "keyboard_check_direct") == 0) {
+            *out = gml_keyboard_check_direct(arg); return true;
+        }
+        if (strcmp(id, "keyboard_clear") == 0) {
+            *out = gml_keyboard_clear(arg); return true;
+        }
+        if (strcmp(id, "io_clear") == 0) {
+            *out = gml_io_clear(); return true;
+        }
+        if (strcmp(id, "keyboard_key") == 0) {
+            *out = gml_keyboard_key(); return true;
+        }
+        if (strcmp(id, "sound_volume") == 0) {
+            *out = gml_sound_volume(arg, (nargs>=2)?args[1]:1); return true;
+        }
+        if (strcmp(id, "sound_pan") == 0) {
+            *out = gml_sound_pan(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "sound_pitch") == 0) {
+            *out = gml_sound_pitch(arg, (nargs>=2)?args[1]:1); return true;
+        }
+        if (strcmp(id, "instance_deactivate_all") == 0) {
+            *out = gml_instance_deactivate_all(arg); return true;
+        }
+        if (strcmp(id, "instance_activate_all") == 0) {
+            *out = gml_instance_activate_all(); return true;
+        }
         if (strcmp(id, "mouse_check_button") == 0) {
             *out = gml_mouse_check_button(arg); return true;
         }

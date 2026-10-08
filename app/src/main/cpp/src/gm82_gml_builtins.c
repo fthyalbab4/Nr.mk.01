@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "gm82_gml_builtins.h"
+#include "gm82_input.h"
 #include "gm82_path.h"
 #include "gm82_timeline.h"
 #include "gm82_gml_eval.h"
@@ -2455,6 +2456,16 @@ double gml_script_execute(double script_index) {
 
 static char g_alarm_scripts[12][128];
 static int g_alarm_script_set[12];
+
+double gml_keyboard_check_direct(double key) {
+    return gml_keyboard_check(key);
+}
+double gml_keyboard_key(void) {
+    return 0.0;
+}
+double gml_keyboard_lastchar(void) {
+    return 0.0;
+}
 
 double gml_alarm_set(double index, double steps) {
     if (!g_self) return 0;
