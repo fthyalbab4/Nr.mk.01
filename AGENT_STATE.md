@@ -19,6 +19,11 @@ last_run_date: 2026-10-07
 
 ## progress reality
 Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~80%.
+Expanded GML AST VM execution dispatches in gml_vm.c and C builtins in gm82_gml_builtins.c for drawing (draw_self, draw_sprite_ext with scaling/tinting), movement & grid snapping (move_snap, place_snapped), instance functions (instance_position, instance_find, instance_number), 2D array lengths, and ds_grid math (ds_grid_get_sum, ds_grid_get_max, ds_grid_get_min, ds_grid_get_mean). Added test_gml_vm_expanded_v4.c to verify AST VM execution. All 20 unit test suites pass and Gradle Android Debug APK builds successfully.
+
+## required_reply_format
+PROGRESS: 80% (compared to full Windows GM82)
+DONE: Expanded GML AST VM handlers and C builtins for draw_self, draw_sprite_ext, move_snap, place_snapped, instance_position, ds_grid math helpers, added test_gml_vm_expanded_v4.c, and verified native compilation and Gradle Android debug APK build.
 Expanded GML AST VM execution dispatches in gml_vm.c and C builtins in gm82_gml_builtins.c for 3D math (point_distance_3d, dot_product_3d), ds_grid math/stats (ds_grid_add, ds_grid_multiply, ds_grid_get_max, ds_grid_get_min), string_trim, instance activation/deactivation, and ds_list/ds_map insertions. Added test_gml_vm_expanded_v4.c to verify AST VM execution. All 20 unit test suites pass and Gradle Android Debug APK builds successfully.
 
 ## required_reply_format
