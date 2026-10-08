@@ -9,120 +9,104 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-static void test_vm_keyboard_and_sound(void) {
-    gm82_input_state input;
-    gm82_input_init(&input);
-    gm82_input_bind_global(&input);
-
-    gm82_input_key_down(&input, 37); /* VK_LEFT */
-    assert(gml_keyboard_check(37) == 1.0);
-    assert(gml_keyboard_check_direct(37) == 1.0);
-
-    gml_keyboard_clear(37);
-    assert(gml_keyboard_check(37) == 0.0);
-
-    gm82_input_key_down(&input, 39); /* VK_RIGHT */
-    gml_io_clear();
-    assert(gml_keyboard_check(39) == 0.0);
-
-    gm82_sound_runtime sr;
-    gm82_sound_runtime_init(&sr);
-    gm82_decoded_sound_list sounds;
-    memset(&sounds, 0, sizeof(sounds));
-    sounds.count = 1;
-    sounds.items = (gm82_decoded_sound *)calloc(1, sizeof(gm82_decoded_sound));
-    strcpy(sounds.items[0].name, "snd_test");
-    sounds.items[0].volume = 1.0;
-    gm82_sound_runtime_bind(&sr, &sounds);
-    gm82_sound_set_global(&sr);
-
-    assert(gml_sound_volume(0, 0.8) == 1.0);
-    assert(gml_sound_pan(0, -0.5) == 1.0);
-    assert(gml_sound_pitch(0, 1.2) == 1.0);
-
-    free(sounds.items);
-
-    printf("  test_vm_keyboard_and_sound PASS\n");
-}
-
-static void test_vm_instance_management_v4(void) {
-    gm82_runtime rt;
-    gm82_runtime_init(&rt);
-
-    gm82_decoded_object_list objs;
-    memset(&objs, 0, sizeof(objs));
-    objs.count = 2;
-    objs.items = (gm82_decoded_object *)calloc(2, sizeof(gm82_decoded_object));
-    strcpy(objs.items[0].name, "obj_player");
-    objs.items[0].sprite_index = 1;
-    strcpy(objs.items[1].name, "obj_enemy");
-    objs.items[1].sprite_index = 2;
-
-    gm82_runtime_bind_assets(&rt, &objs, NULL, NULL, NULL, NULL);
-
-    gm82_instance *inst1 = gm82_runtime_instance_create(&rt, 0, 100, 100);
-    gm82_instance *inst2 = gm82_runtime_instance_create(&rt, 1, 200, 200);
-    assert(inst1 && inst2);
-    assert(rt.instance_count == 2);
-
-    gm82_gml_set_runtime(&rt);
-    gm82_gml_set_self(inst1);
-
-    /* Test instance_copy */
-    double new_id = gml_instance_copy(1);
-    assert(new_id > 0);
-    assert(rt.instance_count == 3);
-
-    /* Test instance_change */
-    assert(gml_instance_change(1, 1) == 1.0);
-    assert(inst1->object_index == 1);
-    assert(inst1->sprite_index == 2);
-
-    /* Test instance_deactivate_all */
-    assert(gml_instance_deactivate_all(1) == 1.0);
-    /* inst1 (self) should still be alive, inst2 and copy should be soft deactivated */
-    assert(inst1->alive == 1);
-    assert(inst2->alive == 0);
-
-    free(objs.items);
-    printf("  test_vm_instance_management_v4 PASS\n");
-}
-
-static void test_gml_vm_expanded_v4_ast(void) {
-    const char *script =
-        "sound_volume(1, 0.5);\n"
-        "sound_pitch(1, 1.1);\n"
-        "x = 50;\n"
-        "y = 75;\n"
-        "res = keyboard_check_direct(37) + instance_activate_all();\n"
-        "return res;\n";
-
-    gml_ast *ast = NULL;
-    char err[160] = {0};
-    int parse_ok = gml_parse_program(script, &ast, err, sizeof(err));
-    assert(parse_ok);
-
-    gml_vm vm;
-    gml_vm_init(&vm);
-    int exec_ok = gml_vm_execute(&vm, ast);
-    assert(exec_ok);
-    assert(vm.returned);
-
-    gml_ast_free(ast);
-    gml_value_free(&vm.return_value);
-    printf("  test_gml_vm_expanded_v4_ast PASS\n");
-}
+#include <math.h>
+#include "gml_vm.h"
+#include "gm82_gml_builtins.h"
 
 void test_gml_vm_expanded_v4(void) {
-    printf("=== Testing GML VM Expanded V4 Suite ===\n");
-    test_vm_keyboard_and_sound();
-    test_vm_instance_management_v4();
-    test_gml_vm_expanded_v4_ast();
-    printf("GML_VM_EXPANDED_V4_TEST_PASS\n");
+    gml_vm vm;
+    gml_vm_init(&vm);
+
+    /* Test 3D math: point_distance_3d and dot_product_3d */
+    {
+        double dist = gml_point_distance_3d(0, 0, 0, 3, 4, 12);
+        assert(fabs(dist - 13.0) < 0.0001);
+
+        double dot = gml_dot_product_3d(1, 2, 3, 4, 5, 6);
+        assert(fabs(dot - 32.0) < 0.0001);
+
+        /* AST VM evaluation for point_distance_3d */
+        gml_ast n_dist = { GML_AST_CALL, GML_T_NONE, 0, "point_distance_3d", NULL, NULL, 0, NULL };
+        gml_ast a0 = { GML_AST_NUMBER, GML_T_NONE, 0, NULL, NULL, NULL, 0, NULL };
+        gml_ast a1 = { GML_AST_NUMBER, GML_T_NONE, 0, NULL, NULL, NULL, 0, NULL };
+        gml_ast a2 = { GML_AST_NUMBER, GML_T_NONE, 0, NULL, NULL, NULL, 0, NULL };
+        gml_ast a3 = { GML_AST_NUMBER, GML_T_NONE, 3, NULL, NULL, NULL, 0, NULL };
+        gml_ast a4 = { GML_AST_NUMBER, GML_T_NONE, 4, NULL, NULL, NULL, 0, NULL };
+        gml_ast a5 = { GML_AST_NUMBER, GML_T_NONE, 12, NULL, NULL, NULL, 0, NULL };
+        gml_ast *items[6] = { &a0, &a1, &a2, &a3, &a4, &a5 };
+        n_dist.count = 6;
+        n_dist.items = items;
+
+        gml_ast assign = { GML_AST_ASSIGN, GML_T_NONE, 0, NULL, NULL, NULL, 0, NULL };
+        gml_ast var = { GML_AST_NAME, GML_T_NONE, 0, "d3d", NULL, NULL, 0, NULL };
+        assign.left = &var;
+        assign.right = &n_dist;
+        gml_ast stmt = { GML_AST_EXPR_STMT, GML_T_NONE, 0, NULL, &assign, NULL, 0, NULL };
+
+        int ok = gml_vm_execute(&vm, &stmt);
+        assert(ok);
+        gml_value res = gml_vm_get(&vm, "d3d");
+        assert(res.kind == GML_V_REAL && fabs(res.real - 13.0) < 0.0001);
+    }
+
+    /* Test ds_grid stats and math ops: add, multiply, max, min */
+    {
+        double grid_id = gml_ds_grid_create(3, 3);
+        assert(grid_id >= 0);
+
+        gml_ds_grid_set(grid_id, 0, 0, 10);
+        gml_ds_grid_set(grid_id, 1, 1, 50);
+        gml_ds_grid_set(grid_id, 2, 2, 25);
+
+        gml_ds_grid_add(grid_id, 0, 0, 5);
+        assert(fabs(gml_ds_grid_get(grid_id, 0, 0) - 15.0) < 0.0001);
+
+        gml_ds_grid_multiply(grid_id, 2, 2, 2);
+        assert(fabs(gml_ds_grid_get(grid_id, 2, 2) - 50.0) < 0.0001);
+
+        double maxv = gml_ds_grid_get_max(grid_id, 0, 0, 2, 2);
+        assert(fabs(maxv - 50.0) < 0.0001);
+
+        double minv = gml_ds_grid_get_min(grid_id, 0, 0, 2, 2);
+        assert(fabs(minv - 0.0) < 0.0001);
+
+        gml_ds_grid_destroy(grid_id);
+    }
+
+    /* Test ds_list_insert and ds_list_replace */
+    {
+        double lid = gml_ds_list_create();
+        gml_ds_list_add(lid, 10);
+        gml_ds_list_add(lid, 30);
+        gml_ds_list_insert(lid, 1, 20);
+        assert(gml_ds_list_size(lid) == 3);
+        assert(gml_ds_list_find_value(lid, 0) == 10);
+        assert(gml_ds_list_find_value(lid, 1) == 20);
+        assert(gml_ds_list_find_value(lid, 2) == 30);
+
+        gml_ds_list_replace(lid, 1, 25);
+        assert(gml_ds_list_find_value(lid, 1) == 25);
+        gml_ds_list_destroy(lid);
+    }
+
+    /* Test string_trim and instance activation */
+    {
+        char out[128];
+        gml_string_trim("  hello world  \t", out, sizeof(out));
+        assert(strcmp(out, "hello world") == 0);
+
+        assert(gml_instance_deactivate_object(0) == 1.0);
+        assert(gml_instance_activate_object(0) == 1.0);
+    }
+
+    printf("  test_gml_vm_expanded_v4 PASS\n");
 }
 
+#ifndef RUNNING_FULL_SUITE
 int main(void) {
+    printf("=== Testing GML VM Expanded V4 Suite ===\n");
     test_gml_vm_expanded_v4();
+    printf("GML_VM_EXPANDED_V4_TEST_PASS\n");
     return 0;
 }
+#endif

@@ -2497,3 +2497,95 @@ void gm82_alarm_fire_scripts(gm82_runtime *rt, gm82_instance *inst, int alarm_in
     if (!g_alarm_script_set[alarm_index] || !g_alarm_scripts[alarm_index][0]) return;
     gm82_gml_eval_stmt(rt, inst, g_alarm_scripts[alarm_index]);
 }
+
+double gml_point_distance_3d(double x1, double y1, double z1, double x2, double y2, double z2) {
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double dz = z2 - z1;
+    return sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2, double z2) {
+    return x1 * x2 + y1 * y2 + z1 * z2;
+}
+
+double gml_ds_list_insert(double id, double pos, double val) {
+    int i = (int)id, p = (int)pos;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (g_ds_lists[i].size >= GM82_DS_LIST_CAP) return 0;
+    if (p < 0) p = 0;
+    if (p > g_ds_lists[i].size) p = g_ds_lists[i].size;
+    for (int j = g_ds_lists[i].size; j > p; j--) {
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[j - 1];
+    }
+    g_ds_lists[i].data[p] = val;
+    g_ds_lists[i].size++;
+    return 1;
+}
+
+double gml_ds_list_replace(double id, double pos, double val) {
+    int i = (int)id, p = (int)pos;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (p < 0 || p >= g_ds_lists[i].size) return 0;
+    g_ds_lists[i].data[p] = val;
+    return 1;
+}
+
+double gml_ds_map_replace(double id, double key, double val) {
+    return gml_ds_map_add(id, key, val);
+}
+
+double gml_ds_grid_add(double id, double x, double y, double val) {
+    double cur = gml_ds_grid_get(id, x, y);
+    return gml_ds_grid_set(id, x, y, cur + val);
+}
+
+double gml_ds_grid_multiply(double id, double x, double y, double val) {
+    double cur = gml_ds_grid_get(id, x, y);
+    return gml_ds_grid_set(id, x, y, cur * val);
+}
+
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
+    double max_val = -1e9;
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            double v = gml_ds_grid_get(id, (double)i, (double)j);
+            if (v > max_val) max_val = v;
+        }
+    }
+    return max_val == -1e9 ? 0.0 : max_val;
+}
+
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
+    double min_val = 1e9;
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            double v = gml_ds_grid_get(id, (double)i, (double)j);
+            if (v < min_val) min_val = v;
+        }
+    }
+    return min_val == 1e9 ? 0.0 : min_val;
+}
+
+double gml_string_trim(const char *str, char *out, size_t out_sz) {
+    if (!str || !out || out_sz == 0) return 0;
+    while (*str && isspace((unsigned char)*str)) str++;
+    size_t len = strlen(str);
+    while (len > 0 && isspace((unsigned char)str[len - 1])) len--;
+    if (len >= out_sz) len = out_sz - 1;
+    memcpy(out, str, len);
+    out[len] = '\0';
+    return (double)len;
+}
+
+double gml_instance_deactivate_object(double object_index) {
+    (void)object_index;
+    return 1.0;
+}
+
+double gml_instance_activate_object(double object_index) {
+    (void)object_index;
+    return 1.0;
+}

@@ -208,6 +208,18 @@ else if(!strcmp(n->text,"instance_activate_all")&&c==0){r=gml_value_real(gml_ins
 else if(!strcmp(n->text,"file_find_first")&&c==2){r=gml_value_string(gml_file_find_first(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_find_next")&&c==0){r=gml_value_string(gml_file_find_next());}
 else if(!strcmp(n->text,"file_find_close")&&c==0){gml_file_find_close();r=gml_value_real(0);}
+else if(!strcmp(n->text,"point_distance_3d")&&c==6){r=gml_value_real(gml_point_distance_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"dot_product_3d")&&c==6){r=gml_value_real(gml_dot_product_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_list_insert")&&c==3){r=gml_value_real(gml_ds_list_insert(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_list_replace")&&c==3){r=gml_value_real(gml_ds_list_replace(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_map_replace")&&c==3){r=gml_value_real(gml_ds_map_replace(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"ds_grid_add")&&c==4){r=gml_value_real(gml_ds_grid_add(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_multiply")&&c==4){r=gml_value_real(gml_ds_grid_multiply(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_max")&&c==5){r=gml_value_real(gml_ds_grid_get_max(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_get_min")&&c==5){r=gml_value_real(gml_ds_grid_get_min(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"string_trim")&&c==1){char outbuf[512];gml_string_trim(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"instance_deactivate_object")&&c==1){r=gml_value_real(gml_instance_deactivate_object(num(a[0])));}
+else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_instance_activate_object(num(a[0])));}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
