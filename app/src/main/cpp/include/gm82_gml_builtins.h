@@ -352,10 +352,20 @@ double gml_get_lives(void);
 void   gml_set_lives(double v);
 double gml_get_health(void);
 void   gml_set_health(double v);
-/* Audio stubs – no device playback yet */
+/* Audio stubs and parameter controls */
 double gml_sound_play(double sound_index);
 double gml_sound_stop(double sound_index);
 double gml_sound_isplaying(double sound_index);
+double gml_sound_volume(double sound_index, double volume);
+double gml_sound_pan(double sound_index, double pan);
+double gml_sound_pitch(double sound_index, double pitch);
+
+/* Keyboard and Input state helpers */
+double gml_keyboard_check_direct(double key);
+double gml_keyboard_clear(double key);
+double gml_io_clear(void);
+double gml_keyboard_key(void);
+double gml_keyboard_lastchar(void);
 
 /* ---- Math helpers common in GML ---- */
 double gml_abs(double v);
@@ -401,6 +411,19 @@ double gml_directory_exists(const char *path);
 double gml_directory_create(const char *path);
 double gml_file_copy(const char *fname, const char *newname);
 double gml_file_move(const char *fname, const char *newname);
+
+double gml_point_distance_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_ds_list_insert(double id, double pos, double val);
+double gml_ds_list_replace(double id, double pos, double val);
+double gml_ds_map_replace(double id, double key, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_string_trim(const char *str, char *out, size_t out_sz);
+double gml_instance_deactivate_object(double object_index);
+double gml_instance_activate_object(double object_index);
 
 #ifdef __cplusplus
 }

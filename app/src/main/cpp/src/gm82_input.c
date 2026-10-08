@@ -52,6 +52,24 @@ double gml_keyboard_check_released(double key) {
     return g_input->released[k] ? 1.0 : 0.0;
 }
 
+double gml_keyboard_clear(double key) {
+    int k = (int)key;
+    if (g_input && k >= 0 && k < GM82_KEY_MAX) {
+        g_input->down[k] = 0;
+        g_input->pressed[k] = 0;
+    }
+    return 1.0;
+}
+
+double gml_io_clear(void) {
+    if (g_input) {
+        memset(g_input->down, 0, sizeof(g_input->down));
+        memset(g_input->pressed, 0, sizeof(g_input->pressed));
+        memset(g_input->released, 0, sizeof(g_input->released));
+    }
+    return 1.0;
+}
+
 double gml_mouse_x(void) { return g_input ? (double)g_input->mouse_x : 0; }
 double gml_mouse_y(void) { return g_input ? (double)g_input->mouse_y : 0; }
 

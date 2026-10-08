@@ -46,3 +46,15 @@ target_link_libraries(
     gm82_android
     m
 )
+
+# Test executables for CTest / native verification
+enable_testing()
+
+file(GLOB GM82_TEST_FILES tests/*.c)
+foreach(TEST_SRC ${GM82_TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_SRC} ${GM82_SOURCES})
+    target_link_libraries(${TEST_NAME} z m)
+    add_test(NAME ${TEST_NAME} COMMAND $<TARGET_FILE:${TEST_NAME}>)
+    set_tests_properties(${TEST_NAME} PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/../..")
+endforeach()
