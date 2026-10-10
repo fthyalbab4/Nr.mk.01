@@ -228,11 +228,23 @@ else if(!strcmp(n->text,"ds_list_replace")&&c==3){r=gml_value_real(gml_ds_list_r
 else if(!strcmp(n->text,"ds_map_replace")&&c==3){r=gml_value_real(gml_ds_map_replace(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ds_grid_add")&&c==4){r=gml_value_real(gml_ds_grid_add(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"ds_grid_multiply")&&c==4){r=gml_value_real(gml_ds_grid_multiply(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
-else if(!strcmp(n->text,"ds_grid_get_max")&&c==5){r=gml_value_real(gml_ds_grid_get_max(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
-else if(!strcmp(n->text,"ds_grid_get_min")&&c==5){r=gml_value_real(gml_ds_grid_get_min(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"string_trim")&&c==1){char outbuf[512];gml_string_trim(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"instance_deactivate_object")&&c==1){r=gml_value_real(gml_instance_deactivate_object(num(a[0])));}
 else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_instance_activate_object(num(a[0])));}
+else if(!strcmp(n->text,"motion_set")&&c==2){gml_motion_set(num(a[0]),num(a[1]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"place_empty")&&c==2){r=gml_value_real(gml_place_empty(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"position_empty")&&c==2){r=gml_value_real(gml_position_empty(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"position_change")&&c==4){r=gml_value_real(gml_position_change(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"draw_line_width")&&c==5){r=gml_value_real(gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"draw_circle_color")&&c==6){r=gml_value_real(gml_draw_circle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"draw_rectangle_color")&&c==9){r=gml_value_real(gml_draw_rectangle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8])));}
+else if(!strcmp(n->text,"draw_text_ext")&&c==5){r=gml_value_real(gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"surface_create")&&c==2){r=gml_value_real(gml_surface_create(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"surface_free")&&c==1){r=gml_value_real(gml_surface_free(num(a[0])));}
+else if(!strcmp(n->text,"surface_exists")&&c==1){r=gml_value_real(gml_surface_exists(num(a[0])));}
+else if(!strcmp(n->text,"surface_set_target")&&c==1){r=gml_value_real(gml_surface_set_target(num(a[0])));}
+else if(!strcmp(n->text,"surface_reset_target")&&c==0){r=gml_value_real(gml_surface_reset_target());}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);

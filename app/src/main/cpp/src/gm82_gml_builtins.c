@@ -2682,30 +2682,6 @@ double gml_ds_grid_multiply(double id, double x, double y, double val) {
     return gml_ds_grid_set(id, x, y, cur * val);
 }
 
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
-    double max_val = -1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v > max_val) max_val = v;
-        }
-    }
-    return max_val == -1e9 ? 0.0 : max_val;
-}
-
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
-    double min_val = 1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v < min_val) min_val = v;
-        }
-    }
-    return min_val == 1e9 ? 0.0 : min_val;
-}
-
 double gml_string_trim(const char *str, char *out, size_t out_sz) {
     if (!str || !out || out_sz == 0) return 0;
     while (*str && isspace((unsigned char)*str)) str++;
@@ -2719,6 +2695,40 @@ double gml_string_trim(const char *str, char *out, size_t out_sz) {
 
 double gml_instance_deactivate_object(double object_index) {
     (void)object_index;
+    return 1.0;
+}
+
+double gml_position_empty(double x, double y) {
+    return gml_instance_position(x, y, -1.0) < 0.0 ? 1.0 : 0.0;
+}
+
+double gml_position_change(double x, double y, double obj, double perf) {
+    (void)perf;
+    gml_position_destroy(x, y);
+    return gml_instance_create(x, y, obj);
+}
+
+double gml_draw_line_width(double x1, double y1, double x2, double y2, double w) {
+    (void)w;
+    gml_draw_line(x1, y1, x2, y2);
+    return 1.0;
+}
+
+double gml_draw_circle_color(double x, double y, double r, double col1, double col2, double outline) {
+    (void)col1; (void)col2;
+    gml_draw_circle(x, y, r, outline);
+    return 1.0;
+}
+
+double gml_draw_rectangle_color(double x1, double y1, double x2, double y2, double col1, double col2, double col3, double col4, double outline) {
+    (void)col1; (void)col2; (void)col3; (void)col4;
+    gml_draw_rectangle(x1, y1, x2, y2, outline);
+    return 1.0;
+}
+
+double gml_draw_text_ext(double x, double y, const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    gml_draw_text(x, y, str);
     return 1.0;
 }
 
