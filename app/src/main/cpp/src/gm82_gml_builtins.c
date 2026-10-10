@@ -2682,29 +2682,6 @@ double gml_ds_grid_multiply(double id, double x, double y, double val) {
     return gml_ds_grid_set(id, x, y, cur * val);
 }
 
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
-    double max_val = -1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v > max_val) max_val = v;
-        }
-    }
-    return max_val == -1e9 ? 0.0 : max_val;
-}
-
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
-    double min_val = 1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v < min_val) min_val = v;
-        }
-    }
-    return min_val == 1e9 ? 0.0 : min_val;
-}
 
 double gml_string_trim(const char *str, char *out, size_t out_sz) {
     if (!str || !out || out_sz == 0) return 0;
