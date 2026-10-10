@@ -133,6 +133,45 @@ static bool get_var(gml_parser *p, const char *name, double *out) {
     if (strcmp(name, "room_speed") == 0) { *out = p->rt ? (double)p->rt->room_speed : 30; return true; }
     if (strcmp(name, "mouse_x") == 0) { *out = gml_mouse_x(); return true; }
     if (strcmp(name, "mouse_y") == 0) { *out = gml_mouse_y(); return true; }
+
+    /* View / Camera variables */
+    if (strcmp(name, "view_enabled") == 0) { *out = p->rt ? (double)p->rt->view_enabled : 0; return true; }
+    if (strcmp(name, "view_xview") == 0 || strcmp(name, "view_x") == 0) { *out = p->rt ? p->rt->view_x : 0; return true; }
+    if (strcmp(name, "view_yview") == 0 || strcmp(name, "view_y") == 0) { *out = p->rt ? p->rt->view_y : 0; return true; }
+    if (strcmp(name, "view_wview") == 0 || strcmp(name, "view_w") == 0) { *out = p->rt ? p->rt->view_w : 0; return true; }
+    if (strcmp(name, "view_hview") == 0 || strcmp(name, "view_h") == 0) { *out = p->rt ? p->rt->view_h : 0; return true; }
+    if (strcmp(name, "view_visible") == 0) { *out = 1.0; return true; }
+
+    /* Alarm variables alarm0 .. alarm11 */
+    if (strncmp(name, "alarm", 5) == 0 && isdigit((unsigned char)name[5])) {
+        int idx = atoi(name + 5);
+        if (idx >= 0 && idx < 12 && s) {
+            *out = (double)s->alarms[idx];
+            return true;
+        }
+    }
+
+    /* Color constants */
+    if (strcmp(name, "c_black") == 0) { *out = 0; return true; }
+    if (strcmp(name, "c_white") == 0) { *out = 16777215; return true; }
+    if (strcmp(name, "c_red") == 0) { *out = 255; return true; }
+    if (strcmp(name, "c_green") == 0) { *out = 32768; return true; }
+    if (strcmp(name, "c_lime") == 0) { *out = 65280; return true; }
+    if (strcmp(name, "c_blue") == 0) { *out = 16711680; return true; }
+    if (strcmp(name, "c_yellow") == 0) { *out = 65535; return true; }
+    if (strcmp(name, "c_orange") == 0) { *out = 42355; return true; }
+    if (strcmp(name, "c_purple") == 0) { *out = 8388736; return true; }
+    if (strcmp(name, "c_fuchsia") == 0) { *out = 16711935; return true; }
+    if (strcmp(name, "c_aqua") == 0) { *out = 16776960; return true; }
+    if (strcmp(name, "c_gray") == 0) { *out = 8421504; return true; }
+    if (strcmp(name, "c_silver") == 0) { *out = 12632256; return true; }
+    if (strcmp(name, "c_dkgray") == 0) { *out = 4210752; return true; }
+    if (strcmp(name, "c_ltgray") == 0) { *out = 12632256; return true; }
+    if (strcmp(name, "c_navy") == 0) { *out = 8388608; return true; }
+    if (strcmp(name, "c_maroon") == 0) { *out = 128; return true; }
+    if (strcmp(name, "c_teal") == 0) { *out = 8421376; return true; }
+    if (strcmp(name, "c_olive") == 0) { *out = 32896; return true; }
+
     /* vk_ constants (GM key codes) */
     if (strcmp(name, "vk_left") == 0) { *out = 37; return true; }
     if (strcmp(name, "vk_right") == 0) { *out = 39; return true; }
@@ -212,6 +251,22 @@ static bool set_var(gml_parser *p, const char *name, double v) {
     if (strcmp(name, "lives") == 0) { gml_set_lives(v); return true; }
     if (strcmp(name, "health") == 0) { gml_set_health(v); return true; }
 
+    /* View camera setting */
+    if (strcmp(name, "view_enabled") == 0) { if (p->rt) p->rt->view_enabled = (int32_t)v; return true; }
+    if (strcmp(name, "view_xview") == 0 || strcmp(name, "view_x") == 0) { if (p->rt) p->rt->view_x = v; return true; }
+    if (strcmp(name, "view_yview") == 0 || strcmp(name, "view_y") == 0) { if (p->rt) p->rt->view_y = v; return true; }
+    if (strcmp(name, "view_wview") == 0 || strcmp(name, "view_w") == 0) { if (p->rt) p->rt->view_w = v; return true; }
+    if (strcmp(name, "view_hview") == 0 || strcmp(name, "view_h") == 0) { if (p->rt) p->rt->view_h = v; return true; }
+
+    /* Alarm setting alarm0 .. alarm11 */
+    if (strncmp(name, "alarm", 5) == 0 && isdigit((unsigned char)name[5])) {
+        int idx = atoi(name + 5);
+        if (idx >= 0 && idx < 12 && s) {
+            s->alarms[idx] = (int32_t)v;
+            return true;
+        }
+    }
+
     /* Set custom instance variable */
     if (s) {
         for (int k = 0; k < s->var_count; k++) {
@@ -233,10 +288,54 @@ static bool set_var(gml_parser *p, const char *name, double v) {
     return false;
 }
 
+#define GML_STR_SLOT_BASE 1000000.0
+
+static char g_str_pool[32][256];
+static int g_str_pool_idx = 0;
+
+static double alloc_str_slot(const char *s) {
+    int slot = (g_str_pool_idx++) % 32;
+    strncpy(g_str_pool[slot], s ? s : "", 255);
+    g_str_pool[slot][255] = 0;
+    return -GML_STR_SLOT_BASE - (double)slot;
+}
+
+static bool is_str_slot(double v) {
+    return (v <= -GML_STR_SLOT_BASE && v >= -GML_STR_SLOT_BASE - 32.0);
+}
+
+static const char *get_str_val(double v, char *fallback_buf, size_t fallback_sz) {
+    if (is_str_slot(v)) {
+        int slot = (int)(-v - GML_STR_SLOT_BASE);
+        if (slot >= 0 && slot < 32) return g_str_pool[slot];
+    }
+    if (fallback_buf && fallback_sz > 0) {
+        if (floor(v) == v) snprintf(fallback_buf, fallback_sz, "%.0f", v);
+        else snprintf(fallback_buf, fallback_sz, "%.2f", v);
+        return fallback_buf;
+    }
+    return "";
+}
+
 static bool parse_primary(gml_parser *p, double *out) {
     skip_ws(p);
     if (p->i >= p->n) return false;
     char c = p->s[p->i];
+    if (c == '"' || c == '\'') {
+        char quote = c;
+        p->i++;
+        char sbuf[256];
+        size_t k = 0;
+        while (p->i < p->n && p->s[p->i] != quote) {
+            if (p->s[p->i] == '\\' && p->i + 1 < p->n) p->i++;
+            if (k + 1 < sizeof(sbuf)) sbuf[k++] = p->s[p->i];
+            p->i++;
+        }
+        sbuf[k] = 0;
+        if (p->i < p->n && p->s[p->i] == quote) p->i++;
+        *out = alloc_str_slot(sbuf);
+        return true;
+    }
     if (c == '(') {
         p->i++;
         if (!parse_expr(p, out)) return false;
@@ -377,6 +476,33 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "keyboard_check") == 0) {
             *out = gml_keyboard_check(arg); return true;
         }
+        if (strcmp(id, "keyboard_check_direct") == 0) {
+            *out = gml_keyboard_check_direct(arg); return true;
+        }
+        if (strcmp(id, "keyboard_clear") == 0) {
+            *out = gml_keyboard_clear(arg); return true;
+        }
+        if (strcmp(id, "io_clear") == 0) {
+            *out = gml_io_clear(); return true;
+        }
+        if (strcmp(id, "keyboard_key") == 0) {
+            *out = gml_keyboard_key(); return true;
+        }
+        if (strcmp(id, "sound_volume") == 0) {
+            *out = gml_sound_volume(arg, (nargs>=2)?args[1]:1); return true;
+        }
+        if (strcmp(id, "sound_pan") == 0) {
+            *out = gml_sound_pan(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "sound_pitch") == 0) {
+            *out = gml_sound_pitch(arg, (nargs>=2)?args[1]:1); return true;
+        }
+        if (strcmp(id, "instance_deactivate_all") == 0) {
+            *out = gml_instance_deactivate_all(arg); return true;
+        }
+        if (strcmp(id, "instance_activate_all") == 0) {
+            *out = gml_instance_activate_all(); return true;
+        }
         if (strcmp(id, "mouse_check_button") == 0) {
             *out = gml_mouse_check_button(arg); return true;
         }
@@ -399,6 +525,56 @@ static bool parse_primary(gml_parser *p, double *out) {
             double yarg = (nargs >= 2) ? args[1] : (p->self ? p->self->y : 0);
             *out = gml_place_empty(arg, yarg); return true;
         }
+        if (strcmp(id, "move_outside_solid") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_solid(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_outside_all") == 0) {
+            double maxdist = (nargs >= 2) ? args[1] : 1000;
+            *out = gml_move_outside_all(arg, maxdist); return true;
+        }
+        if (strcmp(id, "move_bounce_solid") == 0) {
+            *out = gml_move_bounce_solid(arg); return true;
+        }
+        if (strcmp(id, "move_bounce_all") == 0) {
+            *out = gml_move_bounce_all(arg); return true;
+        }
+        if (strcmp(id, "move_random") == 0) {
+            double vsnap = (nargs >= 2) ? args[1] : 1;
+            *out = gml_move_random(arg, vsnap); return true;
+        }
+        if (strcmp(id, "sprite_get_xoffset") == 0) {
+            *out = gml_sprite_get_xoffset(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_yoffset") == 0) {
+            *out = gml_sprite_get_yoffset(arg); return true;
+        }
+        if (strcmp(id, "instance_furthest") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_furthest(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "position_destroy") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_position_destroy(arg, yarg); return true;
+        }
+        if (strcmp(id, "position_meeting") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_position_meeting(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "collision_rectangle") == 0) {
+            *out = gml_collision_rectangle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:-1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0); return true;
+        }
+        if (strcmp(id, "collision_circle") == 0) {
+            *out = gml_collision_circle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:-1, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0); return true;
+        }
+        if (strcmp(id, "collision_ellipse") == 0) {
+            *out = gml_collision_ellipse(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:-1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0); return true;
+        }
+        if (strcmp(id, "collision_point") == 0) {
+            *out = gml_collision_point(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:-1, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0); return true;
+        }
         if (strcmp(id, "instance_number") == 0) {
             *out = gml_instance_number(arg); return true;
         }
@@ -410,6 +586,252 @@ static bool parse_primary(gml_parser *p, double *out) {
             double yarg = (nargs >= 2) ? args[1] : 0;
             double oarg = (nargs >= 3) ? args[2] : 0;
             *out = gml_instance_create(xarg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "instance_destroy") == 0) {
+            gml_instance_destroy();
+            *out = 1; return true;
+        }
+        if (strcmp(id, "instance_nearest") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_nearest(arg, yarg, oarg); return true;
+        }
+        if (strcmp(id, "instance_find") == 0) {
+            double oarg = arg;
+            double narg = (nargs >= 2) ? args[1] : 0;
+            *out = gml_instance_find(oarg, narg); return true;
+        }
+        if (strcmp(id, "instance_change") == 0) {
+            *out = gml_instance_change(arg, (nargs >= 2) ? args[1] : 1); return true;
+        }
+        if (strcmp(id, "instance_copy") == 0) {
+            *out = gml_instance_copy(arg); return true;
+        }
+        if (strcmp(id, "motion_set") == 0) {
+            gml_motion_set(arg, (nargs >= 2) ? args[1] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "motion_add") == 0) {
+            gml_motion_add(arg, (nargs >= 2) ? args[1] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "move_towards_point") == 0) {
+            gml_move_towards_point(arg, (nargs >= 2) ? args[1] : 0, (nargs >= 3) ? args[2] : 0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "move_contact_solid") == 0) {
+            *out = gml_move_contact_solid(arg, (nargs >= 2) ? args[1] : 1000); return true;
+        }
+        if (strcmp(id, "sound_play") == 0) {
+            *out = gml_sound_play(arg); return true;
+        }
+        if (strcmp(id, "sound_stop") == 0) {
+            *out = gml_sound_stop(arg); return true;
+        }
+        if (strcmp(id, "sound_isplaying") == 0) {
+            *out = gml_sound_isplaying(arg); return true;
+        }
+        if (strcmp(id, "sound_loop") == 0) {
+            *out = gml_sound_play(arg); return true;
+        }
+        if (strcmp(id, "draw_sprite") == 0) {
+            gml_draw_sprite(arg, (nargs >= 2) ? args[1] : (p->self ? p->self->x : 0), (nargs >= 3) ? args[2] : (p->self ? p->self->y : 0));
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_ext") == 0) {
+            gml_draw_sprite_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:1, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:16777215, (nargs>=9)?args[8]:1.0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_set_color") == 0) {
+            gml_draw_set_color(arg); *out = 1; return true;
+        }
+        if (strcmp(id, "draw_set_alpha") == 0) {
+            gml_draw_set_alpha(arg); *out = 1; return true;
+        }
+        if (strcmp(id, "draw_get_color") == 0) {
+            *out = gml_draw_get_color(); return true;
+        }
+        if (strcmp(id, "draw_get_alpha") == 0) {
+            *out = gml_draw_get_alpha(); return true;
+        }
+        if (strcmp(id, "draw_rectangle") == 0) {
+            gml_draw_rectangle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_circle") == 0) {
+            gml_draw_circle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_line") == 0) {
+            gml_draw_line(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "string") == 0) {
+            char tmp[128];
+            const char *str = get_str_val(arg, tmp, sizeof(tmp));
+            *out = alloc_str_slot(str); return true;
+        }
+        if (strcmp(id, "ini_open") == 0) {
+            char tmp[256];
+            *out = gml_ini_open(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "file_exists") == 0) {
+            char tmp[256];
+            *out = gml_file_exists(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "file_delete") == 0) {
+            char tmp[256];
+            *out = gml_file_delete(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "directory_exists") == 0) {
+            char tmp[256];
+            *out = gml_directory_exists(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "directory_create") == 0) {
+            char tmp[256];
+            *out = gml_directory_create(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "draw_text") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text(arg, (nargs>=2)?args[1]:0, txt);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_text_color") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text_color(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:16777215, (nargs>=5)?args[4]:16777215, (nargs>=6)?args[5]:16777215, (nargs>=7)?args[6]:16777215);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "string_length") == 0) {
+            char tmp[256];
+            *out = gml_string_length(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "string_pos") == 0) {
+            char t1[256], t2[256];
+            *out = gml_string_pos(get_str_val(arg, t1, sizeof(t1)), get_str_val((nargs>=2)?args[1]:0, t2, sizeof(t2))); return true;
+        }
+        if (strcmp(id, "string_copy") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_copy(get_str_val(arg, t1, sizeof(t1)), (nargs>=2)?args[1]:1, (nargs>=3)?args[2]:1, outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_letters") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_letters(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_digits") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_digits(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_lower") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_lower(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "string_upper") == 0) {
+            char t1[256], outbuf[256];
+            gml_string_upper(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
+        if (strcmp(id, "room_goto") == 0) {
+            *out = gml_room_goto(arg); return true;
+        }
+        if (strcmp(id, "room_goto_next") == 0) {
+            *out = gml_room_goto_next(); return true;
+        }
+        if (strcmp(id, "room_goto_previous") == 0) {
+            *out = gml_room_goto_previous(); return true;
+        }
+        if (strcmp(id, "room_restart") == 0) {
+            *out = gml_room_restart(); return true;
+        }
+        if (strcmp(id, "game_end") == 0) {
+            *out = gml_game_end(); return true;
+        }
+        if (strcmp(id, "game_restart") == 0) {
+            *out = gml_game_restart(); return true;
+        }
+        if (strcmp(id, "sprite_get_width") == 0) {
+            *out = gml_sprite_get_width(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_height") == 0) {
+            *out = gml_sprite_get_height(arg); return true;
+        }
+        if (strcmp(id, "sprite_get_number") == 0) {
+            *out = gml_sprite_get_number(arg); return true;
+        }
+        if (strcmp(id, "sprite_exists") == 0) {
+            *out = gml_sprite_exists(arg); return true;
+        }
+        if (strcmp(id, "object_exists") == 0) {
+            *out = gml_object_exists(arg); return true;
+        }
+        if (strcmp(id, "object_get_sprite") == 0) {
+            *out = gml_object_get_sprite(arg); return true;
+        }
+        if (strcmp(id, "object_get_solid") == 0) {
+            *out = gml_object_get_solid(arg); return true;
+        }
+        if (strcmp(id, "ds_list_create") == 0) {
+            *out = gml_ds_list_create(); return true;
+        }
+        if (strcmp(id, "ds_list_destroy") == 0) {
+            *out = gml_ds_list_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_list_add") == 0) {
+            *out = gml_ds_list_add(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "ds_list_find_value") == 0) {
+            *out = gml_ds_list_find_value(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "ds_list_size") == 0) {
+            *out = gml_ds_list_size(arg); return true;
+        }
+        if (strcmp(id, "ds_map_create") == 0) {
+            *out = gml_ds_map_create(); return true;
+        }
+        if (strcmp(id, "ds_map_destroy") == 0) {
+            *out = gml_ds_map_destroy(arg); return true;
+        }
+        if (strcmp(id, "ds_map_add") == 0) {
+            *out = gml_ds_map_add(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0); return true;
+        }
+        if (strcmp(id, "ds_map_find_value") == 0) {
+            *out = gml_ds_map_find_value(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "path_start") == 0) {
+            *out = gml_path_start(arg, (nargs>=2)?args[1]:1, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0); return true;
+        }
+        if (strcmp(id, "path_end") == 0) {
+            *out = gml_path_end(); return true;
+        }
+        if (strcmp(id, "timeline_start") == 0) {
+            *out = gml_timeline_start(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:1, (nargs>=4)?args[3]:1); return true;
+        }
+        if (strcmp(id, "timeline_stop") == 0) {
+            *out = gml_timeline_stop(); return true;
+        }
+        if (strcmp(id, "random") == 0) {
+            *out = gml_random(arg); return true;
+        }
+        if (strcmp(id, "random_range") == 0) {
+            *out = gml_random_range(arg, (nargs>=2)?args[1]:arg); return true;
+        }
+        if (strcmp(id, "irandom_range") == 0) {
+            *out = gml_irandom_range(arg, (nargs>=2)?args[1]:arg); return true;
+        }
+        if (strcmp(id, "choose") == 0) {
+            if (nargs > 0) {
+                *out = args[rand() % nargs];
+            } else {
+                *out = arg;
+            }
+            return true;
         }
         if (strcmp(id, "draw_self") == 0) {
             if (p->self) gml_draw_sprite((double)p->self->sprite_index, p->self->x, p->self->y);
@@ -459,8 +881,19 @@ static bool parse_additive(gml_parser *p, double *out) {
         getc_(p);
         double r;
         if (!parse_term(p, &r)) return false;
-        if (c == '+') *out += r;
-        else *out -= r;
+        if (c == '+') {
+            if (is_str_slot(*out) || is_str_slot(r)) {
+                char t1[256], t2[256], res[512];
+                const char *s1 = get_str_val(*out, t1, sizeof(t1));
+                const char *s2 = get_str_val(r, t2, sizeof(t2));
+                snprintf(res, sizeof(res), "%s%s", s1, s2);
+                *out = alloc_str_slot(res);
+            } else {
+                *out += r;
+            }
+        } else {
+            *out -= r;
+        }
     }
     return true;
 }

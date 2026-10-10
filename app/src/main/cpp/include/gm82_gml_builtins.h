@@ -33,8 +33,10 @@ void   gml_instance_destroy(void); /* destroys self */
 double gml_instance_number(double object_index); /* -1 = all */
 double gml_instance_exists(double id_or_object);
 double gml_instance_nearest(double x, double y, double object_index);
+double gml_instance_furthest(double x, double y, double object_index);
 double gml_instance_find(double object_index, double n);
 double gml_distance_to_object(double object_index);
+double gml_position_destroy(double x, double y);
 
 /* ---- Motion ---- */
 void   gml_motion_set(double dir, double spd);
@@ -60,9 +62,16 @@ double gml_collision_point(double x, double y, double obj, double prec, double n
 double gml_place_free(double x, double y);
 double gml_place_empty(double x, double y);
 double gml_move_contact_solid(double dir, double maxdist);
+double gml_move_outside_solid(double dir, double maxdist);
+double gml_move_outside_all(double dir, double maxdist);
+double gml_move_bounce_solid(double advanced);
+double gml_move_bounce_all(double advanced);
+double gml_move_random(double hsnap, double vsnap);
 double gml_sprite_get_width(double sprite);
 double gml_sprite_get_height(double sprite);
 double gml_sprite_get_number(double sprite);
+double gml_sprite_get_xoffset(double sprite);
+double gml_sprite_get_yoffset(double sprite);
 double gml_sprite_exists(double sprite);
 double gml_object_exists(double object_index);
 double gml_object_get_sprite(double object_index);
@@ -147,6 +156,15 @@ double gml_ds_priority_delete_max(double id);
 double gml_ds_priority_find_max(double id);
 double gml_ds_priority_size(double id);
 double gml_ds_priority_empty(double id);
+
+/* ds_grid */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_clear(double id, double val);
 
 void gm82_mp_grid_bind(gm82_mp_grid_world *w);
 double gml_mp_grid_create(double left, double top, double hcells, double vcells, double cellw, double cellh);
@@ -283,6 +301,14 @@ double gml_timeline_stop(void);
 void gm82_timeline_step_instance(gm82_runtime *rt, gm82_instance *inst);
 void gml_draw_sprite_ext(double sprite, double subimg, double x, double y,
                          double xscale, double yscale, double rot, double color, double alpha);
+void gml_draw_self(void);
+double gml_move_snap(double hsnap, double vsnap);
+double gml_place_snapped(double hsnap, double vsnap);
+double gml_instance_position(double x, double y, double object_index);
+double gml_ds_grid_get_sum(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_mean(double id, double x1, double y1, double x2, double y2);
 
 /* ---- Built-in variable access on self ---- */
 double gml_get_x(void);
@@ -326,10 +352,20 @@ double gml_get_lives(void);
 void   gml_set_lives(double v);
 double gml_get_health(void);
 void   gml_set_health(double v);
-/* Audio stubs – no device playback yet */
+/* Audio stubs and parameter controls */
 double gml_sound_play(double sound_index);
 double gml_sound_stop(double sound_index);
 double gml_sound_isplaying(double sound_index);
+double gml_sound_volume(double sound_index, double volume);
+double gml_sound_pan(double sound_index, double pan);
+double gml_sound_pitch(double sound_index, double pitch);
+
+/* Keyboard and Input state helpers */
+double gml_keyboard_check_direct(double key);
+double gml_keyboard_clear(double key);
+double gml_io_clear(void);
+double gml_keyboard_key(void);
+double gml_keyboard_lastchar(void);
 
 /* ---- Math helpers common in GML ---- */
 double gml_abs(double v);
@@ -375,6 +411,25 @@ double gml_directory_exists(const char *path);
 double gml_directory_create(const char *path);
 double gml_file_copy(const char *fname, const char *newname);
 double gml_file_move(const char *fname, const char *newname);
+
+double gml_point_distance_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_ds_list_insert(double id, double pos, double val);
+double gml_ds_list_replace(double id, double pos, double val);
+double gml_ds_map_replace(double id, double key, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
+double gml_string_trim(const char *str, char *out, size_t out_sz);
+double gml_instance_deactivate_object(double object_index);
+double gml_instance_activate_object(double object_index);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_fill(double id, double val);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+double gml_string_pos_ext(const char *substr, const char *str, double start_pos);
+double gml_string_last_pos(const char *substr, const char *str);
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
+double gml_instance_activate_region(double left, double top, double width, double height, double inside);
 
 #ifdef __cplusplus
 }
