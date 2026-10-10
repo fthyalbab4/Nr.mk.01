@@ -165,6 +165,8 @@ double gml_ds_grid_height(double id);
 double gml_ds_grid_set(double id, double x, double y, double val);
 double gml_ds_grid_get(double id, double x, double y);
 double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
 
 void gm82_mp_grid_bind(gm82_mp_grid_world *w);
 double gml_mp_grid_create(double left, double top, double hcells, double vcells, double cellw, double cellh);

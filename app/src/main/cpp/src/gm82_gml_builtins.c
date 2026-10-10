@@ -1834,6 +1834,32 @@ double gml_ds_grid_clear(double id, double val) {
     return 1;
 }
 
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+        }
+    }
+    return 1;
+}
+
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+        }
+    }
+    return 1;
+}
+
 double gml_ds_grid_get_sum(double id, double x1, double y1, double x2, double y2) {
     int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
@@ -2680,30 +2706,6 @@ double gml_ds_grid_add(double id, double x, double y, double val) {
 double gml_ds_grid_multiply(double id, double x, double y, double val) {
     double cur = gml_ds_grid_get(id, x, y);
     return gml_ds_grid_set(id, x, y, cur * val);
-}
-
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
-    double max_val = -1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v > max_val) max_val = v;
-        }
-    }
-    return max_val == -1e9 ? 0.0 : max_val;
-}
-
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
-    double min_val = 1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v < min_val) min_val = v;
-        }
-    }
-    return min_val == 1e9 ? 0.0 : min_val;
 }
 
 double gml_string_trim(const char *str, char *out, size_t out_sz) {
