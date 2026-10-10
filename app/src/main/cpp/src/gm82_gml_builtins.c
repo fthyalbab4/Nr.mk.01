@@ -2682,29 +2682,6 @@ double gml_ds_grid_multiply(double id, double x, double y, double val) {
     return gml_ds_grid_set(id, x, y, cur * val);
 }
 
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
-    double max_val = -1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v > max_val) max_val = v;
-        }
-    }
-    return max_val == -1e9 ? 0.0 : max_val;
-}
-
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
-    double min_val = 1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v < min_val) min_val = v;
-        }
-    }
-    return min_val == 1e9 ? 0.0 : min_val;
-}
 
 double gml_string_trim(const char *str, char *out, size_t out_sz) {
     if (!str || !out || out_sz == 0) return 0;
@@ -2719,6 +2696,99 @@ double gml_string_trim(const char *str, char *out, size_t out_sz) {
 
 double gml_instance_deactivate_object(double object_index) {
     (void)object_index;
+    return 1.0;
+}
+
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+        }
+    }
+    return 1.0;
+}
+
+double gml_ds_grid_fill(double id, double val) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    int count = g_ds_grids[i].w * g_ds_grids[i].h;
+    for (int j = 0; j < count; j++) g_ds_grids[i].data[j] = val;
+    return 1.0;
+}
+
+static int compare_doubles_asc(const void *a, const void *b) {
+    double da = *(const double*)a;
+    double db = *(const double*)b;
+    if (da < db) return -1;
+    if (da > db) return 1;
+    return 0;
+}
+
+static int compare_doubles_desc(const void *a, const void *b) {
+    double da = *(const double*)a;
+    double db = *(const double*)b;
+    if (da > db) return -1;
+    if (da < db) return 1;
+    return 0;
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    if (ascending != 0.0) {
+        qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double), compare_doubles_asc);
+    } else {
+        qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double), compare_doubles_desc);
+    }
+    return 1.0;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    int n = g_ds_lists[i].size;
+    for (int j = n - 1; j > 0; j--) {
+        int r = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[r];
+        g_ds_lists[i].data[r] = tmp;
+    }
+    return 1.0;
+}
+
+double gml_string_pos_ext(const char *substr, const char *str, double start_pos) {
+    if (!substr || !str || start_pos < 1) return 0;
+    size_t len = strlen(str);
+    size_t start = (size_t)(start_pos - 1);
+    if (start >= len) return 0;
+    const char *p = strstr(str + start, substr);
+    return p ? (double)(p - str + 1) : 0.0;
+}
+
+double gml_string_last_pos(const char *substr, const char *str) {
+    if (!substr || !str || !substr[0]) return 0;
+    size_t sub_len = strlen(substr);
+    size_t str_len = strlen(str);
+    if (sub_len > str_len) return 0;
+    for (int i = (int)(str_len - sub_len); i >= 0; i--) {
+        if (strncmp(str + i, substr, sub_len) == 0) {
+            return (double)(i + 1);
+        }
+    }
+    return 0.0;
+}
+
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside; (void)notme;
+    return 1.0;
+}
+
+double gml_instance_activate_region(double left, double top, double width, double height, double inside) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside;
     return 1.0;
 }
 

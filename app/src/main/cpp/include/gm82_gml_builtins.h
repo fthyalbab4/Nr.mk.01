@@ -419,11 +419,17 @@ double gml_ds_list_replace(double id, double pos, double val);
 double gml_ds_map_replace(double id, double key, double val);
 double gml_ds_grid_add(double id, double x, double y, double val);
 double gml_ds_grid_multiply(double id, double x, double y, double val);
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
 double gml_string_trim(const char *str, char *out, size_t out_sz);
 double gml_instance_deactivate_object(double object_index);
 double gml_instance_activate_object(double object_index);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_fill(double id, double val);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+double gml_string_pos_ext(const char *substr, const char *str, double start_pos);
+double gml_string_last_pos(const char *substr, const char *str);
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
+double gml_instance_activate_region(double left, double top, double width, double height, double inside);
 
 #ifdef __cplusplus
 }

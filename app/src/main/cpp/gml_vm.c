@@ -228,11 +228,17 @@ else if(!strcmp(n->text,"ds_list_replace")&&c==3){r=gml_value_real(gml_ds_list_r
 else if(!strcmp(n->text,"ds_map_replace")&&c==3){r=gml_value_real(gml_ds_map_replace(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ds_grid_add")&&c==4){r=gml_value_real(gml_ds_grid_add(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"ds_grid_multiply")&&c==4){r=gml_value_real(gml_ds_grid_multiply(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
-else if(!strcmp(n->text,"ds_grid_get_max")&&c==5){r=gml_value_real(gml_ds_grid_get_max(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
-else if(!strcmp(n->text,"ds_grid_get_min")&&c==5){r=gml_value_real(gml_ds_grid_get_min(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"string_trim")&&c==1){char outbuf[512];gml_string_trim(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"instance_deactivate_object")&&c==1){r=gml_value_real(gml_instance_deactivate_object(num(a[0])));}
 else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_instance_activate_object(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_set_region")&&c==6){r=gml_value_real(gml_ds_grid_set_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_fill")&&c==2){r=gml_value_real(gml_ds_grid_fill(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_sort")&&c==2){r=gml_value_real(gml_ds_list_sort(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_shuffle")&&c==1){r=gml_value_real(gml_ds_list_shuffle(num(a[0])));}
+else if(!strcmp(n->text,"string_pos_ext")&&c==3){r=gml_value_real(gml_string_pos_ext(text_of(a[0]),text_of(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"string_last_pos")&&c==2){r=gml_value_real(gml_string_last_pos(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"instance_deactivate_region")&&c==6){r=gml_value_real(gml_instance_deactivate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"instance_activate_region")&&c==5){r=gml_value_real(gml_instance_activate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
