@@ -1,21 +1,27 @@
 # تقدم مشروع NOR Maker / GM82
 
-تاريخ التحديث: 2026-09-30
-النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~58%**
+تاريخ التحديث: 2026-10-06
+النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~80%**
 
 ## 📌 ملخص الوضع الحالي
-- النواة تتطور كنسخة أولية على Host (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, وتتبع متغيرات الملاحة والفيزياء `xstart`, `ystart`, `xprevious`, `yprevious`, `gravity`, `friction` وحساب أحجام السبرايت المجمعة `image_xscale/yscale` باصطدامات الأشكال والحجم المتقدم).
-- اجتياز 10 اختبارات ذاتية ناتيف بالكامل وتأكيد بناء نسخة Android Debug APK بنجاح عبر `gradle assembleDebug`.
-- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **58%**.
+- النواة تتطور كنسخة أولية على Host و Android (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, والتعابير النصية المقتبسة `"..."` والربط النصي `+` وثوابت الألوان المعيارية `c_black..c_olive` ومتغيرات الكاميرا `view_xview/yview/wview/hview/enabled` والمنبهات `alarm0..11`, ودوال المثلثات بالدرجات, ودوال الرسم `draw_self`, `draw_sprite_ext`, والمحاذاة `move_snap`, `place_snapped`, ودوال الكائنات `instance_position`, `instance_find`, `instance_number`, ودوال النصوص, وإدارة الملفات والمجلدات, وحساب المسافات والزوايا, ومتغيرات الفيزياء وحزم الهياكل البياناتية `ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid` مع `ds_grid_get_sum/max/min/mean` والبافرات في VM).
+- اجتياز 20 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake وتجميع تطبيق الأندرويد `app-debug.apk` عبر Gradle بنجاح 100%.
+- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **80%**.
+النسبة الفعلية مقارنة بـ Windows GM82 الكامل: **~82%**
+
+## 📌 ملخص الوضع الحالي
+- النواة تتطور كنسخة أولية على Host و Android (تفك GMK، تمارس Soft Render، تحاكي فيزياء ماريو، تنفذ أفعال DnD وحلقات GML التحكمية `while`, `do...until`, والتعابير النصية المقتبسة `"..."` والربط النصي `+` وثوابت الألوان المعيارية `c_black..c_olive` ومتغيرات الكاميرا `view_xview/yview/wview/hview/enabled` والمنبهات `alarm0..11`, ودوال المثلثات بالدرجات `dsin`, `dcos`, `dtan`, ودوال النصوص `string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_replace_all`, وإدارة الملفات والمجلدات `file_exists`, `file_delete`, `directory_exists`, `directory_create`, `file_copy`, `file_move`, وحساب المسافات والزوايا `angle_difference`, `dot_product`, ومتغيرات الفيزياء وحزم الهياكل البياناتية `ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid` والبافرات في VM `buffer_create`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `buffer_get_size`, `buffer_delete`, `buffer_seek`, `buffer_tell`, `buffer_sizeof`, واستعلامات وتصفير لوحة المفاتيح `keyboard_check_direct`, `keyboard_clear`, `io_clear`, والتحكم بأبعاد وحجم الصوت `sound_volume`, `sound_pan`, `sound_pitch`, وإدارة الكائنات `instance_change`, `instance_copy`, `instance_deactivate_all`, والتحكم بتنقل الغرف `room_goto_next`, `room_goto_previous`, `room_restart`, `game_restart`).
+- اجتياز 20 اختبار ذاتي ناتيف بالكامل وبناء المكتبة الناتيف `libgm82_android.so` عبر CMake وتجميع تطبيق الأندرويد `app-debug.apk` عبر Gradle بنجاح 100%.
+- النسبة الإجمالية مقارنة بالمحرك الكامل لويندوز هي **82%**.
 
 ## 🗺️ خطة التطوير الشاملة للوصول لـ Core & GML Full Support
 
 ### المرحلة 1: مفسر وVM الـ GML (GML Bytecode VM Engine)
-- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال النصوص (`string_copy`, `string_replace`, `string_replace_all`).
-- تحسين التعامل مع المصفوفات ثنائية الأبعاد والبُنى البياناتية المتعددة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`).
+- دعم كامل لكافة تعابير ودوال GML العميقة وتمرير المعاملات المتقدمة ودوال المثلثات والنصوص بالدرجات ورمز المحارف `string_ord_at`.
+- تحسين التعامل مع المصفوفات ثنائية الأبعاد والبُنى البياناتية المتعددة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`) والـ Buffers (`buffer_create`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `buffer_get_size`, `buffer_seek`).
 
 ### المرحلة 2: الاصطدامات الدقيقة (Precise Collision Masking)
-- دعم الأشكال الصدامية `collision_line` و`collision_ellipse` و`collision_circle` و`collision_rectangle`.
+- دعم الأشكال الصدامية `collision_line` و`collision_ellipse` و`collision_circle` و`collision_rectangle` و`collision_point` و`distance_to_point`.
 - الانتقال المستقبلي إلى Per-Pixel Masking لكل سبرايت.
 
 ### المرحلة 3: معالجة العرض والجرافيكس العتادي (GLES Hardware Pipeline)
