@@ -2574,6 +2574,52 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            gml_ds_grid_set(id, (double)i, (double)j, val);
+        }
+    }
+    return 1.0;
+}
+
+double gml_ds_grid_value_exists(double id, double x1, double y1, double x2, double y2, double val) {
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            if (fabs(gml_ds_grid_get(id, (double)i, (double)j) - val) < 0.0001) {
+                return 1.0;
+            }
+        }
+    }
+    return 0.0;
+}
+
+double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2, double val) {
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            if (fabs(gml_ds_grid_get(id, (double)i, (double)j) - val) < 0.0001) {
+                return (double)i;
+            }
+        }
+    }
+    return -1.0;
+}
+
+double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val) {
+    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
+    for (int i = ix1; i <= ix2; i++) {
+        for (int j = iy1; j <= iy2; j++) {
+            if (fabs(gml_ds_grid_get(id, (double)i, (double)j) - val) < 0.0001) {
+                return (double)j;
+            }
+        }
+    }
+    return -1.0;
+}
+
 double gml_instance_activate_object(double object_index) {
     (void)object_index;
     return 1.0;
