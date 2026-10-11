@@ -2698,6 +2698,50 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+            }
+        }
+    }
+    return 1.0;
+}
+
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+            }
+        }
+    }
+    return 1.0;
+}
+
+double gml_instance_activate_region(double left, double top, double width, double height, double inside) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside;
+    return 1.0;
+}
+
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside; (void)notme;
+    return 1.0;
+}
+
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val) {
     int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
