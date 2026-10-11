@@ -234,6 +234,18 @@ else if(!strcmp(n->text,"string_trim")&&c==1){char outbuf[512];gml_string_trim(t
 else if(!strcmp(n->text,"instance_deactivate_object")&&c==1){r=gml_value_real(gml_instance_deactivate_object(num(a[0])));}
 else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_instance_activate_object(num(a[0])));}
 else if(!strcmp(n->text,"ds_grid_set_region")&&c==6){r=gml_value_real(gml_ds_grid_set_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_set_disk")&&c==5){r=gml_value_real(gml_ds_grid_set_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_add_disk")&&c==5){r=gml_value_real(gml_ds_grid_add_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"instance_activate_region")&&c==5){r=gml_value_real(gml_instance_activate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"instance_deactivate_region")&&c==6){r=gml_value_real(gml_instance_deactivate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"display_get_width")&&c==0){r=gml_value_real(gml_display_get_width());}
+else if(!strcmp(n->text,"display_get_height")&&c==0){r=gml_value_real(gml_display_get_height());}
+else if(!strcmp(n->text,"window_get_width")&&c==0){r=gml_value_real(gml_window_get_width());}
+else if(!strcmp(n->text,"window_get_height")&&c==0){r=gml_value_real(gml_window_get_height());}
+else if(!strcmp(n->text,"file_text_open_read")&&c==1){r=gml_value_real(gml_file_text_open_read(text_of(a[0])));}
+else if(!strcmp(n->text,"file_text_open_write")&&c==1){r=gml_value_real(gml_file_text_open_write(text_of(a[0])));}
+else if(!strcmp(n->text,"file_text_close")&&c==1){r=gml_value_real(gml_file_text_close(num(a[0])));}
+else if(!strcmp(n->text,"file_text_eof")&&c==1){r=gml_value_real(gml_file_text_eof(num(a[0])));}
 else if(!strcmp(n->text,"string_repeat_ext")&&c==2){char outbuf[1024];gml_string_repeat_ext(text_of(a[0]),num(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]),num(a[1])));}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}

@@ -425,6 +425,10 @@ double gml_string_trim(const char *str, char *out, size_t out_sz);
 double gml_instance_deactivate_object(double object_index);
 double gml_instance_activate_object(double object_index);
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val);
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val);
+double gml_instance_activate_region(double left, double top, double width, double height, double inside);
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
 double gml_math_hypot(double a, double b);
 
