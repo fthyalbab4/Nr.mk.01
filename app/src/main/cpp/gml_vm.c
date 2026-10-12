@@ -248,6 +248,16 @@ else if(!strcmp(n->text,"file_text_close")&&c==1){r=gml_value_real(gml_file_text
 else if(!strcmp(n->text,"file_text_eof")&&c==1){r=gml_value_real(gml_file_text_eof(num(a[0])));}
 else if(!strcmp(n->text,"string_repeat_ext")&&c==2){char outbuf[1024];gml_string_repeat_ext(text_of(a[0]),num(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_grid_multiply_region")&&c==6){r=gml_value_real(gml_ds_grid_multiply_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"string_insert")&&c==3){char outbuf[1024];gml_string_insert(text_of(a[0]),text_of(a[1]),num(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"string_delete")&&c==3){char outbuf[1024];gml_string_delete(text_of(a[0]),num(a[1]),num(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"choose")&&c>=1){size_t idx=(size_t)(rand()%c);r=copyv(&a[idx]);}
+else if(!strcmp(n->text,"random_range")&&c==2){r=gml_value_real(gml_random_range(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"irandom")&&c==1){r=gml_value_real(gml_irandom(num(a[0])));}
+else if(!strcmp(n->text,"irandom_range")&&c==2){r=gml_value_real(gml_irandom_range(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"motion_set")&&c==2){gml_motion_set(num(a[0]),num(a[1]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
