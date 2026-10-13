@@ -246,6 +246,14 @@ else if(!strcmp(n->text,"file_text_open_read")&&c==1){r=gml_value_real(gml_file_
 else if(!strcmp(n->text,"file_text_open_write")&&c==1){r=gml_value_real(gml_file_text_open_write(text_of(a[0])));}
 else if(!strcmp(n->text,"file_text_close")&&c==1){r=gml_value_real(gml_file_text_close(num(a[0])));}
 else if(!strcmp(n->text,"file_text_eof")&&c==1){r=gml_value_real(gml_file_text_eof(num(a[0])));}
+else if(!strcmp(n->text,"file_text_read_string")&&c==1){char outbuf[1024];gml_file_text_read_string(num(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"file_text_readln")&&c==1){r=gml_value_real(gml_file_text_readln(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_value_exists")&&c==6){r=gml_value_real(gml_ds_grid_value_exists(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_value_x")&&c==6){r=gml_value_real(gml_ds_grid_value_x(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_value_y")&&c==6){r=gml_value_real(gml_ds_grid_value_y(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"point_in_circle")&&c==5){r=gml_value_real(gml_point_in_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"draw_circle_color")&&c==6){gml_draw_circle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_rectangle_color")&&c==9){gml_draw_rectangle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"string_repeat_ext")&&c==2){char outbuf[1024];gml_string_repeat_ext(text_of(a[0]),num(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_grid_multiply_region")&&c==6){r=gml_value_real(gml_ds_grid_multiply_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
