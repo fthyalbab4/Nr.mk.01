@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 87
+plan_B_percent: 88
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 24 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-10-08
+last_test_log: "All 25 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-13
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -16,13 +16,13 @@ last_run_date: 2026-10-08
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~87%.
-Expanded GML AST VM execution dispatches in gml_vm.c and C builtins in gm82_gml_builtins.c for window_get_fullscreen, window_set_fullscreen, ds_grid_copy, string_width_ext, string_height_ext, draw_line_width, and draw_text_ext. Added test_gml_vm_expanded_v8.c to verify AST VM execution. All 24 unit test suites pass and Gradle Android Debug APK builds successfully.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~88%.
+Expanded GML AST VM execution dispatches in gml_vm.c and C builtins in gm82_gml_builtins.c for file_text_read_string, file_text_readln, ds_grid_value_exists, ds_grid_value_x, ds_grid_value_y, point_in_circle, draw_circle_color, and draw_rectangle_color. Added test_gml_vm_expanded_v9.c to verify AST VM execution. All 25 unit test suites pass and Gradle Android Debug APK builds successfully.
 
 ## required_reply_format
-PROGRESS: 87% (compared to full Windows GM82)
-DONE: Expanded GML AST VM handlers and C builtins for window_get_fullscreen, window_set_fullscreen, ds_grid_copy, string_width_ext, string_height_ext, draw_line_width, draw_text_ext, added test_gml_vm_expanded_v8.c, and verified native compilation and Gradle Android debug APK build.
-TEST: All 24 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_gml_vm_expanded_v5 PASS, test_gml_vm_expanded_v6 PASS, test_gml_vm_expanded_v7 PASS, test_gml_vm_expanded_v8 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
+PROGRESS: 88% (compared to full Windows GM82)
+DONE: Expanded GML AST VM handlers and C builtins for file_text_read_string, file_text_readln, ds_grid_value_exists, ds_grid_value_x, ds_grid_value_y, point_in_circle, draw_circle_color, draw_rectangle_color, added test_gml_vm_expanded_v9.c, and verified native compilation and Gradle Android debug APK build.
+TEST: All 25 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_gml_vm_expanded_v5 PASS, test_gml_vm_expanded_v6 PASS, test_gml_vm_expanded_v7 PASS, test_gml_vm_expanded_v8 PASS, test_gml_vm_expanded_v9 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
