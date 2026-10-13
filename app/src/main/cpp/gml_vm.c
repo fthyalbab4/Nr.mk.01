@@ -258,6 +258,13 @@ else if(!strcmp(n->text,"irandom_range")&&c==2){r=gml_value_real(gml_irandom_ran
 else if(!strcmp(n->text,"motion_set")&&c==2){gml_motion_set(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"window_get_fullscreen")&&c==0){r=gml_value_real(gml_window_get_fullscreen());}
+else if(!strcmp(n->text,"window_set_fullscreen")&&c==1){r=gml_value_real(gml_window_set_fullscreen(num(a[0])));}
+else if(!strcmp(n->text,"ds_grid_copy")&&c==2){r=gml_value_real(gml_ds_grid_copy(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"string_width_ext")&&c==3){r=gml_value_real(gml_string_width_ext(text_of(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"string_height_ext")&&c==3){r=gml_value_real(gml_string_height_ext(text_of(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_text_ext")&&c==5){gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);

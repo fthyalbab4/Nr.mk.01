@@ -2698,6 +2698,47 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+static int g_window_fullscreen = 0;
+
+double gml_window_get_fullscreen(void) {
+    return (double)g_window_fullscreen;
+}
+
+double gml_window_set_fullscreen(double enable) {
+    g_window_fullscreen = (enable != 0.0);
+    return 1.0;
+}
+
+double gml_ds_grid_copy(double id, double source_id) {
+    int dst = (int)id, src = (int)source_id;
+    if (dst < 0 || dst >= GM82_DS_GRID_MAX || !g_ds_grids[dst].used) return 0.0;
+    if (src < 0 || src >= GM82_DS_GRID_MAX || !g_ds_grids[src].used) return 0.0;
+    g_ds_grids[dst].w = g_ds_grids[src].w;
+    g_ds_grids[dst].h = g_ds_grids[src].h;
+    memcpy(g_ds_grids[dst].data, g_ds_grids[src].data, sizeof(g_ds_grids[dst].data));
+    return 1.0;
+}
+
+double gml_string_width_ext(const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    return gml_string_width(str);
+}
+
+double gml_string_height_ext(const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    return gml_string_height(str);
+}
+
+void gml_draw_line_width(double x1, double y1, double x2, double y2, double w) {
+    (void)w;
+    gml_draw_line(x1, y1, x2, y2);
+}
+
+void gml_draw_text_ext(double x, double y, const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    gml_draw_text(x, y, str);
+}
+
 double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val) {
     int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0;
