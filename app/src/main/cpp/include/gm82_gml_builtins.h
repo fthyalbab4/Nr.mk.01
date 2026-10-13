@@ -170,6 +170,8 @@ double gml_ds_grid_clear(double id, double val);
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
 double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
 double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val);
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val);
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
 double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
 

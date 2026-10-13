@@ -169,6 +169,9 @@ else if(!strcmp(n->text,"ds_grid_get")&&c==3){r=gml_value_real(gml_ds_grid_get(n
 else if(!strcmp(n->text,"ds_grid_clear")&&c==2){r=gml_value_real(gml_ds_grid_clear(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_grid_set_region")&&c==6){r=gml_value_real(gml_ds_grid_set_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_grid_add_region")&&c==6){r=gml_value_real(gml_ds_grid_add_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_multiply_region")&&c==6){r=gml_value_real(gml_ds_grid_multiply_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_set_disk")&&c==5){r=gml_value_real(gml_ds_grid_set_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_add_disk")&&c==5){r=gml_value_real(gml_ds_grid_add_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_get_sum")&&c==5){r=gml_value_real(gml_ds_grid_get_sum(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_get_max")&&c==5){r=gml_value_real(gml_ds_grid_get_max(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_get_min")&&c==5){r=gml_value_real(gml_ds_grid_get_min(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}

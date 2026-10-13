@@ -1877,6 +1877,19 @@ double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double
     return 1;
 }
 
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+        }
+    }
+    return 1;
+}
+
 double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val) {
     int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
@@ -1889,14 +1902,38 @@ double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, d
     }
     return 1;
 }
-double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
-    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
-    for (int y = gy1; y <= gy2; y++) {
+    int r2 = rad * rad;
+    for (int dy = -rad; dy <= rad; dy++) {
+        int y = cy + dy;
         if (y < 0 || y >= g_ds_grids[i].h) continue;
-        for (int x = gx1; x <= gx2; x++) {
+        for (int dx = -rad; dx <= rad; dx++) {
+            int x = cx + dx;
             if (x < 0 || x >= g_ds_grids[i].w) continue;
-            g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+            }
+        }
+    }
+    return 1;
+}
+
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    int r2 = rad * rad;
+    for (int dy = -rad; dy <= rad; dy++) {
+        int y = cy + dy;
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int dx = -rad; dx <= rad; dx++) {
+            int x = cx + dx;
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+            }
         }
     }
     return 1;
