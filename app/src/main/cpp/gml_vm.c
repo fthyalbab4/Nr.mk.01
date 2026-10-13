@@ -258,6 +258,21 @@ else if(!strcmp(n->text,"irandom_range")&&c==2){r=gml_value_real(gml_irandom_ran
 else if(!strcmp(n->text,"motion_set")&&c==2){gml_motion_set(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"instance_create")&&c==3){r=gml_value_real(gml_instance_create(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_destroy")&&c==0){gml_instance_destroy();r=gml_value_real(1);}
+else if(!strcmp(n->text,"instance_exists")&&c==1){r=gml_value_real(gml_instance_exists(num(a[0])));}
+else if(!strcmp(n->text,"instance_nearest")&&c==3){r=gml_value_real(gml_instance_nearest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"sound_play")&&c==1){r=gml_value_real(gml_sound_play(num(a[0])));}
+else if(!strcmp(n->text,"sound_stop")&&c==1){r=gml_value_real(gml_sound_stop(num(a[0])));}
+else if(!strcmp(n->text,"sound_isplaying")&&c==1){r=gml_value_real(gml_sound_isplaying(num(a[0])));}
+else if(!strcmp(n->text,"move_contact_solid")&&c==2){r=gml_value_real(gml_move_contact_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_outside_solid")&&c==2){r=gml_value_real(gml_move_outside_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_bounce_solid")&&c==1){r=gml_value_real(gml_move_bounce_solid(num(a[0])));}
+else if(!strcmp(n->text,"move_bounce_all")&&c==1){r=gml_value_real(gml_move_bounce_all(num(a[0])));}
+else if(!strcmp(n->text,"move_random")&&c==2){r=gml_value_real(gml_move_random(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
+else if(!strcmp(n->text,"window_get_caption")&&c==0){r=gml_value_string(gml_window_get_caption());}
+else if(!strcmp(n->text,"point_in_rectangle")&&c==6){r=gml_value_real(gml_point_in_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
