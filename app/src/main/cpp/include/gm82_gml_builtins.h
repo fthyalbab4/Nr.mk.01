@@ -117,6 +117,8 @@ double gml_ds_list_clear(double id);
 double gml_ds_list_delete(double id, double pos);
 double gml_ds_list_find_index(double id, double value);
 double gml_ds_list_empty(double id);
+double gml_ds_list_sort(double id, double ascend);
+double gml_ds_list_shuffle(double id);
 
 /* ds_map (numeric keys only) */
 double gml_ds_map_create(void);
@@ -165,6 +167,9 @@ double gml_ds_grid_height(double id);
 double gml_ds_grid_set(double id, double x, double y, double val);
 double gml_ds_grid_get(double id, double x, double y);
 double gml_ds_grid_clear(double id, double val);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val);
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
 double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
 

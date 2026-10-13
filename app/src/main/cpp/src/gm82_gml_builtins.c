@@ -1509,6 +1509,36 @@ double gml_ds_list_find_index(double id, double value) {
 double gml_ds_list_empty(double id) {
     return gml_ds_list_size(id) == 0 ? 1.0 : 0.0;
 }
+double gml_ds_list_sort(double id, double ascend) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    int asc = (ascend != 0);
+    for (int a = 0; a < n - 1; a++) {
+        for (int b = a + 1; b < n; b++) {
+            if ((asc && g_ds_lists[i].data[a] > g_ds_lists[i].data[b]) ||
+                (!asc && g_ds_lists[i].data[a] < g_ds_lists[i].data[b])) {
+                double tmp = g_ds_lists[i].data[a];
+                g_ds_lists[i].data[a] = g_ds_lists[i].data[b];
+                g_ds_lists[i].data[b] = tmp;
+            }
+        }
+    }
+    return 1;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int k = n - 1; k > 0; k--) {
+        int r = rand() % (k + 1);
+        double tmp = g_ds_lists[i].data[k];
+        g_ds_lists[i].data[k] = g_ds_lists[i].data[r];
+        g_ds_lists[i].data[r] = tmp;
+    }
+    return 1;
+}
 
 #define GM82_DS_MAP_MAX 16
 #define GM82_DS_MAP_CAP 128
@@ -1847,6 +1877,18 @@ double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double
     return 1;
 }
 
+double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] *= val;
+        }
+    }
+    return 1;
+}
 double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
     int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
