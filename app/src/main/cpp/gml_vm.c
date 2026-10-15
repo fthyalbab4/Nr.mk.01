@@ -269,8 +269,15 @@ else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(
 else if(!strcmp(n->text,"window_get_fullscreen")&&c==0){r=gml_value_real(gml_window_get_fullscreen());}
 else if(!strcmp(n->text,"window_set_fullscreen")&&c==1){r=gml_value_real(gml_window_set_fullscreen(num(a[0])));}
 else if(!strcmp(n->text,"ds_grid_copy")&&c==2){r=gml_value_real(gml_ds_grid_copy(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"string_width")&&c==1){r=gml_value_real(gml_string_width(text_of(a[0])));}
+else if(!strcmp(n->text,"string_height")&&c==1){r=gml_value_real(gml_string_height(text_of(a[0])));}
 else if(!strcmp(n->text,"string_width_ext")&&c==3){r=gml_value_real(gml_string_width_ext(text_of(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"string_height_ext")&&c==3){r=gml_value_real(gml_string_height_ext(text_of(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"math_hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"deg_to_rad")&&c==1){r=gml_value_real(gml_deg_to_rad(num(a[0])));}
+else if(!strcmp(n->text,"rad_to_deg")&&c==1){r=gml_value_real(gml_rad_to_deg(num(a[0])));}
+else if(!strcmp(n->text,"math_min")&&c==2){r=gml_value_real(gml_math_min(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"math_max")&&c==2){r=gml_value_real(gml_math_max(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text_ext")&&c==5){gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"file_text_open_append")&&c==1){r=gml_value_real(gml_file_text_open_append(text_of(a[0])));}
