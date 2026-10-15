@@ -273,6 +273,17 @@ else if(!strcmp(n->text,"string_width_ext")&&c==3){r=gml_value_real(gml_string_w
 else if(!strcmp(n->text,"string_height_ext")&&c==3){r=gml_value_real(gml_string_height_ext(text_of(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text_ext")&&c==5){gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"file_text_open_append")&&c==1){r=gml_value_real(gml_file_text_open_append(text_of(a[0])));}
+else if(!strcmp(n->text,"file_text_write_string")&&c==2){r=gml_value_real(gml_file_text_write_string(num(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"file_text_write_real")&&c==2){r=gml_value_real(gml_file_text_write_real(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"file_text_writeln")&&c==1){r=gml_value_real(gml_file_text_writeln(num(a[0])));}
+else if(!strcmp(n->text,"file_text_read_real")&&c==1){r=gml_value_real(gml_file_text_read_real(num(a[0])));}
+else if(!strcmp(n->text,"point_in_rectangle")&&c==6){r=gml_value_real(gml_point_in_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"string_replace")&&c==3){char outbuf[1024];gml_string_replace(text_of(a[0]),text_of(a[1]),text_of(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"string_replace_all")&&c==3){char outbuf[1024];gml_string_replace_all(text_of(a[0]),text_of(a[1]),text_of(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"file_exists")&&c==1){r=gml_value_real(gml_file_exists(text_of(a[0])));}
+else if(!strcmp(n->text,"file_delete")&&c==1){r=gml_value_real(gml_file_delete(text_of(a[0])));}
+else if(!strcmp(n->text,"date_get_year")&&c==1){r=gml_value_real(gml_date_get_year(num(a[0])));}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
