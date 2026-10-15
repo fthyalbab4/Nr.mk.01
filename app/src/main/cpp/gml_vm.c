@@ -328,6 +328,43 @@ else if(!strcmp(n->text,"current_time")&&c==0){r=gml_value_real(gml_current_time
 else if(!strcmp(n->text,"current_year")&&c==0){r=gml_value_real(gml_current_year());}
 else if(!strcmp(n->text,"current_month")&&c==0){r=gml_value_real(gml_current_month());}
 else if(!strcmp(n->text,"current_day")&&c==0){r=gml_value_real(gml_current_day());}
+else if(!strcmp(n->text,"instance_create")&&c==3){r=gml_value_real(gml_instance_create(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_destroy")&&c==0){gml_instance_destroy();r=gml_value_real(1);}
+else if(!strcmp(n->text,"instance_exists")&&c==1){r=gml_value_real(gml_instance_exists(num(a[0])));}
+else if(!strcmp(n->text,"instance_place")&&c==3){r=gml_value_real(gml_instance_place(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"position_meeting")&&c==3){r=gml_value_real(gml_position_meeting(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_nearest")&&c==3){r=gml_value_real(gml_instance_nearest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_furthest")&&c==3){r=gml_value_real(gml_instance_furthest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"position_destroy")&&c==2){r=gml_value_real(gml_position_destroy(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"distance_to_object")&&c==1){r=gml_value_real(gml_distance_to_object(num(a[0])));}
+else if(!strcmp(n->text,"distance_to_point")&&c==2){r=gml_value_real(gml_distance_to_point(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_outside_solid")&&c==2){r=gml_value_real(gml_move_outside_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_outside_all")&&c==2){r=gml_value_real(gml_move_outside_all(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_contact_solid")&&c==2){r=gml_value_real(gml_move_contact_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_bounce_solid")&&c==1){r=gml_value_real(gml_move_bounce_solid(num(a[0])));}
+else if(!strcmp(n->text,"move_bounce_all")&&c==1){r=gml_value_real(gml_move_bounce_all(num(a[0])));}
+else if(!strcmp(n->text,"move_random")&&c==2){r=gml_value_real(gml_move_random(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"draw_clear")&&c==1){r=gml_value_real(gml_draw_clear(num(a[0])));}
+else if(!strcmp(n->text,"draw_sprite")&&(c==3||c==4)){if(c==4)gml_draw_sprite(num(a[0]),num(a[2]),num(a[3]));else gml_draw_sprite(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"room_goto")&&c==1){r=gml_value_real(gml_room_goto(num(a[0])));}
+else if(!strcmp(n->text,"room_goto_next")&&c==0){r=gml_value_real(gml_room_goto_next());}
+else if(!strcmp(n->text,"room_goto_previous")&&c==0){r=gml_value_real(gml_room_goto_previous());}
+else if(!strcmp(n->text,"room_restart")&&c==0){r=gml_value_real(gml_room_restart());}
+else if(!strcmp(n->text,"game_end")&&c==0){r=gml_value_real(gml_game_end());}
+else if(!strcmp(n->text,"game_restart")&&c==0){r=gml_value_real(gml_game_restart());}
+else if(!strcmp(n->text,"path_start")&&c==4){r=gml_value_real(gml_path_start(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"path_end")&&c==0){r=gml_value_real(gml_path_end());}
+else if(!strcmp(n->text,"path_get_number")&&(c==0||c==1)){r=gml_value_real(gml_path_get_number());}
+else if(!strcmp(n->text,"timeline_start")&&c==4){r=gml_value_real(gml_timeline_start(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"timeline_stop")&&c==0){r=gml_value_real(gml_timeline_stop());}
+else if(!strcmp(n->text,"get_timer")&&c==0){r=gml_value_real(gml_get_timer());}
+else if(!strcmp(n->text,"delta_time")&&c==0){r=gml_value_real(gml_delta_time());}
+else if(!strcmp(n->text,"alarm_set")&&c==2){r=gml_value_real(gml_alarm_set(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"alarm_get")&&c==1){r=gml_value_real(gml_alarm_get(num(a[0])));}
+else if(!strcmp(n->text,"script_exists")&&c==1){r=gml_value_real(gml_script_exists(num(a[0])));}
+else if(!strcmp(n->text,"script_execute")&&c==1){r=gml_value_real(gml_script_execute(num(a[0])));}
+else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
+else if(!strcmp(n->text,"window_get_caption")&&c==0){r=gml_value_string(gml_window_get_caption());}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
