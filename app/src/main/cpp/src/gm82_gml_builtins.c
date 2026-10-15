@@ -2236,6 +2236,85 @@ double gml_file_text_read_real(double id) {
     if (fscanf(g_files[i].fp, "%lf", &v) != 1) return 0;
     return v;
 }
+double gml_file_text_read_string(double id, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = '\0';
+    int i = (int)id;
+    if (i < 0 || i >= GM82_FILE_MAX || !g_files[i].used || g_files[i].is_write) return 0;
+    size_t k = 0;
+    int ch;
+    while ((ch = fgetc(g_files[i].fp)) != EOF) {
+        if (ch == '\n' || ch == '\r') {
+            ungetc(ch, g_files[i].fp);
+            break;
+        }
+        if (k + 1 < out_sz) {
+            out[k++] = (char)ch;
+        }
+    }
+    out[k] = '\0';
+    return (double)k;
+}
+double gml_file_text_readln(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_FILE_MAX || !g_files[i].used || g_files[i].is_write) return 0;
+    int ch;
+    while ((ch = fgetc(g_files[i].fp)) != EOF) {
+        if (ch == '\n') break;
+    }
+    return 1.0;
+}
+double gml_ds_grid_value_exists(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return 1.0;
+        }
+    }
+    return 0.0;
+}
+double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return -1.0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)x;
+        }
+    }
+    return -1.0;
+}
+double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return -1.0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)y;
+        }
+    }
+    return -1.0;
+}
+double gml_point_in_circle(double px, double py, double cx, double cy, double rad) {
+    double dx = px - cx;
+    double dy = py - cy;
+    return (dx * dx + dy * dy <= rad * rad) ? 1.0 : 0.0;
+}
+void gml_draw_circle_color(double x, double y, double r, double col1, double col2, double outline) {
+    (void)col2;
+    gml_draw_set_color(col1);
+    gml_draw_circle(x, y, r, outline);
+}
+void gml_draw_rectangle_color(double x1, double y1, double x2, double y2, double col1, double col2, double col3, double col4, double outline) {
+    (void)col2; (void)col3; (void)col4;
+    gml_draw_set_color(col1);
+    gml_draw_rectangle(x1, y1, x2, y2, outline);
+}
 double gml_file_exists(const char *path) {
     if (!path) return 0;
     FILE *f = fopen(path, "r");
