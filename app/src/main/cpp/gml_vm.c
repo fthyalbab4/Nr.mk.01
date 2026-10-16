@@ -284,6 +284,13 @@ else if(!strcmp(n->text,"lengthdir_x")&&c==2){r=gml_value_real(gml_lengthdir_x(n
 else if(!strcmp(n->text,"lengthdir_y")&&c==2){r=gml_value_real(gml_lengthdir_y(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"math_min")&&c==2){r=gml_value_real(gml_math_min(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"math_max")&&c==2){r=gml_value_real(gml_math_max(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"dot_product")&&c==4){r=gml_value_real(gml_dot_product(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"dot_product_3d")&&c==6){r=gml_value_real(gml_dot_product_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"point_distance_3d")&&c==6){r=gml_value_real(gml_point_distance_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"angle_difference")&&c==2){r=gml_value_real(gml_angle_difference(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"clamp")&&c==3){r=gml_value_real(gml_clamp(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"lerp")&&c==3){r=gml_value_real(gml_lerp(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"sign")&&c==1){r=gml_value_real(gml_sign(num(a[0])));}
 else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text_ext")&&c==5){gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"file_text_open_append")&&c==1){r=gml_value_real(gml_file_text_open_append(text_of(a[0])));}
