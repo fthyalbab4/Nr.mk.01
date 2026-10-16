@@ -2777,6 +2777,16 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_file_rename(const char *oldname, const char *newname) {
+    if (!oldname || !newname) return 0.0;
+    return rename(oldname, newname) == 0 ? 1.0 : 0.0;
+}
+
+double gml_directory_rename(const char *oldname, const char *newname) {
+    if (!oldname || !newname) return 0.0;
+    return rename(oldname, newname) == 0 ? 1.0 : 0.0;
+}
+
 static int g_window_fullscreen = 0;
 
 double gml_window_get_fullscreen(void) {
