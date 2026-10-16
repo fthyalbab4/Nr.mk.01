@@ -67,6 +67,8 @@ gm82_instance *gm82_runtime_instance_create(gm82_runtime *rt, int32_t object_ind
     memset(inst, 0, sizeof(*inst));
     inst->id = rt->next_id++;
     inst->x = x; inst->y = y;
+    inst->xstart = x; inst->ystart = y;
+    inst->xprevious = x; inst->yprevious = y;
     inst->alive = 1;
     for (int i = 0; i < 12; i++) inst->alarms[i] = -1;
     apply_object_defaults(rt, inst, object_index);
@@ -130,6 +132,15 @@ void gm82_runtime_step(gm82_runtime *rt) {
     {
         double sec = (rt->room_speed > 0) ? (1.0 / (double)rt->room_speed) : (1.0/30.0);
         gm82_gml_set_frame_time(sec);
+    }
+
+    /* Track xprevious / yprevious before movement */
+    for (int i = 0; i < rt->instance_count; i++) {
+        gm82_instance *inst = &rt->instances[i];
+        if (inst->alive) {
+            inst->xprevious = inst->x;
+            inst->yprevious = inst->y;
+        }
     }
 
     /*
