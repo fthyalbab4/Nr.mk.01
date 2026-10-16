@@ -119,6 +119,9 @@ double gml_ds_list_clear(double id);
 double gml_ds_list_delete(double id, double pos);
 double gml_ds_list_find_index(double id, double value);
 double gml_ds_list_empty(double id);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+double gml_ds_list_reverse(double id);
 
 /* ds_map (numeric keys only) */
 double gml_ds_map_create(void);
@@ -129,6 +132,8 @@ double gml_ds_map_exists(double id, double key);
 double gml_ds_map_size(double id);
 double gml_ds_map_clear(double id);
 double gml_ds_map_delete(double id, double key);
+double gml_ds_map_find_first(double id);
+double gml_ds_map_find_next(double id, double key);
 
 /* ds_stack */
 double gml_ds_stack_create(void);

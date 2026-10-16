@@ -1510,6 +1510,52 @@ double gml_ds_list_empty(double id) {
     return gml_ds_list_size(id) == 0 ? 1.0 : 0.0;
 }
 
+static int compare_double_asc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    return (da > db) - (da < db);
+}
+
+static int compare_double_desc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    return (da < db) - (da > db);
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (g_ds_lists[i].size <= 1) return 1;
+    qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double),
+          ascending != 0 ? compare_double_asc : compare_double_desc);
+    return 1;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int j = n - 1; j > 0; j--) {
+        int r = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[r];
+        g_ds_lists[i].data[r] = tmp;
+    }
+    return 1;
+}
+
+double gml_ds_list_reverse(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int j = 0; j < n / 2; j++) {
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[n - 1 - j];
+        g_ds_lists[i].data[n - 1 - j] = tmp;
+    }
+    return 1;
+}
+
 #define GM82_DS_MAP_MAX 16
 #define GM82_DS_MAP_CAP 128
 typedef struct {
@@ -1581,6 +1627,24 @@ double gml_ds_map_delete(double id, double key) {
         }
         g_ds_maps[i].size--;
         return 1;
+    }
+    return 0;
+}
+
+double gml_ds_map_find_first(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used || g_ds_maps[i].size == 0) return 0;
+    return g_ds_maps[i].keys[0];
+}
+
+double gml_ds_map_find_next(double id, double key) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    for (int j = 0; j < g_ds_maps[i].size; j++) {
+        if (g_ds_maps[i].keys[j] == key) {
+            if (j + 1 < g_ds_maps[i].size) return g_ds_maps[i].keys[j + 1];
+            break;
+        }
     }
     return 0;
 }
