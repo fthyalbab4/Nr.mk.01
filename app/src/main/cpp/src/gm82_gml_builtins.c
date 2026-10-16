@@ -1510,6 +1510,52 @@ double gml_ds_list_empty(double id) {
     return gml_ds_list_size(id) == 0 ? 1.0 : 0.0;
 }
 
+static int compare_double_asc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    return (da > db) - (da < db);
+}
+
+static int compare_double_desc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    return (da < db) - (da > db);
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (g_ds_lists[i].size <= 1) return 1;
+    qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double),
+          ascending != 0 ? compare_double_asc : compare_double_desc);
+    return 1;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int j = n - 1; j > 0; j--) {
+        int r = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[r];
+        g_ds_lists[i].data[r] = tmp;
+    }
+    return 1;
+}
+
+double gml_ds_list_reverse(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int j = 0; j < n / 2; j++) {
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[n - 1 - j];
+        g_ds_lists[i].data[n - 1 - j] = tmp;
+    }
+    return 1;
+}
+
 #define GM82_DS_MAP_MAX 16
 #define GM82_DS_MAP_CAP 128
 typedef struct {
@@ -1581,6 +1627,24 @@ double gml_ds_map_delete(double id, double key) {
         }
         g_ds_maps[i].size--;
         return 1;
+    }
+    return 0;
+}
+
+double gml_ds_map_find_first(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used || g_ds_maps[i].size == 0) return 0;
+    return g_ds_maps[i].keys[0];
+}
+
+double gml_ds_map_find_next(double id, double key) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    for (int j = 0; j < g_ds_maps[i].size; j++) {
+        if (g_ds_maps[i].keys[j] == key) {
+            if (j + 1 < g_ds_maps[i].size) return g_ds_maps[i].keys[j + 1];
+            break;
+        }
     }
     return 0;
 }
@@ -2236,6 +2300,85 @@ double gml_file_text_read_real(double id) {
     if (fscanf(g_files[i].fp, "%lf", &v) != 1) return 0;
     return v;
 }
+double gml_file_text_read_string(double id, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = '\0';
+    int i = (int)id;
+    if (i < 0 || i >= GM82_FILE_MAX || !g_files[i].used || g_files[i].is_write) return 0;
+    size_t k = 0;
+    int ch;
+    while ((ch = fgetc(g_files[i].fp)) != EOF) {
+        if (ch == '\n' || ch == '\r') {
+            ungetc(ch, g_files[i].fp);
+            break;
+        }
+        if (k + 1 < out_sz) {
+            out[k++] = (char)ch;
+        }
+    }
+    out[k] = '\0';
+    return (double)k;
+}
+double gml_file_text_readln(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_FILE_MAX || !g_files[i].used || g_files[i].is_write) return 0;
+    int ch;
+    while ((ch = fgetc(g_files[i].fp)) != EOF) {
+        if (ch == '\n') break;
+    }
+    return 1.0;
+}
+double gml_ds_grid_value_exists(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return 1.0;
+        }
+    }
+    return 0.0;
+}
+double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return -1.0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)x;
+        }
+    }
+    return -1.0;
+}
+double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return -1.0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)y;
+        }
+    }
+    return -1.0;
+}
+double gml_point_in_circle(double px, double py, double cx, double cy, double rad) {
+    double dx = px - cx;
+    double dy = py - cy;
+    return (dx * dx + dy * dy <= rad * rad) ? 1.0 : 0.0;
+}
+void gml_draw_circle_color(double x, double y, double r, double col1, double col2, double outline) {
+    (void)col2;
+    gml_draw_set_color(col1);
+    gml_draw_circle(x, y, r, outline);
+}
+void gml_draw_rectangle_color(double x1, double y1, double x2, double y2, double col1, double col2, double col3, double col4, double outline) {
+    (void)col2; (void)col3; (void)col4;
+    gml_draw_set_color(col1);
+    gml_draw_rectangle(x1, y1, x2, y2, outline);
+}
 double gml_file_exists(const char *path) {
     if (!path) return 0;
     FILE *f = fopen(path, "r");
@@ -2682,30 +2825,6 @@ double gml_ds_grid_multiply(double id, double x, double y, double val) {
     return gml_ds_grid_set(id, x, y, cur * val);
 }
 
-double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2) {
-    double max_val = -1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v > max_val) max_val = v;
-        }
-    }
-    return max_val == -1e9 ? 0.0 : max_val;
-}
-
-double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2) {
-    double min_val = 1e9;
-    int ix1 = (int)x1, iy1 = (int)y1, ix2 = (int)x2, iy2 = (int)y2;
-    for (int i = ix1; i <= ix2; i++) {
-        for (int j = iy1; j <= iy2; j++) {
-            double v = gml_ds_grid_get(id, (double)i, (double)j);
-            if (v < min_val) min_val = v;
-        }
-    }
-    return min_val == 1e9 ? 0.0 : min_val;
-}
-
 double gml_string_trim(const char *str, char *out, size_t out_sz) {
     if (!str || !out || out_sz == 0) return 0;
     while (*str && isspace((unsigned char)*str)) str++;
@@ -2720,6 +2839,136 @@ double gml_string_trim(const char *str, char *out, size_t out_sz) {
 double gml_instance_deactivate_object(double object_index) {
     (void)object_index;
     return 1.0;
+}
+
+static int g_window_fullscreen = 0;
+
+double gml_window_get_fullscreen(void) {
+    return (double)g_window_fullscreen;
+}
+
+double gml_window_set_fullscreen(double enable) {
+    g_window_fullscreen = (enable != 0.0);
+    return 1.0;
+}
+
+double gml_ds_grid_copy(double id, double source_id) {
+    int dst = (int)id, src = (int)source_id;
+    if (dst < 0 || dst >= GM82_DS_GRID_MAX || !g_ds_grids[dst].used) return 0.0;
+    if (src < 0 || src >= GM82_DS_GRID_MAX || !g_ds_grids[src].used) return 0.0;
+    g_ds_grids[dst].w = g_ds_grids[src].w;
+    g_ds_grids[dst].h = g_ds_grids[src].h;
+    memcpy(g_ds_grids[dst].data, g_ds_grids[src].data, sizeof(g_ds_grids[dst].data));
+    return 1.0;
+}
+
+double gml_string_width_ext(const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    return gml_string_width(str);
+}
+
+double gml_string_height_ext(const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    return gml_string_height(str);
+}
+
+void gml_draw_line_width(double x1, double y1, double x2, double y2, double w) {
+    (void)w;
+    gml_draw_line(x1, y1, x2, y2);
+}
+
+void gml_draw_text_ext(double x, double y, const char *str, double sep, double w) {
+    (void)sep; (void)w;
+    gml_draw_text(x, y, str);
+}
+
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+            }
+        }
+    }
+    return 1.0;
+}
+
+double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] *= val;
+        }
+    }
+    return 1.0;
+}
+
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+            }
+        }
+    }
+    return 1.0;
+}
+
+double gml_instance_activate_region(double left, double top, double width, double height, double inside) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside;
+    return 1.0;
+}
+
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme) {
+    (void)left; (void)top; (void)width; (void)height; (void)inside; (void)notme;
+    return 1.0;
+}
+
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] = val;
+        }
+    }
+    return 1.0;
+}
+
+double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz) {
+    if (!str || !out || out_sz == 0) return 0;
+    out[0] = '\0';
+    int n = (int)count;
+    if (n <= 0) return 0;
+    size_t slen = strlen(str);
+    size_t pos = 0;
+    for (int i = 0; i < n && pos + slen < out_sz; i++) {
+        memcpy(out + pos, str, slen);
+        pos += slen;
+    }
+    out[pos] = '\0';
+    return (double)pos;
+}
+
+double gml_math_hypot(double a, double b) {
+    return sqrt(a * a + b * b);
 }
 
 double gml_instance_activate_object(double object_index) {
