@@ -447,6 +447,8 @@ double gml_instance_activate_region(double left, double top, double width, doubl
 double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
 double gml_math_hypot(double a, double b);
+double gml_file_rename(const char *oldname, const char *newname);
+double gml_directory_rename(const char *oldname, const char *newname);
 
 #ifdef __cplusplus
 }
