@@ -207,7 +207,12 @@ else if(!strcmp(n->text,"collision_line")&&c==7){r=gml_value_real(gml_collision_
 else if(!strcmp(n->text,"collision_ellipse")&&c==7){r=gml_value_real(gml_collision_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
 else if(!strcmp(n->text,"collision_point")&&c==5){r=gml_value_real(gml_collision_point(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"place_meeting")&&c==3){r=gml_value_real(gml_place_meeting(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_place")&&c==3){r=gml_value_real(gml_instance_place(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"position_meeting")&&c==3){r=gml_value_real(gml_position_meeting(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"place_empty")&&c==2){r=gml_value_real(gml_place_empty(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"place_free")&&c==2){r=gml_value_real(gml_place_free(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"distance_to_object")&&c==1){r=gml_value_real(gml_distance_to_object(num(a[0])));}
+else if(!strcmp(n->text,"distance_to_point")&&c==2){r=gml_value_real(gml_distance_to_point(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"keyboard_check_direct")&&c==1){r=gml_value_real(gml_keyboard_check_direct(num(a[0])));}
 else if(!strcmp(n->text,"keyboard_clear")&&c==1){r=gml_value_real(gml_keyboard_clear(num(a[0])));}
 else if(!strcmp(n->text,"io_clear")&&c==0){r=gml_value_real(gml_io_clear());}

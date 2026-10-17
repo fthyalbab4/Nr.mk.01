@@ -6,8 +6,8 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 30 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-10-16
+last_test_log: "All 31 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-17
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -17,12 +17,12 @@ last_run_date: 2026-10-16
 
 ## progress reality
 Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~91%.
-Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for file and directory renaming (file_rename, directory_rename). Added test_gml_vm_expanded_v14.c to verify AST VM execution. All 30 unit test suites pass and Gradle Android Debug APK builds successfully.
+Expanded GML AST VM execution dispatches and evaluator builtins in gml_vm.c / gm82_gml_eval.c for collision and spatial query builtins (instance_place, position_meeting, place_empty, distance_to_object, distance_to_point). Added test_gml_vm_expanded_v15.c to verify AST VM execution. All 31 unit test suites pass and Gradle Android Debug APK builds successfully.
 
 ## required_reply_format
 PROGRESS: 91% (compared to full Windows GM82)
-DONE: Expanded GML AST VM handlers and native builtins for file and directory renaming (file_rename, directory_rename), added test_gml_vm_expanded_v14.c, and verified native compilation (30 test suites) and Gradle Android debug APK build.
-TEST: All 30 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v10 PASS, test_gml_vm_expanded_v11 PASS, test_gml_vm_expanded_v12 PASS, test_gml_vm_expanded_v13 PASS, test_gml_vm_expanded_v14 PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_gml_vm_expanded_v5 PASS, test_gml_vm_expanded_v6 PASS, test_gml_vm_expanded_v7 PASS, test_gml_vm_expanded_v8 PASS, test_gml_vm_expanded_v9 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
+DONE: Expanded GML AST VM handlers and evaluator builtins for spatial collision queries (instance_place, position_meeting, place_empty, distance_to_object, distance_to_point), added test_gml_vm_expanded_v15.c, and verified native compilation (31 test suites) and Gradle Android debug APK build.
+TEST: All 31 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v10 PASS, test_gml_vm_expanded_v11 PASS, test_gml_vm_expanded_v12 PASS, test_gml_vm_expanded_v13 PASS, test_gml_vm_expanded_v14 PASS, test_gml_vm_expanded_v15 PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_gml_vm_expanded_v5 PASS, test_gml_vm_expanded_v6 PASS, test_gml_vm_expanded_v7 PASS, test_gml_vm_expanded_v8 PASS, test_gml_vm_expanded_v9 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
