@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 91
+plan_B_percent: 92
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 31 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-10-16
+last_test_log: "All 32 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-17
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -16,13 +16,13 @@ last_run_date: 2026-10-16
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~91%.
-Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for filename path functions (filename_name, filename_path, filename_dir, filename_ext, filename_change_ext). Added test_gml_vm_expanded_v15.c to verify AST VM execution. All 31 unit test suites pass and Gradle Android Debug APK builds successfully.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~92%.
+Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for point_in_triangle, binary file I/O functions (file_bin_open, file_bin_close, file_bin_size, file_bin_pos, file_bin_seek, file_bin_read_byte, file_bin_write_byte), and string_hash_to_newline. Added test_gml_vm_expanded_v16.c to verify AST VM execution. All 32 unit test suites pass and Gradle Android Debug APK builds successfully.
 
 ## required_reply_format
-PROGRESS: 91% (compared to full Windows GM82)
-DONE: Expanded GML AST VM handlers and native builtins for filename path functions (filename_name, filename_path, filename_dir, filename_ext, filename_change_ext), added test_gml_vm_expanded_v15.c, and verified native compilation (31 test suites) and Gradle Android debug APK build.
-TEST: All 31 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_core_expansion PASS, test_gml_core_expansion_v2 PASS, test_gml_degree_trig PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_strings_and_views PASS, test_gml_vm_advanced PASS, test_gml_vm_core_parity PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_gml_vm_expanded_v10 PASS, test_gml_vm_expanded_v11 PASS, test_gml_vm_expanded_v12 PASS, test_gml_vm_expanded_v13 PASS, test_gml_vm_expanded_v14 PASS, test_gml_vm_expanded_v15 PASS, test_gml_vm_expanded_v2 PASS, test_gml_vm_expanded_v3 PASS, test_gml_vm_expanded_v4 PASS, test_gml_vm_expanded_v5 PASS, test_gml_vm_expanded_v6 PASS, test_gml_vm_expanded_v7 PASS, test_gml_vm_expanded_v8 PASS, test_gml_vm_expanded_v9 PASS, test_runtime_guard PASS) and Gradle Android Debug APK build PASS.
+PROGRESS: 92% (compared to full Windows GM82)
+DONE: Expanded GML AST VM handlers and native builtins for point_in_triangle, binary file I/O (file_bin_open, file_bin_close, file_bin_size, file_bin_pos, file_bin_seek, file_bin_read_byte, file_bin_write_byte), and string_hash_to_newline, added test_gml_vm_expanded_v16.c, and verified native compilation (32 test suites) and Gradle Android debug APK build.
+TEST: All 32 native C unit test suites passing and Gradle Android Debug APK build PASS.
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.

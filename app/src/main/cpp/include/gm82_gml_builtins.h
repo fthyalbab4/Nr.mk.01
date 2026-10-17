@@ -455,6 +455,17 @@ double gml_filename_dir(const char *fname, char *out, size_t out_sz);
 double gml_filename_ext(const char *fname, char *out, size_t out_sz);
 double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
 
+/* Geometry and Binary File I/O */
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_file_bin_open(const char *path, double mode);
+double gml_file_bin_close(double id);
+double gml_file_bin_size(double id);
+double gml_file_bin_pos(double id);
+double gml_file_bin_seek(double id, double pos);
+double gml_file_bin_read_byte(double id);
+double gml_file_bin_write_byte(double id, double byte);
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
+
 #ifdef __cplusplus
 }
 #endif
