@@ -521,6 +521,11 @@ static bool parse_primary(gml_parser *p, double *out) {
             double oarg = (nargs >= 3) ? args[2] : -1;
             *out = gml_place_meeting(arg, yarg, oarg); return true;
         }
+        if (strcmp(id, "instance_place") == 0) {
+            double yarg = (nargs >= 2) ? args[1] : 0;
+            double oarg = (nargs >= 3) ? args[2] : -1;
+            *out = gml_instance_place(arg, yarg, oarg); return true;
+        }
         if (strcmp(id, "place_empty") == 0) {
             double yarg = (nargs >= 2) ? args[1] : (p->self ? p->self->y : 0);
             *out = gml_place_empty(arg, yarg); return true;
