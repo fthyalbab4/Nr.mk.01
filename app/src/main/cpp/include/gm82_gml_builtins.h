@@ -449,6 +449,11 @@ double gml_string_repeat_ext(const char *str, double count, char *out, size_t ou
 double gml_math_hypot(double a, double b);
 double gml_file_rename(const char *oldname, const char *newname);
 double gml_directory_rename(const char *oldname, const char *newname);
+double gml_filename_name(const char *fname, char *out, size_t out_sz);
+double gml_filename_path(const char *fname, char *out, size_t out_sz);
+double gml_filename_dir(const char *fname, char *out, size_t out_sz);
+double gml_filename_ext(const char *fname, char *out, size_t out_sz);
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
 
 #ifdef __cplusplus
 }

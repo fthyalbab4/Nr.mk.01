@@ -2787,6 +2787,88 @@ double gml_directory_rename(const char *oldname, const char *newname) {
     return rename(oldname, newname) == 0 ? 1.0 : 0.0;
 }
 
+double gml_filename_name(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = fname;
+    if (slash && slash >= p) p = slash + 1;
+    if (bslash && bslash >= p) p = bslash + 1;
+    strncpy(out, p, out_sz - 1);
+    out[out_sz - 1] = 0;
+    return (double)strlen(out);
+}
+
+double gml_filename_path(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = NULL;
+    if (slash && (!bslash || slash > bslash)) p = slash;
+    else if (bslash) p = bslash;
+    if (p) {
+        size_t len = (size_t)(p - fname + 1);
+        if (len >= out_sz) len = out_sz - 1;
+        memcpy(out, fname, len);
+        out[len] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_dir(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = NULL;
+    if (slash && (!bslash || slash > bslash)) p = slash;
+    else if (bslash) p = bslash;
+    if (p) {
+        size_t len = (size_t)(p - fname);
+        if (len >= out_sz) len = out_sz - 1;
+        memcpy(out, fname, len);
+        out[len] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_ext(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    char namebuf[256];
+    gml_filename_name(fname, namebuf, sizeof(namebuf));
+    const char *dot = strrchr(namebuf, '.');
+    if (dot) {
+        strncpy(out, dot, out_sz - 1);
+        out[out_sz - 1] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    char extbuf[64];
+    gml_filename_ext(fname, extbuf, sizeof(extbuf));
+    size_t flen = strlen(fname);
+    size_t elen = strlen(extbuf);
+    size_t base_len = (flen >= elen) ? (flen - elen) : flen;
+    if (base_len >= out_sz) base_len = out_sz - 1;
+    memcpy(out, fname, base_len);
+    out[base_len] = 0;
+    if (newext) {
+        strncat(out, newext, out_sz - strlen(out) - 1);
+    }
+    return (double)strlen(out);
+}
+
 static int g_window_fullscreen = 0;
 
 double gml_window_get_fullscreen(void) {
