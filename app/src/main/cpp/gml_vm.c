@@ -261,6 +261,11 @@ else if(!strcmp(n->text,"string_insert")&&c==3){char outbuf[1024];gml_string_ins
 else if(!strcmp(n->text,"string_delete")&&c==3){char outbuf[1024];gml_string_delete(text_of(a[0]),num(a[1]),num(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"file_rename")&&c==2){r=gml_value_real(gml_file_rename(text_of(a[0]),text_of(a[1])));}
 else if(!strcmp(n->text,"directory_rename")&&c==2){r=gml_value_real(gml_directory_rename(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"filename_name")&&c==1){char outbuf[512];gml_filename_name(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_path")&&c==1){char outbuf[512];gml_filename_path(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_dir")&&c==1){char outbuf[512];gml_filename_dir(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_ext")&&c==1){char outbuf[512];gml_filename_ext(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_change_ext")&&c==2){char outbuf[512];gml_filename_change_ext(text_of(a[0]),text_of(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"choose")&&c>=1){size_t idx=(size_t)(rand()%c);r=copyv(&a[idx]);}
 else if(!strcmp(n->text,"random_range")&&c==2){r=gml_value_real(gml_random_range(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"irandom")&&c==1){r=gml_value_real(gml_irandom(num(a[0])));}
