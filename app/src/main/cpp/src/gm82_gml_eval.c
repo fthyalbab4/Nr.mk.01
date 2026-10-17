@@ -569,6 +569,36 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "collision_circle") == 0) {
             *out = gml_collision_circle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:-1, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0); return true;
         }
+        if (strcmp(id, "point_in_triangle") == 0) {
+            *out = gml_point_in_triangle(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:0); return true;
+        }
+        if (strcmp(id, "file_bin_open") == 0) {
+            char tmp[256];
+            *out = gml_file_bin_open(get_str_val(arg, tmp, sizeof(tmp)), (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "file_bin_close") == 0) {
+            *out = gml_file_bin_close(arg); return true;
+        }
+        if (strcmp(id, "file_bin_size") == 0) {
+            *out = gml_file_bin_size(arg); return true;
+        }
+        if (strcmp(id, "file_bin_pos") == 0) {
+            *out = gml_file_bin_pos(arg); return true;
+        }
+        if (strcmp(id, "file_bin_seek") == 0) {
+            *out = gml_file_bin_seek(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "file_bin_read_byte") == 0) {
+            *out = gml_file_bin_read_byte(arg); return true;
+        }
+        if (strcmp(id, "file_bin_write_byte") == 0) {
+            *out = gml_file_bin_write_byte(arg, (nargs>=2)?args[1]:0); return true;
+        }
+        if (strcmp(id, "string_hash_to_newline") == 0) {
+            char t1[256], outbuf[512];
+            gml_string_hash_to_newline(get_str_val(arg, t1, sizeof(t1)), outbuf, sizeof(outbuf));
+            *out = alloc_str_slot(outbuf); return true;
+        }
         if (strcmp(id, "collision_ellipse") == 0) {
             *out = gml_collision_ellipse(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:-1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0); return true;
         }

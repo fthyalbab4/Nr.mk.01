@@ -2777,6 +2777,107 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
+    double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
+    double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);
+    double d3 = (px - x1) * (y3 - y1) - (x3 - x1) * (py - y1);
+    bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos) ? 1.0 : 0.0;
+}
+
+#define GM82_BIN_FILE_MAX 8
+typedef struct {
+    int used;
+    FILE *fp;
+    int mode; /* 0=read, 1=write, 2=read/write */
+} gm82_bin_file;
+static gm82_bin_file g_bin_files[GM82_BIN_FILE_MAX];
+
+double gml_file_bin_open(const char *path, double mode) {
+    if (!path) return -1;
+    int m = (int)mode;
+    const char *fmode = "rb";
+    if (m == 1) fmode = "wb";
+    else if (m == 2) fmode = "r+b";
+    for (int i = 0; i < GM82_BIN_FILE_MAX; i++) {
+        if (g_bin_files[i].used) continue;
+        FILE *f = fopen(path, fmode);
+        if (!f && m == 2) f = fopen(path, "w+b");
+        if (!f) return -1;
+        g_bin_files[i].used = 1;
+        g_bin_files[i].fp = f;
+        g_bin_files[i].mode = m;
+        return (double)i;
+    }
+    return -1;
+}
+
+double gml_file_bin_close(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    fclose(g_bin_files[i].fp);
+    memset(&g_bin_files[i], 0, sizeof(g_bin_files[i]));
+    return 1;
+}
+
+double gml_file_bin_size(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    long cur = ftell(g_bin_files[i].fp);
+    fseek(g_bin_files[i].fp, 0, SEEK_END);
+    long sz = ftell(g_bin_files[i].fp);
+    fseek(g_bin_files[i].fp, cur, SEEK_SET);
+    return (double)sz;
+}
+
+double gml_file_bin_pos(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    return (double)ftell(g_bin_files[i].fp);
+}
+
+double gml_file_bin_seek(double id, double pos) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    long p = (long)pos;
+    if (p < 0) p = 0;
+    return (fseek(g_bin_files[i].fp, p, SEEK_SET) == 0) ? 1.0 : 0.0;
+}
+
+double gml_file_bin_read_byte(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    int b = fgetc(g_bin_files[i].fp);
+    return (b == EOF) ? 0.0 : (double)b;
+}
+
+double gml_file_bin_write_byte(double id, double byte) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    unsigned char b = (unsigned char)byte;
+    return (fputc(b, g_bin_files[i].fp) != EOF) ? 1.0 : 0.0;
+}
+
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (str[i] == '\\' && str[i+1] == '#') {
+            out[k++] = '#';
+            i++;
+        } else if (str[i] == '#') {
+            out[k++] = '\n';
+        } else {
+            out[k++] = str[i];
+        }
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
 double gml_file_rename(const char *oldname, const char *newname) {
     if (!oldname || !newname) return 0.0;
     return rename(oldname, newname) == 0 ? 1.0 : 0.0;
