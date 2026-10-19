@@ -502,6 +502,19 @@ double gml_point_in_rectangle(double px, double py, double x1, double y1, double
     return (px >= x1 && px <= x2 && py >= y1 && py <= y2) ? 1.0 : 0.0;
 }
 
+double gml_point_in_ellipse(double px, double py, double x1, double y1, double x2, double y2) {
+    if (x1 > x2) { double t=x1; x1=x2; x2=t; }
+    if (y1 > y2) { double t=y1; y1=y2; y2=t; }
+    double cx = (x1 + x2) * 0.5;
+    double cy = (y1 + y2) * 0.5;
+    double rx = (x2 - x1) * 0.5;
+    double ry = (y2 - y1) * 0.5;
+    if (rx <= 0.0 || ry <= 0.0) return 0.0;
+    double dx = (px - cx) / rx;
+    double dy = (py - cy) / ry;
+    return (dx * dx + dy * dy <= 1.0) ? 1.0 : 0.0;
+}
+
 double gml_collision_rectangle(double x1, double y1, double x2, double y2, double obj, double prec, double notme) {
     (void)prec;
     if (!g_rt) return -4;

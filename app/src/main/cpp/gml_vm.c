@@ -308,6 +308,7 @@ else if(!strcmp(n->text,"file_text_write_real")&&c==2){r=gml_value_real(gml_file
 else if(!strcmp(n->text,"file_text_writeln")&&c==1){r=gml_value_real(gml_file_text_writeln(num(a[0])));}
 else if(!strcmp(n->text,"file_text_read_real")&&c==1){r=gml_value_real(gml_file_text_read_real(num(a[0])));}
 else if(!strcmp(n->text,"point_in_rectangle")&&c==6){r=gml_value_real(gml_point_in_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"point_in_ellipse")&&c==6){r=gml_value_real(gml_point_in_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"string_replace")&&c==3){char outbuf[1024];gml_string_replace(text_of(a[0]),text_of(a[1]),text_of(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"string_replace_all")&&c==3){char outbuf[1024];gml_string_replace_all(text_of(a[0]),text_of(a[1]),text_of(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"surface_create")&&c==2){r=gml_value_real(gml_surface_create(num(a[0]),num(a[1])));}
