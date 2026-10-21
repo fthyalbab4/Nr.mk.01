@@ -1754,6 +1754,13 @@ static int prio_max_idx(gm82_ds_prio *p) {
         if (p->prios[j] > p->prios[best]) best = j;
     return best;
 }
+static int prio_min_idx(gm82_ds_prio *p) {
+    if (p->size <= 0) return -1;
+    int best = 0;
+    for (int j = 1; j < p->size; j++)
+        if (p->prios[j] < p->prios[best]) best = j;
+    return best;
+}
 double gml_ds_priority_find_max(double id) {
     int i = (int)id;
     if (i < 0 || i >= GM82_DS_PRIO_MAX || !g_ds_prios[i].used) return 0;
@@ -1772,6 +1779,31 @@ double gml_ds_priority_delete_max(double id) {
     }
     g_ds_prios[i].size--;
     return v;
+}
+double gml_ds_priority_find_min(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_PRIO_MAX || !g_ds_prios[i].used) return 0;
+    int b = prio_min_idx(&g_ds_prios[i]);
+    return b >= 0 ? g_ds_prios[i].vals[b] : 0;
+}
+double gml_ds_priority_delete_min(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_PRIO_MAX || !g_ds_prios[i].used) return 0;
+    int b = prio_min_idx(&g_ds_prios[i]);
+    if (b < 0) return 0;
+    double v = g_ds_prios[i].vals[b];
+    for (int j = b; j < g_ds_prios[i].size - 1; j++) {
+        g_ds_prios[i].vals[j] = g_ds_prios[i].vals[j+1];
+        g_ds_prios[i].prios[j] = g_ds_prios[i].prios[j+1];
+    }
+    g_ds_prios[i].size--;
+    return v;
+}
+double gml_ds_priority_clear(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_PRIO_MAX || !g_ds_prios[i].used) return 0;
+    g_ds_prios[i].size = 0;
+    return 1;
 }
 double gml_ds_priority_size(double id) {
     int i = (int)id;
