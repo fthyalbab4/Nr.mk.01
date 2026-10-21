@@ -158,6 +158,9 @@ else if(!strcmp(n->text,"ds_priority_destroy")&&c==1){r=gml_value_real(gml_ds_pr
 else if(!strcmp(n->text,"ds_priority_add")&&c==3){r=gml_value_real(gml_ds_priority_add(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ds_priority_find_max")&&c==1){r=gml_value_real(gml_ds_priority_find_max(num(a[0])));}
 else if(!strcmp(n->text,"ds_priority_delete_max")&&c==1){r=gml_value_real(gml_ds_priority_delete_max(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_find_min")&&c==1){r=gml_value_real(gml_ds_priority_find_min(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_delete_min")&&c==1){r=gml_value_real(gml_ds_priority_delete_min(num(a[0])));}
+else if(!strcmp(n->text,"ds_priority_clear")&&c==1){r=gml_value_real(gml_ds_priority_clear(num(a[0])));}
 else if(!strcmp(n->text,"ds_priority_size")&&c==1){r=gml_value_real(gml_ds_priority_size(num(a[0])));}
 else if(!strcmp(n->text,"ds_priority_empty")&&c==1){r=gml_value_real(gml_ds_priority_empty(num(a[0])));}
 else if(!strcmp(n->text,"ds_grid_create")&&c==2){r=gml_value_real(gml_ds_grid_create(num(a[0]),num(a[1])));}
@@ -284,6 +287,9 @@ else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]))
 else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"window_get_fullscreen")&&c==0){r=gml_value_real(gml_window_get_fullscreen());}
 else if(!strcmp(n->text,"window_set_fullscreen")&&c==1){r=gml_value_real(gml_window_set_fullscreen(num(a[0])));}
+else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
+else if(!strcmp(n->text,"ds_grid_get_mean")&&c==5){r=gml_value_real(gml_ds_grid_get_mean(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"distance_to_point")&&c==2){r=gml_value_real(gml_distance_to_point(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_grid_copy")&&c==2){r=gml_value_real(gml_ds_grid_copy(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"string_width")&&c==1){r=gml_value_real(gml_string_width(text_of(a[0])));}
 else if(!strcmp(n->text,"string_height")&&c==1){r=gml_value_real(gml_string_height(text_of(a[0])));}
