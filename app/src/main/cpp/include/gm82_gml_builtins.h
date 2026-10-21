@@ -27,6 +27,9 @@ gm82_runtime *gm82_gml_get_runtime(void);
 void gm82_gml_set_self(gm82_instance *self);
 gm82_instance *gm82_gml_get_self(void);
 
+/* Calculate sprite origin (xoffset/yoffset) and scale aware bounding box */
+void gm82_instance_get_bbox(gm82_runtime *rt, gm82_instance *inst, double custom_x, double custom_y, double *l, double *t, double *r, double *b);
+
 /* ---- Instance ---- */
 double gml_instance_create(double x, double y, double object_index);
 void   gml_instance_destroy(void); /* destroys self */
@@ -87,8 +90,13 @@ double gml_draw_get_color(void);
 void gml_draw_rectangle(double x1, double y1, double x2, double y2, double outline);
 void gml_draw_circle(double x, double y, double r, double outline);
 void gml_draw_line(double x1, double y1, double x2, double y2);
+void gml_draw_line_width(double x1, double y1, double x2, double y2, double w);
 void gml_draw_text(double x, double y, const char *str);
+void gml_draw_text_ext(double x, double y, const char *str, double sep, double w);
 void gml_draw_text_color(double x, double y, const char *str, double c1, double c2, double c3, double c4);
+void gml_draw_text_transformed(double x, double y, const char *str, double xscale, double yscale, double angle);
+void gml_draw_sprite_part(double sprite, double subimg, double left, double top, double width, double height, double x, double y);
+void gml_draw_sprite_part_ext(double sprite, double subimg, double left, double top, double width, double height, double x, double y, double xscale, double yscale, double color, double alpha);
 
 /* Surfaces (CPU framebuffer targets) */
 double gml_surface_create(double w, double h);
@@ -203,6 +211,14 @@ double gml_file_text_write_string(double id, const char *str);
 double gml_file_text_write_real(double id, double value);
 double gml_file_text_writeln(double id);
 double gml_file_text_read_real(double id);
+double gml_file_text_read_string(double id, char *out, size_t out_sz);
+double gml_file_text_readln(double id);
+double gml_ds_grid_value_exists(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val);
+double gml_point_in_circle(double px, double py, double cx, double cy, double rad);
+void gml_draw_circle_color(double x, double y, double r, double col1, double col2, double outline);
+void gml_draw_rectangle_color(double x1, double y1, double x2, double y2, double col1, double col2, double col3, double col4, double outline);
 double gml_file_exists(const char *path);
 double gml_file_delete(const char *path);
 const char *gml_file_find_first(const char *mask, double attr);
@@ -238,6 +254,8 @@ double gml_display_get_width(void);
 double gml_display_get_height(void);
 double gml_window_get_width(void);
 double gml_window_get_height(void);
+double gml_window_get_fullscreen(void);
+double gml_window_set_fullscreen(double enable);
 double gml_window_set_caption(const char *caption);
 const char *gml_window_get_caption(void);
 double gml_room_goto(double room_index);
@@ -270,6 +288,8 @@ double gml_string_letters(const char *str, char *out, size_t out_sz);
 double gml_string_lettersdigits(const char *str, char *out, size_t out_sz);
 double gml_string_width(const char *str);
 double gml_string_height(const char *str);
+double gml_string_width_ext(const char *str, double sep, double w);
+double gml_string_height_ext(const char *str, double sep, double w);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
@@ -425,12 +445,32 @@ double gml_string_trim(const char *str, char *out, size_t out_sz);
 double gml_instance_deactivate_object(double object_index);
 double gml_instance_activate_object(double object_index);
 double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_copy(double id, double source_id);
 double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val);
 double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val);
 double gml_instance_activate_region(double left, double top, double width, double height, double inside);
 double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
 double gml_math_hypot(double a, double b);
+double gml_file_rename(const char *oldname, const char *newname);
+double gml_directory_rename(const char *oldname, const char *newname);
+double gml_filename_name(const char *fname, char *out, size_t out_sz);
+double gml_filename_path(const char *fname, char *out, size_t out_sz);
+double gml_filename_dir(const char *fname, char *out, size_t out_sz);
+double gml_filename_ext(const char *fname, char *out, size_t out_sz);
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
+
+/* Geometry and Binary File I/O */
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_file_bin_open(const char *path, double mode);
+double gml_file_bin_close(double id);
+double gml_file_bin_size(double id);
+double gml_file_bin_pos(double id);
+double gml_file_bin_seek(double id, double pos);
+double gml_file_bin_read_byte(double id);
+double gml_file_bin_write_byte(double id, double byte);
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
 
 #ifdef __cplusplus
 }
