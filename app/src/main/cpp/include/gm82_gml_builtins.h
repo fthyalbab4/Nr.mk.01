@@ -86,6 +86,12 @@ double gml_draw_get_alpha(void);
 double gml_draw_get_color(void);
 void gml_draw_rectangle(double x1, double y1, double x2, double y2, double outline);
 void gml_draw_circle(double x, double y, double r, double outline);
+void gml_draw_triangle(double x1, double y1, double x2, double y2, double x3, double y3, double outline);
+void gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline);
+void gml_draw_set_halign(double halign);
+void gml_draw_set_valign(double valign);
+double gml_draw_get_halign(void);
+double gml_draw_get_valign(void);
 void gml_draw_line(double x1, double y1, double x2, double y2);
 void gml_draw_line_width(double x1, double y1, double x2, double y2, double w);
 void gml_draw_text(double x, double y, const char *str);
@@ -447,6 +453,24 @@ double gml_instance_activate_region(double left, double top, double width, doubl
 double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
 double gml_math_hypot(double a, double b);
+double gml_file_rename(const char *oldname, const char *newname);
+double gml_directory_rename(const char *oldname, const char *newname);
+double gml_filename_name(const char *fname, char *out, size_t out_sz);
+double gml_filename_path(const char *fname, char *out, size_t out_sz);
+double gml_filename_dir(const char *fname, char *out, size_t out_sz);
+double gml_filename_ext(const char *fname, char *out, size_t out_sz);
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
+
+/* Geometry and Binary File I/O */
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_file_bin_open(const char *path, double mode);
+double gml_file_bin_close(double id);
+double gml_file_bin_size(double id);
+double gml_file_bin_pos(double id);
+double gml_file_bin_seek(double id, double pos);
+double gml_file_bin_read_byte(double id);
+double gml_file_bin_write_byte(double id, double byte);
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
 
 #ifdef __cplusplus
 }
