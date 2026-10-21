@@ -189,38 +189,22 @@ int gm82_decode_objects_from_gmk(const uint8_t *data, size_t size, gm82_decoded_
                     if (ch < 9 || (ch > 13 && ch < 32 && ch != 9)) { ok = 0; break; }
                 }
                 if (!ok) continue;
-                /* require GML markers */
+                /* require GML code indicators (variable assignments, functions, or control flow) */
                 int has = 0;
-                for (int k = 0; k + 8 < nlen; k++) {
-                    if (cs[k]=='k' && cs[k+1]=='e' && cs[k+2]=='y' && cs[k+3]=='b' &&
-                        cs[k+4]=='o' && cs[k+5]=='a' && cs[k+6]=='r' && cs[k+7]=='d') {
-                        has = 1; break;
-                    }
-                    if (cs[k]=='p' && cs[k+1]=='l' && cs[k+2]=='a' && cs[k+3]=='c' &&
-                        cs[k+4]=='e' && cs[k+5]=='_' && cs[k+6]=='f') {
-                        has = 1; break;
-                    }
-                    if (cs[k]=='s' && cs[k+1]=='p' && cs[k+2]=='r' && cs[k+3]=='i' &&
-                        cs[k+4]=='t' && cs[k+5]=='e' && cs[k+6]=='_' && cs[k+7]=='i') {
-                        has = 1; break;
-                    }
-                    if (cs[k]=='v' && cs[k+1]=='s' && cs[k+2]=='p' && cs[k+3]=='e' &&
-                        cs[k+4]=='e' && cs[k+5]=='d') {
-                        has = 1; break;
-                    }
-                    if (cs[k]=='h' && cs[k+1]=='s' && cs[k+2]=='p' && cs[k+3]=='e' &&
-                        cs[k+4]=='e' && cs[k+5]=='d') {
+                for (int k = 0; k + 1 < nlen; k++) {
+                    if (cs[k] == '=' || (cs[k] == '(' && cs[k+1] != ')') || cs[k] == ';' || cs[k] == '{') {
                         has = 1; break;
                     }
                 }
                 if (!has) continue;
-                /* attach to first event lacking snippet, prefer step (3) if present */
+                /* attach to first event lacking snippet, preferring step (3) or create (0) if present */
                 gm82_decoded_event *target = &o->events[0];
                 for (int ei = 0; ei < o->event_count; ei++) {
-                    if (o->events[ei].main_type == 3) { target = &o->events[ei]; break; }
+                    if (o->events[ei].main_type == 3 || o->events[ei].main_type == 0) {
+                        if (!o->events[ei].code_snippet) { target = &o->events[ei]; break; }
+                    }
                 }
-                if (!target->code_snippet || (int)strlen(target->code_snippet) < 20) {
-                    free(target->code_snippet);
+                if (!target->code_snippet) {
                     target->code_snippet = (char *)malloc((size_t)nlen + 1);
                     if (target->code_snippet) {
                         memcpy(target->code_snippet, cs, (size_t)nlen);
