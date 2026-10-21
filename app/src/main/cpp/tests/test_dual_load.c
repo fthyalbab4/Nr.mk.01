@@ -11,6 +11,10 @@ static void test_gmk_sample(const char *path) {
     char err[512];
     gm82_project_ir *ir = NULL;
     bool playable = gm82_load_and_prepare(path, &ir, err, sizeof(err));
+    if (!playable) {
+        printf("FAILED TO LOAD %s: %s\n", path, err);
+        fflush(stdout);
+    }
 
     /* Should be playable when sprites/backgrounds materialize */
     assert(playable == true);
