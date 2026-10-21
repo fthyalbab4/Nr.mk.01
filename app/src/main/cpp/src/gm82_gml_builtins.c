@@ -21,6 +21,8 @@ static uint8_t *g_draw_buf = NULL;
 static int32_t g_draw_w = 0, g_draw_h = 0;
 static uint32_t g_draw_color = 0xFFFFFF;
 static double g_draw_alpha = 1.0;
+static double g_draw_halign = 0.0; /* 0=fa_left, 1=fa_center, 2=fa_right */
+static double g_draw_valign = 0.0; /* 0=fa_top, 1=fa_middle, 2=fa_bottom */
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -796,6 +798,10 @@ void gml_draw_set_color(double color) { g_draw_color = (uint32_t)color; }
 void gml_draw_set_alpha(double alpha) { g_draw_alpha = alpha; }
 double gml_draw_get_alpha(void) { return g_draw_alpha; }
 double gml_draw_get_color(void) { return (double)g_draw_color; }
+void gml_draw_set_halign(double halign) { g_draw_halign = halign; }
+void gml_draw_set_valign(double valign) { g_draw_valign = valign; }
+double gml_draw_get_halign(void) { return g_draw_halign; }
+double gml_draw_get_valign(void) { return g_draw_valign; }
 
 static void put_px(int x, int y) {
     if (!g_draw_buf || x < 0 || y < 0 || x >= g_draw_w || y >= g_draw_h) return;
@@ -835,6 +841,54 @@ void gml_draw_circle(double x, double y, double r, double outline) {
                 if (dist2 <= rad*rad && dist2 >= (rad-1)*(rad-1)) put_px(cx+dx, cy+dy);
             } else {
                 if (dist2 <= rad*rad) put_px(cx+dx, cy+dy);
+            }
+        }
+    }
+}
+
+void gml_draw_triangle(double x1, double y1, double x2, double y2, double x3, double y3, double outline) {
+    if (outline) {
+        gml_draw_line(x1, y1, x2, y2);
+        gml_draw_line(x2, y2, x3, y3);
+        gml_draw_line(x3, y3, x1, y1);
+    } else {
+        int min_x = (int)fmin(x1, fmin(x2, x3));
+        int max_x = (int)fmax(x1, fmax(x2, x3));
+        int min_y = (int)fmin(y1, fmin(y2, y3));
+        int max_y = (int)fmax(y1, fmax(y2, y3));
+        for (int py = min_y; py <= max_y; py++) {
+            for (int px = min_x; px <= max_x; px++) {
+                if (gml_point_in_triangle((double)px, (double)py, x1, y1, x2, y2, x3, y3) == 1.0) {
+                    put_px(px, py);
+                }
+            }
+        }
+    }
+}
+
+void gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline) {
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return;
+
+    int min_x = (int)floor(x1);
+    int max_x = (int)ceil(x2);
+    int min_y = (int)floor(y1);
+    int max_y = (int)ceil(y2);
+
+    for (int py = min_y; py <= max_y; py++) {
+        for (int px = min_x; px <= max_x; px++) {
+            double dx = ((double)px - cx) / rx;
+            double dy = ((double)py - cy) / ry;
+            double val = dx * dx + dy * dy;
+            if (outline) {
+                if (val <= 1.0 && val >= 0.75) put_px(px, py);
+            } else {
+                if (val <= 1.0) put_px(px, py);
             }
         }
     }

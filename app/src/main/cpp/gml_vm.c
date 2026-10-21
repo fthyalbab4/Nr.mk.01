@@ -329,6 +329,12 @@ else if(!strcmp(n->text,"object_get_sprite")&&c==1){r=gml_value_real(gml_object_
 else if(!strcmp(n->text,"object_get_solid")&&c==1){r=gml_value_real(gml_object_get_solid(num(a[0])));}
 else if(!strcmp(n->text,"draw_rectangle")&&c==5){gml_draw_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_circle")&&c==4){gml_draw_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_triangle")&&c==7){gml_draw_triangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_ellipse")&&c==5){gml_draw_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_set_halign")&&c==1){gml_draw_set_halign(num(a[0]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_set_valign")&&c==1){gml_draw_set_valign(num(a[0]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_get_halign")&&c==0){r=gml_value_real(gml_draw_get_halign());}
+else if(!strcmp(n->text,"draw_get_valign")&&c==0){r=gml_value_real(gml_draw_get_valign());}
 else if(!strcmp(n->text,"draw_line")&&c==4){gml_draw_line(num(a[0]),num(a[1]),num(a[2]),num(a[3]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text")&&c==3){gml_draw_text(num(a[0]),num(a[1]),text_of(a[2]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text_color")&&c==7){gml_draw_text_color(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]));r=gml_value_real(1);}
