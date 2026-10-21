@@ -267,6 +267,8 @@ else if(!strcmp(n->text,"filename_dir")&&c==1){char outbuf[512];gml_filename_dir
 else if(!strcmp(n->text,"filename_ext")&&c==1){char outbuf[512];gml_filename_ext(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"filename_change_ext")&&c==2){char outbuf[512];gml_filename_change_ext(text_of(a[0]),text_of(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"point_in_triangle")&&c==8){r=gml_value_real(gml_point_in_triangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
+else if(!strcmp(n->text,"rectangle_in_rectangle")&&c==8){r=gml_value_real(gml_rectangle_in_rectangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
+else if(!strcmp(n->text,"rectangle_in_circle")&&c==7){r=gml_value_real(gml_rectangle_in_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6])));}
 else if(!strcmp(n->text,"file_bin_open")&&c==2){r=gml_value_real(gml_file_bin_open(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_bin_close")&&c==1){r=gml_value_real(gml_file_bin_close(num(a[0])));}
 else if(!strcmp(n->text,"file_bin_size")&&c==1){r=gml_value_real(gml_file_bin_size(num(a[0])));}
