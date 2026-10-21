@@ -6,8 +6,8 @@ claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 32 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-10-17
+last_test_log: "All 34 native C unit test suites verified PASS via CTest."
+last_run_date: 2026-10-18
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -17,13 +17,13 @@ last_run_date: 2026-10-17
 
 ## progress reality
 Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~92%.
-Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for point_in_ellipse, string_count, string_replace_all, and file_text_eof. Added test_gml_vm_expanded_v17.c to verify AST VM execution. All 33 unit test suites pass successfully.
+Verified math and string builtins (`clamp`, `lerp`, `sign`, `frac`, `string_copy`, `string_pos`, `string_delete`) in gml_vm.c and gm82_gml_builtins.c. Added test_gml_vm_expanded_v18.c to verify AST VM execution and direct builtin execution. All 34 CTest unit test suites pass successfully (100%).
 
 ## required_reply_format
 PROGRESS: 92% (compared to full Windows GM82)
-DONE: Expanded GML AST VM handlers and native builtins for point_in_ellipse, string_count, string_replace_all, and file_text_eof, added test_gml_vm_expanded_v17.c, and verified native compilation across all 33 CTest unit test suites.
-TEST: All 33 native C unit test suites passing.
+DONE: Added test_gml_vm_expanded_v18.c verifying clamp, lerp, sign, frac, string_copy, string_pos, and string_delete builtins both directly and via AST VM execution across all 34 CTest unit test suites.
+TEST: All 34 native C unit test suites passing.
 RESULT: PASS
-REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
+REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, physical device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
 CLAIM_100: no
