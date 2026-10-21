@@ -456,6 +456,14 @@ double gml_filename_ext(const char *fname, char *out, size_t out_sz);
 double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
 
 /* Geometry and Binary File I/O */
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+void   gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline);
+void   gml_draw_ellipse_color(double x1, double y1, double x2, double y2, double col1, double col2, double outline);
+double gml_ds_map_find_first(double id);
+double gml_ds_map_find_next(double id, double key);
+
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
 double gml_file_bin_open(const char *path, double mode);
 double gml_file_bin_close(double id);

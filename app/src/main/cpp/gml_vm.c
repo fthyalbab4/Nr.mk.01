@@ -266,6 +266,13 @@ else if(!strcmp(n->text,"filename_path")&&c==1){char outbuf[512];gml_filename_pa
 else if(!strcmp(n->text,"filename_dir")&&c==1){char outbuf[512];gml_filename_dir(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"filename_ext")&&c==1){char outbuf[512];gml_filename_ext(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"filename_change_ext")&&c==2){char outbuf[512];gml_filename_change_ext(text_of(a[0]),text_of(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"ds_grid_add_region")&&c==6){r=gml_value_real(gml_ds_grid_add_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_list_sort")&&c==2){r=gml_value_real(gml_ds_list_sort(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_shuffle")&&c==1){r=gml_value_real(gml_ds_list_shuffle(num(a[0])));}
+else if(!strcmp(n->text,"draw_ellipse")&&c==5){gml_draw_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_ellipse_color")&&c==7){gml_draw_ellipse_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"ds_map_find_first")&&c==1){r=gml_value_real(gml_ds_map_find_first(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_find_next")&&c==2){r=gml_value_real(gml_ds_map_find_next(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"point_in_triangle")&&c==8){r=gml_value_real(gml_point_in_triangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
 else if(!strcmp(n->text,"file_bin_open")&&c==2){r=gml_value_real(gml_file_bin_open(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_bin_close")&&c==1){r=gml_value_real(gml_file_bin_close(num(a[0])));}

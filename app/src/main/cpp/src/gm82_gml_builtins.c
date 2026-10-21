@@ -2777,6 +2777,98 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+        }
+    }
+    return 1.0;
+}
+
+static int cmp_dbl_asc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da > db) - (da < db);
+}
+static int cmp_dbl_desc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da < db) - (da > db);
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double), ascending ? cmp_dbl_asc : cmp_dbl_desc);
+    return 1.0;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    for (int j = g_ds_lists[i].size - 1; j > 0; j--) {
+        int k = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[k];
+        g_ds_lists[i].data[k] = tmp;
+    }
+    return 1.0;
+}
+
+void gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline) {
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return;
+    int min_x = (int)floor(x1), max_x = (int)ceil(x2);
+    int min_y = (int)floor(y1), max_y = (int)ceil(y2);
+    for (int y = min_y; y <= max_y; y++) {
+        for (int x = min_x; x <= max_x; x++) {
+            double dx = (x - cx) / rx;
+            double dy = (y - cy) / ry;
+            double d2 = dx * dx + dy * dy;
+            if (outline) {
+                double inner_dx = (x - cx) / (rx > 1 ? rx - 1 : rx);
+                double inner_dy = (y - cy) / (ry > 1 ? ry - 1 : ry);
+                double inner_d2 = inner_dx * inner_dx + inner_dy * inner_dy;
+                if (d2 <= 1.0 && inner_d2 >= 1.0) put_px(x, y);
+            } else {
+                if (d2 <= 1.0) put_px(x, y);
+            }
+        }
+    }
+}
+
+void gml_draw_ellipse_color(double x1, double y1, double x2, double y2, double col1, double col2, double outline) {
+    (void)col2;
+    gml_draw_set_color(col1);
+    gml_draw_ellipse(x1, y1, x2, y2, outline);
+}
+
+double gml_ds_map_find_first(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used || g_ds_maps[i].size == 0) return 0;
+    return g_ds_maps[i].keys[0];
+}
+
+double gml_ds_map_find_next(double id, double key) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    for (int j = 0; j < g_ds_maps[i].size; j++) {
+        if (g_ds_maps[i].keys[j] == key) {
+            if (j + 1 < g_ds_maps[i].size) return g_ds_maps[i].keys[j + 1];
+            break;
+        }
+    }
+    return 0;
+}
+
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
     double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
     double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);
