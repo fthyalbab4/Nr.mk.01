@@ -2786,6 +2786,44 @@ double gml_point_in_triangle(double px, double py, double x1, double y1, double 
     return !(has_neg && has_pos) ? 1.0 : 0.0;
 }
 
+double gml_rectangle_in_rectangle(double sx1, double sy1, double sx2, double sy2, double dx1, double dy1, double dx2, double dy2) {
+    double rx1 = sx1 < sx2 ? sx1 : sx2;
+    double rx2 = sx1 > sx2 ? sx1 : sx2;
+    double ry1 = sy1 < sy2 ? sy1 : sy2;
+    double ry2 = sy1 > sy2 ? sy1 : sy2;
+
+    double bx1 = dx1 < dx2 ? dx1 : dx2;
+    double bx2 = dx1 > dx2 ? dx1 : dx2;
+    double by1 = dy1 < dy2 ? dy1 : dy2;
+    double by2 = dy1 > dy2 ? dy1 : dy2;
+
+    if (rx2 < bx1 || rx1 > bx2 || ry2 < by1 || ry1 > by2) return 0.0;
+    if (rx1 >= bx1 && rx2 <= bx2 && ry1 >= by1 && ry2 <= by2) return 1.0;
+    return 2.0;
+}
+
+double gml_rectangle_in_circle(double x1, double y1, double x2, double y2, double cx, double cy, double rad) {
+    double rx1 = x1 < x2 ? x1 : x2;
+    double rx2 = x1 > x2 ? x1 : x2;
+    double ry1 = y1 < y2 ? y1 : y2;
+    double ry2 = y1 > y2 ? y1 : y2;
+
+    double r2 = rad * rad;
+    double c1 = (rx1 - cx)*(rx1 - cx) + (ry1 - cy)*(ry1 - cy);
+    double c2 = (rx2 - cx)*(rx2 - cx) + (ry1 - cy)*(ry1 - cy);
+    double c3 = (rx1 - cx)*(rx1 - cx) + (ry2 - cy)*(ry2 - cy);
+    double c4 = (rx2 - cx)*(rx2 - cx) + (ry2 - cy)*(ry2 - cy);
+
+    if (c1 <= r2 && c2 <= r2 && c3 <= r2 && c4 <= r2) return 1.0;
+
+    double nx = cx < rx1 ? rx1 : (cx > rx2 ? rx2 : cx);
+    double ny = cy < ry1 ? ry1 : (cy > ry2 ? ry2 : cy);
+    double dist_sq = (cx - nx)*(cx - nx) + (cy - ny)*(cy - ny);
+
+    if (dist_sq > r2) return 0.0;
+    return 2.0;
+}
+
 #define GM82_BIN_FILE_MAX 8
 typedef struct {
     int used;

@@ -457,6 +457,8 @@ double gml_filename_change_ext(const char *fname, const char *newext, char *out,
 
 /* Geometry and Binary File I/O */
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_rectangle_in_rectangle(double sx1, double sy1, double sx2, double sy2, double dx1, double dy1, double dx2, double dy2);
+double gml_rectangle_in_circle(double x1, double y1, double x2, double y2, double cx, double cy, double rad);
 double gml_file_bin_open(const char *path, double mode);
 double gml_file_bin_close(double id);
 double gml_file_bin_size(double id);
