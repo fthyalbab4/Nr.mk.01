@@ -17,12 +17,12 @@ last_run_date: 2026-10-17
 
 ## progress reality
 Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~92%.
-Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for point_in_triangle, binary file I/O functions (file_bin_open, file_bin_close, file_bin_size, file_bin_pos, file_bin_seek, file_bin_read_byte, file_bin_write_byte), and string_hash_to_newline. Added test_gml_vm_expanded_v16.c to verify AST VM execution. All 32 unit test suites pass and Gradle Android Debug APK builds successfully.
+Expanded GML AST VM execution dispatches and native builtins in gml_vm.c / gm82_gml_builtins.c for point_in_ellipse, string_count, string_replace_all, and file_text_eof. Added test_gml_vm_expanded_v17.c to verify AST VM execution. All 33 unit test suites pass successfully.
 
 ## required_reply_format
 PROGRESS: 92% (compared to full Windows GM82)
-DONE: Expanded GML AST VM handlers and native builtins for point_in_triangle, binary file I/O (file_bin_open, file_bin_close, file_bin_size, file_bin_pos, file_bin_seek, file_bin_read_byte, file_bin_write_byte), and string_hash_to_newline, added test_gml_vm_expanded_v16.c, and verified native compilation (32 test suites) and Gradle Android debug APK build.
-TEST: All 32 native C unit test suites passing and Gradle Android Debug APK build PASS.
+DONE: Expanded GML AST VM handlers and native builtins for point_in_ellipse, string_count, string_replace_all, and file_text_eof, added test_gml_vm_expanded_v17.c, and verified native compilation across all 33 CTest unit test suites.
+TEST: All 33 native C unit test suites passing.
 RESULT: PASS
 REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
