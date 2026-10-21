@@ -87,7 +87,9 @@ double gml_draw_get_color(void);
 void gml_draw_rectangle(double x1, double y1, double x2, double y2, double outline);
 void gml_draw_circle(double x, double y, double r, double outline);
 void gml_draw_line(double x1, double y1, double x2, double y2);
+void gml_draw_line_width(double x1, double y1, double x2, double y2, double w);
 void gml_draw_text(double x, double y, const char *str);
+void gml_draw_text_ext(double x, double y, const char *str, double sep, double w);
 void gml_draw_text_color(double x, double y, const char *str, double c1, double c2, double c3, double c4);
 
 /* Surfaces (CPU framebuffer targets) */
@@ -117,6 +119,9 @@ double gml_ds_list_clear(double id);
 double gml_ds_list_delete(double id, double pos);
 double gml_ds_list_find_index(double id, double value);
 double gml_ds_list_empty(double id);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+double gml_ds_list_copy(double id, double source_id);
 
 /* ds_map (numeric keys only) */
 double gml_ds_map_create(void);
@@ -157,6 +162,15 @@ double gml_ds_priority_find_max(double id);
 double gml_ds_priority_size(double id);
 double gml_ds_priority_empty(double id);
 
+/* ds_grid */
+double gml_ds_grid_create(double w, double h);
+double gml_ds_grid_destroy(double id);
+double gml_ds_grid_width(double id);
+double gml_ds_grid_height(double id);
+double gml_ds_grid_set(double id, double x, double y, double val);
+double gml_ds_grid_get(double id, double x, double y);
+double gml_ds_grid_clear(double id, double val);
+
 void gm82_mp_grid_bind(gm82_mp_grid_world *w);
 double gml_mp_grid_create(double left, double top, double hcells, double vcells, double cellw, double cellh);
 double gml_mp_grid_destroy(double id);
@@ -194,6 +208,14 @@ double gml_file_text_write_string(double id, const char *str);
 double gml_file_text_write_real(double id, double value);
 double gml_file_text_writeln(double id);
 double gml_file_text_read_real(double id);
+double gml_file_text_read_string(double id, char *out, size_t out_sz);
+double gml_file_text_readln(double id);
+double gml_ds_grid_value_exists(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val);
+double gml_point_in_circle(double px, double py, double cx, double cy, double rad);
+void gml_draw_circle_color(double x, double y, double r, double col1, double col2, double outline);
+void gml_draw_rectangle_color(double x1, double y1, double x2, double y2, double col1, double col2, double col3, double col4, double outline);
 double gml_file_exists(const char *path);
 double gml_file_delete(const char *path);
 const char *gml_file_find_first(const char *mask, double attr);
@@ -229,6 +251,8 @@ double gml_display_get_width(void);
 double gml_display_get_height(void);
 double gml_window_get_width(void);
 double gml_window_get_height(void);
+double gml_window_get_fullscreen(void);
+double gml_window_set_fullscreen(double enable);
 double gml_window_set_caption(const char *caption);
 const char *gml_window_get_caption(void);
 double gml_room_goto(double room_index);
@@ -257,6 +281,12 @@ double gml_real(const char *s);
 double gml_string_pos(const char *sub, const char *str);
 double gml_string_char_at(const char *str, double index);
 double gml_string_digits(const char *str, char *out, size_t out_sz);
+double gml_string_letters(const char *str, char *out, size_t out_sz);
+double gml_string_lettersdigits(const char *str, char *out, size_t out_sz);
+double gml_string_width(const char *str);
+double gml_string_height(const char *str);
+double gml_string_width_ext(const char *str, double sep, double w);
+double gml_string_height_ext(const char *str, double sep, double w);
 double gml_string_lower(const char *str, char *out, size_t out_sz);
 double gml_string_upper(const char *str, char *out, size_t out_sz);
 double gml_string_copy(const char *str, double index, double count, char *out, size_t out_sz);
@@ -288,6 +318,14 @@ double gml_timeline_stop(void);
 void gm82_timeline_step_instance(gm82_runtime *rt, gm82_instance *inst);
 void gml_draw_sprite_ext(double sprite, double subimg, double x, double y,
                          double xscale, double yscale, double rot, double color, double alpha);
+void gml_draw_self(void);
+double gml_move_snap(double hsnap, double vsnap);
+double gml_place_snapped(double hsnap, double vsnap);
+double gml_instance_position(double x, double y, double object_index);
+double gml_ds_grid_get_sum(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_mean(double id, double x1, double y1, double x2, double y2);
 
 /* ---- Built-in variable access on self ---- */
 double gml_get_x(void);
@@ -331,10 +369,23 @@ double gml_get_lives(void);
 void   gml_set_lives(double v);
 double gml_get_health(void);
 void   gml_set_health(double v);
-/* Audio stubs – no device playback yet */
+/* Audio stubs and parameter controls */
 double gml_sound_play(double sound_index);
 double gml_sound_stop(double sound_index);
 double gml_sound_isplaying(double sound_index);
+double gml_sound_volume(double sound_index, double volume);
+double gml_sound_pan(double sound_index, double pan);
+double gml_sound_pitch(double sound_index, double pitch);
+double gml_audio_play_sound(double sound_index, double priority, double loop);
+double gml_audio_stop_sound(double sound_index);
+double gml_audio_is_playing(double sound_index);
+
+/* Keyboard and Input state helpers */
+double gml_keyboard_check_direct(double key);
+double gml_keyboard_clear(double key);
+double gml_io_clear(void);
+double gml_keyboard_key(void);
+double gml_keyboard_lastchar(void);
 
 /* ---- Math helpers common in GML ---- */
 double gml_abs(double v);
@@ -344,6 +395,14 @@ double gml_lerp(double a, double b, double t);
 double gml_irandom(double n);
 double gml_random(double n);
 double gml_arctan2(double y, double x);
+double gml_dsin(double deg);
+double gml_dcos(double deg);
+double gml_dtan(double deg);
+double gml_darcsin(double val);
+double gml_darccos(double val);
+double gml_darctan(double val);
+double gml_darctan2(double y, double x);
+double gml_distance_to_point(double x, double y);
 double gml_sqr(double v);
 double gml_sqrt(double v);
 double gml_power(double base, double exp_val);
@@ -367,6 +426,51 @@ double gml_color_get_value(double col);
 double gml_merge_color(double col1, double col2, double amount);
 double gml_string_byte_at(const char *str, double index);
 double gml_string_byte_length(const char *str);
+double gml_string_ord_at(const char *str, double index);
+double gml_directory_exists(const char *path);
+double gml_directory_create(const char *path);
+double gml_file_copy(const char *fname, const char *newname);
+double gml_file_move(const char *fname, const char *newname);
+
+double gml_point_distance_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2, double z2);
+double gml_ds_list_insert(double id, double pos, double val);
+double gml_ds_list_replace(double id, double pos, double val);
+double gml_ds_map_replace(double id, double key, double val);
+double gml_ds_grid_add(double id, double x, double y, double val);
+double gml_ds_grid_multiply(double id, double x, double y, double val);
+double gml_ds_grid_get_max(double id, double x1, double y1, double x2, double y2);
+double gml_ds_grid_get_min(double id, double x1, double y1, double x2, double y2);
+double gml_string_trim(const char *str, char *out, size_t out_sz);
+double gml_instance_deactivate_object(double object_index);
+double gml_instance_activate_object(double object_index);
+double gml_ds_grid_set_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_grid_copy(double id, double source_id);
+double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val);
+double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val);
+double gml_instance_activate_region(double left, double top, double width, double height, double inside);
+double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
+double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
+double gml_math_hypot(double a, double b);
+double gml_file_rename(const char *oldname, const char *newname);
+double gml_directory_rename(const char *oldname, const char *newname);
+double gml_filename_name(const char *fname, char *out, size_t out_sz);
+double gml_filename_path(const char *fname, char *out, size_t out_sz);
+double gml_filename_dir(const char *fname, char *out, size_t out_sz);
+double gml_filename_ext(const char *fname, char *out, size_t out_sz);
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
+
+/* Geometry and Binary File I/O */
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_file_bin_open(const char *path, double mode);
+double gml_file_bin_close(double id);
+double gml_file_bin_size(double id);
+double gml_file_bin_pos(double id);
+double gml_file_bin_seek(double id, double pos);
+double gml_file_bin_read_byte(double id);
+double gml_file_bin_write_byte(double id, double byte);
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
 
 #ifdef __cplusplus
 }

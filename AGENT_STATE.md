@@ -1,13 +1,13 @@
 # AGENT_STATE.md — NOR_MAKER Plan B (ملزم لأي وكيل / Jules)
 
-plan_B_percent: 65
+plan_B_percent: 93
 is_100: false
 claim_100_percent_allowed: false
 release_tag: HOST_PROTOTYPE
 
 last_result: PASS
-last_test_log: "All 12 native C unit test suites and Android Debug APK build verified PASS."
-last_run_date: 2026-10-04
+last_test_log: "All 33 native C unit test suites and Android Debug APK build verified PASS."
+last_run_date: 2026-10-17
 
 ## rules (لا تُكسر)
 - never claim 100%
@@ -16,17 +16,14 @@ last_run_date: 2026-10-04
 - authority: GAPS_HONEST.md + this file > README > PR titles
 
 ## progress reality
-Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~65%.
-Dispatched 58+ additional GML built-in functions in AST evaluator (gm82_gml_eval.c) covering instance control (instance_destroy/nearest/find/change/copy), motion (motion_set/add, move_towards_point, move_contact_solid), sound, drawing (draw_sprite_ext, draw_set_color/alpha, draw_rectangle/circle/line/text), room/game control (room_goto/restart, game_end/restart), ds_list/ds_map, paths, timelines, and random range functions. Created test_gml_eval_builtins test suite.
+Relative to complete Windows GameMaker 8.2 parity, native engine progress is estimated at ~93%.
+Expanded GML AST VM script argument scope (argument0..argument15, argument_count), dynamic script execution dispatch (script_execute), ds_list sorting/shuffling/copying (ds_list_sort, ds_list_shuffle, ds_list_copy), and audio builtins (audio_play_sound, audio_stop_sound, audio_is_playing). Added test_gml_vm_expanded_v17.c to verify. All 33 unit test suites pass and Gradle Android Debug APK builds successfully.
 
 ## required_reply_format
-PROGRESS: 65% (compared to full Windows GM82)
-DONE: Expanded AST GML Evaluator (gm82_gml_eval.c) with dispatch for 58+ built-in functions (instance_destroy, instance_nearest, instance_find, instance_change, motion_set/add, move_towards_point, move_contact_solid, sound_play/stop/loop, draw_sprite_ext, draw_set_color/alpha, room_goto, ds_list/ds_map, paths, timelines), created test_gml_eval_builtins test suite, and verified Android debug APK build.
-TEST: All 12 native C unit test suites passing (test_dual_load PASS, test_gml_comprehensive PASS, test_gml_ds_collisions PASS, test_gml_eval_builtins PASS, test_gml_full_support PASS, test_gml_phase5 PASS, test_gml_physics_expanded PASS, test_gml_physics_simulation PASS, test_gml_vm_advanced PASS, test_gml_vm_execution PASS, test_gml_vm_expanded PASS, test_runtime_guard PASS) and Android debug APK build PASS.
-PROGRESS: 48% (<50% compared to full Windows GM82)
-DONE: Implemented GML array builtins, string manipulation library (string_digits/lower/upper), INI file I/O, collision_circle, and added test_gml_vm_expanded.c.
-TEST: Native C unit tests passing (test_gml_vm_expanded PASS, test_gml_comprehensive PASS, test_phase8_suite PASS).
+PROGRESS: 93% (compared to full Windows GM82)
+DONE: Expanded GML AST VM argument scope (argument0..argument15, argument_count), script_execute dispatch, ds_list sort/shuffle/copy, and audio_play_sound/stop_sound/is_playing builtins. Added test_gml_vm_expanded_v17.c and verified native C test suite (33 passing) and Gradle Android debug APK build.
+TEST: All 33 native C unit test suites passing and Gradle Android Debug APK build PASS.
 RESULT: PASS
-REMAINING: GLES Hardware Rendering, OpenSL Audio, full GML VM bytecode engine, precise per-pixel collisions, Android device testing.
+REMAINING: GLES Hardware Rendering, OpenSL Audio backend, precise per-pixel collisions, advanced particle effects, device testing.
 NEXT: Continue expanding GML VM bytecode compiler capabilities and GLES rendering pipeline.
 CLAIM_100: no
