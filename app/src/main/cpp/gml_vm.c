@@ -275,6 +275,10 @@ else if(!strcmp(n->text,"file_bin_seek")&&c==2){r=gml_value_real(gml_file_bin_se
 else if(!strcmp(n->text,"file_bin_read_byte")&&c==1){r=gml_value_real(gml_file_bin_read_byte(num(a[0])));}
 else if(!strcmp(n->text,"file_bin_write_byte")&&c==2){r=gml_value_real(gml_file_bin_write_byte(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"string_hash_to_newline")&&c==1){char outbuf[1024];gml_string_hash_to_newline(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"dot_product_normalised")&&c==4){r=gml_value_real(gml_dot_product_normalised(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"dot_product_normalized")&&c==4){r=gml_value_real(gml_dot_product_normalised(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"dot_product_3d_normalised")&&c==6){r=gml_value_real(gml_dot_product_3d_normalised(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"dot_product_3d_normalized")&&c==6){r=gml_value_real(gml_dot_product_3d_normalised(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"choose")&&c>=1){size_t idx=(size_t)(rand()%c);r=copyv(&a[idx]);}
 else if(!strcmp(n->text,"random_range")&&c==2){r=gml_value_real(gml_random_range(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"irandom")&&c==1){r=gml_value_real(gml_irandom(num(a[0])));}

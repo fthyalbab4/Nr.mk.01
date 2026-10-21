@@ -465,6 +465,8 @@ double gml_file_bin_seek(double id, double pos);
 double gml_file_bin_read_byte(double id);
 double gml_file_bin_write_byte(double id, double byte);
 double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
+double gml_dot_product_normalised(double x1, double y1, double x2, double y2);
+double gml_dot_product_3d_normalised(double x1, double y1, double z1, double x2, double y2, double z2);
 
 #ifdef __cplusplus
 }

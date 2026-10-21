@@ -2777,6 +2777,20 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_dot_product_normalised(double x1, double y1, double x2, double y2) {
+    double l1 = sqrt(x1 * x1 + y1 * y1);
+    double l2 = sqrt(x2 * x2 + y2 * y2);
+    if (l1 <= 0.000001 || l2 <= 0.000001) return 0.0;
+    return (x1 * x2 + y1 * y2) / (l1 * l2);
+}
+
+double gml_dot_product_3d_normalised(double x1, double y1, double z1, double x2, double y2, double z2) {
+    double l1 = sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+    double l2 = sqrt(x2 * x2 + y2 * y2 + z2 * z2);
+    if (l1 <= 0.000001 || l2 <= 0.000001) return 0.0;
+    return (x1 * x2 + y1 * y2 + z1 * z2) / (l1 * l2);
+}
+
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
     double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
     double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);
