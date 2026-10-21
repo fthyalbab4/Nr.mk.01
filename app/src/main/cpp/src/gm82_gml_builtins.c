@@ -1510,6 +1510,54 @@ double gml_ds_list_empty(double id) {
     return gml_ds_list_size(id) == 0 ? 1.0 : 0.0;
 }
 
+static int compare_doubles_asc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    if (da < db) return -1;
+    if (da > db) return 1;
+    return 0;
+}
+
+static int compare_doubles_desc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    if (da > db) return -1;
+    if (da < db) return 1;
+    return 0;
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 1;
+    if (ascending != 0) {
+        qsort(g_ds_lists[i].data, (size_t)g_ds_lists[i].size, sizeof(double), compare_doubles_asc);
+    } else {
+        qsort(g_ds_lists[i].data, (size_t)g_ds_lists[i].size, sizeof(double), compare_doubles_desc);
+    }
+    return 1;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 1;
+    for (int j = g_ds_lists[i].size - 1; j > 0; j--) {
+        int k = rand() % (j + 1);
+        double temp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[k];
+        g_ds_lists[i].data[k] = temp;
+    }
+    return 1;
+}
+
+double gml_ds_list_copy(double id, double source_id) {
+    int dst = (int)id, src = (int)source_id;
+    if (dst < 0 || dst >= GM82_DS_LIST_MAX || !g_ds_lists[dst].used) return 0;
+    if (src < 0 || src >= GM82_DS_LIST_MAX || !g_ds_lists[src].used) return 0;
+    g_ds_lists[dst].size = g_ds_lists[src].size;
+    memcpy(g_ds_lists[dst].data, g_ds_lists[src].data, sizeof(double) * (size_t)g_ds_lists[src].size);
+    return 1;
+}
+
 #define GM82_DS_MAP_MAX 16
 #define GM82_DS_MAP_CAP 128
 typedef struct {
@@ -2775,6 +2823,19 @@ double gml_string_trim(const char *str, char *out, size_t out_sz) {
 double gml_instance_deactivate_object(double object_index) {
     (void)object_index;
     return 1.0;
+}
+
+double gml_audio_play_sound(double sound_index, double priority, double loop) {
+    (void)priority; (void)loop;
+    return gml_sound_play(sound_index);
+}
+
+double gml_audio_stop_sound(double sound_index) {
+    return gml_sound_stop(sound_index);
+}
+
+double gml_audio_is_playing(double sound_index) {
+    return gml_sound_isplaying(sound_index);
 }
 
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {

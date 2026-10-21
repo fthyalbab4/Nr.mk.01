@@ -66,6 +66,10 @@ double gm82_gml_get_script_arg(int index) {
 
 static bool get_var(gml_parser *p, const char *name, double *out) {
     gm82_instance *s = p->self;
+    if (strcmp(name, "argument_count") == 0) {
+        *out = (double)g_script_arg_count;
+        return true;
+    }
     if (strncmp(name, "argument", 8) == 0 && isdigit((unsigned char)name[8])) {
         int idx = atoi(name + 8);
         if (idx >= 0 && idx < 16) {
@@ -446,6 +450,12 @@ static bool parse_primary(gml_parser *p, double *out) {
         if (strcmp(id, "ds_list_add") == 0) { *out = gml_ds_list_add(arg, nargs >= 2 ? args[1] : 0); return true; }
         if (strcmp(id, "ds_list_find_value") == 0) { *out = gml_ds_list_find_value(arg, nargs >= 2 ? args[1] : 0); return true; }
         if (strcmp(id, "ds_list_size") == 0) { *out = gml_ds_list_size(arg); return true; }
+        if (strcmp(id, "ds_list_sort") == 0) { *out = gml_ds_list_sort(arg, nargs >= 2 ? args[1] : 1); return true; }
+        if (strcmp(id, "ds_list_shuffle") == 0) { *out = gml_ds_list_shuffle(arg); return true; }
+        if (strcmp(id, "ds_list_copy") == 0) { *out = gml_ds_list_copy(arg, nargs >= 2 ? args[1] : 0); return true; }
+        if (strcmp(id, "audio_play_sound") == 0) { *out = gml_audio_play_sound(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
+        if (strcmp(id, "audio_stop_sound") == 0) { *out = gml_audio_stop_sound(arg); return true; }
+        if (strcmp(id, "audio_is_playing") == 0) { *out = gml_audio_is_playing(arg); return true; }
         if (strcmp(id, "ds_map_create") == 0) { *out = gml_ds_map_create(); return true; }
         if (strcmp(id, "ds_map_add") == 0) { *out = gml_ds_map_add(arg, nargs >= 2 ? args[1] : 0, nargs >= 3 ? args[2] : 0); return true; }
         if (strcmp(id, "ds_map_find_value") == 0) { *out = gml_ds_map_find_value(arg, nargs >= 2 ? args[1] : 0); return true; }

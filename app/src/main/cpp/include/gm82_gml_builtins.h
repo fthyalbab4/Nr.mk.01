@@ -119,6 +119,9 @@ double gml_ds_list_clear(double id);
 double gml_ds_list_delete(double id, double pos);
 double gml_ds_list_find_index(double id, double value);
 double gml_ds_list_empty(double id);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+double gml_ds_list_copy(double id, double source_id);
 
 /* ds_map (numeric keys only) */
 double gml_ds_map_create(void);
@@ -373,6 +376,9 @@ double gml_sound_isplaying(double sound_index);
 double gml_sound_volume(double sound_index, double volume);
 double gml_sound_pan(double sound_index, double pan);
 double gml_sound_pitch(double sound_index, double pitch);
+double gml_audio_play_sound(double sound_index, double priority, double loop);
+double gml_audio_stop_sound(double sound_index);
+double gml_audio_is_playing(double sound_index);
 
 /* Keyboard and Input state helpers */
 double gml_keyboard_check_direct(double key);
