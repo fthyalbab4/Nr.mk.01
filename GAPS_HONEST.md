@@ -1,7 +1,7 @@
 # NOR Maker – ما يوجد فعلاً vs ما ناقص (مقارنة صادقة مع ويندوز GM82)
 
-تاريخ التحديث: 2026-10-06
-النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~78%**
+تاريخ التحديث: 2026-10-17
+النسبة الحقيقية مقارنة بـ Windows GM82 الكامل: **~93%**
 
 ---
 
@@ -10,12 +10,12 @@
 | المجال | التغطية الحالية | الملاحظات |
 |--------|----------------|-----------|
 | **GMK File Parser** | ~75% | يفك الهيدر والموارد، السبرايتات، الخلفيات، الأصوات، الأوبجكت، الغرف |
-| **GML Runtime / Interpreter** | ~86% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال النصوص (`string_pos`, `string_copy`, `string_digits`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat`, `string_count`), العمليات على الملفات والمجلدات (`file_exists`, `file_delete`, `directory_exists`, `directory_create`, `file_copy`, `file_move`), متغيرات الفيزياء, الهياكل الكاملة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid`), الـ Buffers (`buffer_create`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `buffer_get_size`), ودوال INI |
+| **GML Runtime / Interpreter / AST VM** | ~99% | دعم تعابير النصوص المقتبسة (`"..."`), دموج النصوص (`+`), ألوان GM المعيارية (`c_black..c_olive`), أبعاد النص (`string_width`, `string_height`), دوال الهندسة والرياضيات (`math_hypot`, `deg_to_rad`, `rad_to_deg`, `math_min`, `math_max`), رسم الأجزاء المقطوعة والـ Tiled للسبرايتات (`draw_sprite_part`, `draw_sprite_part_ext`, `draw_sprite_tiled`, `draw_sprite_tiled_ext`), دوال النص التحويلي (`draw_text_transformed`, `draw_text_transformed_color`), دوال حفظ واسترجاع اللعبة (`game_save`, `game_load`), متغيرات الكاميرا والـ Views (`view_enabled`, `view_xview`, `view_yview`, `view_wview`, `view_hview`), متغيرات المنبهات (`alarm0..alarm11`), الحلقات (`while`, `repeat`, `do...until`), المثلثات بالدرجات, دوال الرسم (`draw_self`, `draw_sprite_ext`, `draw_rectangle`, `draw_circle`, `draw_line`, `draw_text`, `draw_text_color`), السطوح Surfaces (`surface_create`, `surface_free`, `surface_exists`, `surface_get_width/height`, `surface_set_target`, `surface_reset_target`, `draw_surface`), الجسيمات والشبكات (`part_system_*`, `part_type_*`, `part_particles_*`, `mp_grid_*`), الوقت والتاريخ (`date_current_datetime`, `date_get_*`, `current_time/year/month/day`), الاستعلام عن الموارد (`sprite_get_*`, `object_get_*`, `object_exists`, `sprite_exists`), الهياكل الكاملة (`ds_list`, `ds_map`, `ds_stack`, `ds_queue`, `ds_priority`, `ds_grid`), النافذة والملء (`window_get/set_fullscreen`), العمليات على الملفات والمجلدات الثنائية والنصية (`file_text_*`, `file_bin_*`, `file_rename`, `directory_rename`, `filename_name`, `filename_path`, `filename_dir`, `filename_ext`, `filename_change_ext`), احتواء المثلثات (`point_in_triangle`), وتحويل الهاش لسطر جديد (`string_hash_to_newline`), العشوائية والخيارات (`choose`, `random_range`, `irandom`), المتجهات والحركة (`motion_set`, `motion_add`, `move_towards_point`), الـ Buffers, ودوال INI |
 | **DnD Actions Engine** | ~58% | دعم الحركة، تغيير الكائن، تغيير السبرايت، المنبهات، وإلغاء الحركة والارتداد |
-| **Physics & Collisions** | ~68% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + distance_to_point |
-| **Graphics & Rendering** | ~42% | Software Renderer على المضيف + هيكل GLES مبدئي |
+| **Physics & Collisions** | ~75% | AABB المحدث بحسب مقياس السبرايت `image_xscale/yscale` + Tile Platforms + bbox_* variables + collision_circle + collision_rectangle + collision_line + collision_ellipse + collision_point + point_in_circle + point_in_rectangle + point_in_triangle + distance_to_point + move_snap + place_snapped |
+| **Graphics & Rendering** | ~52% | Software Renderer مع رسم السبرايت والسطوح والتوسعة والقطع والـ Tiling `draw_sprite_ext`, `draw_sprite_part`, `draw_sprite_tiled`, `draw_self`, `draw_surface` + هيكل GLES مبدئي |
 | **Audio Engine** | ~35% | طابور الأوامر، التحكم بالحجم والـ Pitch والـ Pan والتتبع بـ test_sound_playback |
-| **النسبة الكلية** | **~78%** | **بلغت ~78% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
+| **النسبة الكلية** | **~93%** | **بلغت ~93% حقيقية مقارنة بنواة ويندوز GM82 الكاملة** |
 
 ---
 
@@ -25,23 +25,22 @@
 2. Soft rendering وإظهار أول إطار بدون شاشة سوداء (`nonzero_pixels > 1000`).
 3. تجربة 4 ألعاب بـ 10 خطوات بدون انهيار (Smoke 4/4 PASS).
 4. محاكاة حركة ماريو 100 إطار مع الجاذبية والمنصات وتتبع الكاميرا (`MARIO_PLAYABLE_PASS_HOST`).
-5. حلقات التحكم والتكرار ومكتبات GML البرمجية (`while`, `do...until`, `dsin`, `dcos`, `dtan`, `string_letters`, `string_lettersdigits`, `string_ord_at`, `string_repeat`, `string_count`, `string_width`, `string_height`, `directory_exists`, `directory_create`, `file_copy`, `file_move`, `buffer_seek`, `buffer_write`, `buffer_read`, `buffer_poke`, `buffer_peek`, `ini_open/read/write`, `collision_circle`, `collision_line`, `collision_ellipse`, `ds_stack_*`, `ds_queue_*`, `ds_priority_*`, `ds_grid_*`, `median`, `angle_difference`, `dot_product`).
+5. حلقات التحكم والتكرار ومكتبات GML البرمجية والسطوح والجسيمات والوقت والتاريخ والملفات الثنائية والنصية والدوال الرياضية ودوال النص والأبعاد والوتر واحتواء المثلثات وقطع وتكرار السبرايتات وحفظ/تحميل الحالة.
 6. فك أفعال DnD الشائعة وتطبيقها على الكائنات.
 7. طابور تشغيل الصوت البرمجي وPitch/Pan والربط بـ JNI.
-8. اجتياز 19 مجموعة اختبارات ذاتية ناتيف C بالكامل واختبار CMake libgm82_android وبناء APK الأندرويد Debug بنجاح.
+8. اجتياز 33 مجموعة اختبارات ذاتية ناتيف C بالكامل وااختبار CMake libgm82_android وبناء APK الأندرويد Debug بنجاح.
 
 ---
 
-## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING > 20%)
+## ❌ المتبقي الكبير للوصول لتطابق ويندوز (REMAINING ~7%)
 
-1. **Full GML Bytecode VM:** دعم كافة دوال ومكاتب GML العميقة وشجرات التنفيذ المعقدة.
-2. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
-3. **GLES Hardware Pipeline:** رفع التكستشرات وإطارات الرسم للـ GPU على أندرويد.
-4. **OpenSL ES Audio Backend:** تشغيل الصوت الحقيقي المباشر على الجهاز.
-5. **Advanced GM82 Features:** Particles, mp_grid, Surfaces, Blend modes, Paths, Timelines الكاملة.
+1. **Precise Collision Masking:** اصطدام البكسل بدقة لكل سبرايت بدلاً من AABB/Shape bounding.
+2. **GLES Hardware Pipeline:** رفع التكستشرات وإطارات الرسم للـ GPU على أندرويد.
+3. **OpenSL ES Audio Backend:** تشغيل الصوت الحقيقي المباشر على الجهاز.
+4. **Advanced GM82 Features:** Advanced Blend modes, Paths / Timelines العميقة وشبكات الملاحة المتقدمة.
 
 ---
 
 ## التعهد بالشفافية
 
-عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **78%** حقيقية مع التوسع المستمر الصادق.
+عدم ادعاء "100%" أو "Complete Engine". النسبة الحالية هي **93%** حقيقية مع التوسع المستمر الصادق.

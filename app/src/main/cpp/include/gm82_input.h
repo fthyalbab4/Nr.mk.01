@@ -46,6 +46,8 @@ void gm82_input_set_mouse(gm82_input_state *in, int x, int y);
 double gml_keyboard_check(double key);
 double gml_keyboard_check_pressed(double key);
 double gml_keyboard_check_released(double key);
+double gml_keyboard_clear(double key);
+double gml_io_clear(void);
 double gml_mouse_x(void);
 double gml_mouse_y(void);
 double gml_mouse_check_button(double button);

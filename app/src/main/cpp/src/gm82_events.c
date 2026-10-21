@@ -195,6 +195,9 @@ static void fire_object_create_actions(gm82_runtime *rt, gm82_instance *inst) {
             if (strcmp(ev->action_name0, "action_kill_object") == 0)
                 gm82_action_execute_named(rt, inst, "action_kill_object");
         }
+        if (ev->main_type == 0 && ev->code_snippet && ev->code_snippet[0]) {
+            gm82_gml_eval_block(rt, inst, ev->code_snippet);
+        }
     }
 }
 
@@ -244,8 +247,7 @@ static void fire_object_step_actions(gm82_runtime *rt, gm82_instance *inst) {
     const gm82_decoded_object *obj = &rt->objects->items[oi];
     for (int e = 0; e < obj->event_count && e < GM82_OBJ_EVENT_MAX; e++) {
         const gm82_decoded_event *ev = &obj->events[e];
-        /* Step (3) actions; also run any decoded GML snippet each step
-         * when it looks like movement code (keyboard/place_free). */
+        /* Step (3) actions */
         if (ev->main_type == 3 && ev->action_name0[0]) {
             gm82_action_execute_named(rt, inst, ev->action_name0);
             if (strcmp(ev->action_name0, "action_set_hspeed") == 0 && ev->action_arg0 != -1)
@@ -253,9 +255,29 @@ static void fire_object_step_actions(gm82_runtime *rt, gm82_instance *inst) {
             if (strcmp(ev->action_name0, "action_set_vspeed") == 0 && ev->action_arg0 != -1)
                 inst->vspeed = (double)ev->action_arg0;
         }
-        if (ev->code_snippet && ev->code_snippet[0] && (ev->main_type == 3 ||
-            strstr(ev->code_snippet, "keyboard") || strstr(ev->code_snippet, "place_free"))) {
-            gm82_gml_eval_block(rt, inst, ev->code_snippet);
+        /* Evaluate GML snippets based on event main_type and input state */
+        if (ev->code_snippet && ev->code_snippet[0]) {
+            if (ev->main_type == 3 || ev->main_type == 7) {
+                gm82_gml_eval_block(rt, inst, ev->code_snippet);
+            } else if (ev->main_type == 5) { /* Keyboard event */
+                int key = ev->event_numb;
+                if (key == 0) { /* nokey */
+                    if (gml_keyboard_check(1) == 0.0) {
+                        gm82_gml_eval_block(rt, inst, ev->code_snippet);
+                    }
+                } else if (key == 1) { /* anykey */
+                    if (gml_keyboard_check(1) != 0.0) {
+                        gm82_gml_eval_block(rt, inst, ev->code_snippet);
+                    }
+                } else if (gml_keyboard_check((double)key) != 0.0) {
+                    gm82_gml_eval_block(rt, inst, ev->code_snippet);
+                }
+            } else if (ev->main_type == 6) { /* Mouse event */
+                int btn = ev->event_numb;
+                if (gml_mouse_check_button((double)btn)) {
+                    gm82_gml_eval_block(rt, inst, ev->code_snippet);
+                }
+            }
         }
     }
 }
