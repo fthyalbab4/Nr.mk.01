@@ -27,6 +27,9 @@ gm82_runtime *gm82_gml_get_runtime(void);
 void gm82_gml_set_self(gm82_instance *self);
 gm82_instance *gm82_gml_get_self(void);
 
+/* Calculate sprite origin (xoffset/yoffset) and scale aware bounding box */
+void gm82_instance_get_bbox(gm82_runtime *rt, gm82_instance *inst, double custom_x, double custom_y, double *l, double *t, double *r, double *b);
+
 /* ---- Instance ---- */
 double gml_instance_create(double x, double y, double object_index);
 void   gml_instance_destroy(void); /* destroys self */
@@ -91,6 +94,9 @@ void gml_draw_line_width(double x1, double y1, double x2, double y2, double w);
 void gml_draw_text(double x, double y, const char *str);
 void gml_draw_text_ext(double x, double y, const char *str, double sep, double w);
 void gml_draw_text_color(double x, double y, const char *str, double c1, double c2, double c3, double c4);
+void gml_draw_text_transformed(double x, double y, const char *str, double xscale, double yscale, double angle);
+void gml_draw_sprite_part(double sprite, double subimg, double left, double top, double width, double height, double x, double y);
+void gml_draw_sprite_part_ext(double sprite, double subimg, double left, double top, double width, double height, double x, double y, double xscale, double yscale, double color, double alpha);
 
 /* Surfaces (CPU framebuffer targets) */
 double gml_surface_create(double w, double h);

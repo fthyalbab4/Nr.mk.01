@@ -206,45 +206,37 @@ void gm82_runtime_step(gm82_runtime *rt) {
     for (int i = 0; i < rt->instance_count; i++) {
         gm82_instance *inst = &rt->instances[i];
         if (!inst->alive) continue;
-        int32_t sw = 16, sh = 16;
-        if (rt->sprites && inst->sprite_index >= 0 && inst->sprite_index < rt->sprites->count) {
-            sw = rt->sprites->frames[inst->sprite_index].width;
-            sh = rt->sprites->frames[inst->sprite_index].height;
-        }
+        double ax1, ay1, ax2, ay2;
+        gm82_instance_get_bbox(rt, inst, inst->x, inst->y, &ax1, &ay1, &ax2, &ay2);
         for (int j = 0; j < rt->instance_count; j++) {
             if (i == j) continue;
             gm82_instance *other = &rt->instances[j];
             if (!other->alive) continue;
-            int32_t ow = 16, oh = 16;
-            if (rt->sprites && other->sprite_index >= 0 && other->sprite_index < rt->sprites->count) {
-                ow = rt->sprites->frames[other->sprite_index].width;
-                oh = rt->sprites->frames[other->sprite_index].height;
-            }
-            double ax1 = inst->x, ay1 = inst->y, ax2 = inst->x + sw, ay2 = inst->y + sh;
-            double bx1 = other->x, by1 = other->y, bx2 = other->x + ow, by2 = other->y + oh;
-            if (!(ax1 < bx2 && ax2 > bx1 && ay1 < by2 && ay2 > by1))
+            double bx1, by1, bx2, by2;
+            gm82_instance_get_bbox(rt, other, other->x, other->y, &bx1, &by1, &bx2, &by2);
+            if (!(ax1 <= bx2 && ax2 >= bx1 && ay1 <= by2 && ay2 >= by1))
                 continue;
             /* collision event (both sides); solid still resolves position */
             gm82_events_fire_collision(rt, inst, other);
             if (other->solid) {
                 double overlap_x = (ax2 < bx2 ? ax2 : bx2) - (ax1 > bx1 ? ax1 : bx1);
                 double overlap_y = (ay2 < by2 ? ay2 : by2) - (ay1 > by1 ? ay1 : by1);
-                /* Separate first; only zero velocity if still moving into the solid
-                 * (preserves action_bounce which already flipped the axis). */
+                double sw = ax2 - ax1 + 1, sh = ay2 - ay1 + 1;
+                double ow = bx2 - bx1 + 1, oh = by2 - by1 + 1;
                 if (overlap_y <= overlap_x) {
                     if (inst->y + sh/2.0 < other->y + oh/2.0) {
-                        inst->y = other->y - sh;
+                        inst->y = by1 - (ay2 - inst->y + 1);
                         if (inst->vspeed > 0) inst->vspeed = 0;
                     } else {
-                        inst->y = other->y + oh;
+                        inst->y = by2 + (inst->y - ay1);
                         if (inst->vspeed < 0) inst->vspeed = 0;
                     }
                 } else {
                     if (inst->x + sw/2.0 < other->x + ow/2.0) {
-                        inst->x = other->x - sw;
+                        inst->x = bx1 - (ax2 - inst->x + 1);
                         if (inst->hspeed > 0) inst->hspeed = 0;
                     } else {
-                        inst->x = other->x + ow;
+                        inst->x = bx2 + (inst->x - ax1);
                         if (inst->hspeed < 0) inst->hspeed = 0;
                     }
                 }
@@ -348,8 +340,8 @@ bool gm82_runtime_draw(gm82_runtime *rt, uint8_t *rgba, int32_t buf_w, int32_t b
         const gm82_decoded_frame *fr = &rt->sprites->frames[si];
         if (!fr->rgba) continue;
         {
-            int dx = (int)inst->x - (int)rt->view_x;
-            int dy = (int)inst->y - (int)rt->view_y;
+            int dx = (int)inst->x - fr->xoffset - (int)rt->view_x;
+            int dy = (int)inst->y - fr->yoffset - (int)rt->view_y;
             blit(rgba, buf_w, buf_h, fr->rgba, fr->width, fr->height, dx, dy);
         }
     }

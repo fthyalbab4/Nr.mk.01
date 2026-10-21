@@ -302,6 +302,14 @@ else if(!strcmp(n->text,"math_min")&&c==2){r=gml_value_real(gml_math_min(num(a[0
 else if(!strcmp(n->text,"math_max")&&c==2){r=gml_value_real(gml_math_max(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_text_ext")&&c==5){gml_draw_text_ext(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_text_transformed")&&c==6){gml_draw_text_transformed(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]),num(a[5]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_part")&&c==8){gml_draw_sprite_part(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_part_ext")&&c==12){gml_draw_sprite_part_ext(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]),num(a[9]),num(a[10]),num(a[11]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
+else if(!strcmp(n->text,"window_get_caption")&&c==0){r=gml_value_string(gml_window_get_caption());}
+else if(!strcmp(n->text,"instance_place")&&c==3){r=gml_value_real(gml_instance_place(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_nearest")&&c==3){r=gml_value_real(gml_instance_nearest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_furthest")&&c==3){r=gml_value_real(gml_instance_furthest(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"file_text_open_append")&&c==1){r=gml_value_real(gml_file_text_open_append(text_of(a[0])));}
 else if(!strcmp(n->text,"file_text_write_string")&&c==2){r=gml_value_real(gml_file_text_write_string(num(a[0]),text_of(a[1])));}
 else if(!strcmp(n->text,"file_text_write_real")&&c==2){r=gml_value_real(gml_file_text_write_real(num(a[0]),num(a[1])));}

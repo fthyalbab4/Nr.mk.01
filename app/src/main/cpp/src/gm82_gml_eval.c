@@ -735,6 +735,34 @@ static bool parse_primary(gml_parser *p, double *out) {
             gml_draw_text_color(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:16777215, (nargs>=5)?args[4]:16777215, (nargs>=6)?args[5]:16777215, (nargs>=7)?args[6]:16777215);
             *out = 1; return true;
         }
+        if (strcmp(id, "draw_text_transformed") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text_transformed(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:1.0, (nargs>=5)?args[4]:1.0, (nargs>=6)?args[5]:0.0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_part") == 0) {
+            gml_draw_sprite_part(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_part_ext") == 0) {
+            gml_draw_sprite_part_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:0, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:0, (nargs>=9)?args[8]:1.0, (nargs>=10)?args[9]:1.0, (nargs>=11)?args[10]:16777215, (nargs>=12)?args[11]:1.0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "window_set_caption") == 0) {
+            char tmp[256];
+            *out = gml_window_set_caption(get_str_val(arg, tmp, sizeof(tmp)));
+            return true;
+        }
+        if (strcmp(id, "window_get_caption") == 0) {
+            *out = alloc_str_slot(gml_window_get_caption());
+            return true;
+        }
+        if (strcmp(id, "instance_place") == 0) {
+            *out = gml_instance_place(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:-1);
+            return true;
+        }
         if (strcmp(id, "string_length") == 0) {
             char tmp[256];
             *out = gml_string_length(get_str_val(arg, tmp, sizeof(tmp))); return true;

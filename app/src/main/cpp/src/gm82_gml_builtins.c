@@ -113,6 +113,32 @@ double gml_point_direction(double x1, double y1, double x2, double y2) {
     return atan2(-(y2 - y1), (x2 - x1)) * 180.0 / M_PI;
 }
 
+void gm82_instance_get_bbox(gm82_runtime *rt, gm82_instance *inst, double custom_x, double custom_y, double *l, double *t, double *r, double *b) {
+    if (!inst) {
+        *l = custom_x; *t = custom_y; *r = custom_x + 15; *b = custom_y + 15;
+        return;
+    }
+    double base_w = 16, base_h = 16, xo = 0, yo = 0;
+    if (rt && rt->sprites && inst->sprite_index >= 0 && inst->sprite_index < rt->sprites->count) {
+        base_w = rt->sprites->frames[inst->sprite_index].width;
+        base_h = rt->sprites->frames[inst->sprite_index].height;
+        xo = rt->sprites->frames[inst->sprite_index].xoffset;
+        yo = rt->sprites->frames[inst->sprite_index].yoffset;
+    }
+    double xs = (inst->image_xscale != 0) ? inst->image_xscale : 1.0;
+    double ys = (inst->image_yscale != 0) ? inst->image_yscale : 1.0;
+
+    double w = base_w * fabs(xs);
+    double h = base_h * fabs(ys);
+    double ox = xo * fabs(xs);
+    double oy = yo * fabs(ys);
+
+    *l = custom_x - ox;
+    *t = custom_y - oy;
+    *r = *l + (w > 0 ? w - 1 : 0);
+    *b = *t + (h > 0 ? h - 1 : 0);
+}
+
 static bool sprite_size_ext(gm82_runtime *rt, gm82_instance *inst, int32_t *w, int32_t *h) {
     int32_t base_w = 16, base_h = 16;
     if (rt && inst && rt->sprites && inst->sprite_index >= 0 && inst->sprite_index < rt->sprites->count) {
@@ -135,24 +161,19 @@ static bool sprite_size(gm82_runtime *rt, int32_t sprite_index, int32_t *w, int3
     return true;
 }
 
-static bool aabb_overlap(double ax, double ay, int aw, int ah,
-                         double bx, double by, int bw, int bh) {
-    return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-}
-
 double gml_place_meeting(double x, double y, double object_index) {
     if (!g_rt || !g_self) return 0;
     int32_t oi = (int32_t)object_index;
-    int32_t sw, sh;
-    sprite_size_ext(g_rt, g_self, &sw, &sh);
+    double al, at, ar, ab;
+    gm82_instance_get_bbox(g_rt, g_self, x, y, &al, &at, &ar, &ab);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
         if (oi >= 100000) { if (o->id != oi) continue; }
         else if (oi >= 0) { if (o->object_index != oi) continue; }
-        int32_t ow, oh;
-        sprite_size_ext(g_rt, o, &ow, &oh);
-        if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 1;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (al <= br && ar >= bl && at <= bb && ab >= bt) return 1;
     }
     return 0;
 }
@@ -164,9 +185,9 @@ double gml_position_meeting(double x, double y, double object_index) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (x >= o->x && x < o->x + ow && y >= o->y && y < o->y + oh) return 1;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (x >= bl && x <= br && y >= bt && y <= bb) return 1;
     }
     return 0;
 }
@@ -174,16 +195,16 @@ double gml_position_meeting(double x, double y, double object_index) {
 double gml_instance_place(double x, double y, double object_index) {
     if (!g_rt || !g_self) return -4; /* noone */
     int32_t oi = (int32_t)object_index;
-    int32_t sw, sh;
-    sprite_size_ext(g_rt, g_self, &sw, &sh);
+    double al, at, ar, ab;
+    gm82_instance_get_bbox(g_rt, g_self, x, y, &al, &at, &ar, &ab);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
         if (oi >= 100000) { if (o->id != oi) continue; }
         else if (oi >= 0) { if (o->object_index != oi) continue; }
-        int32_t ow, oh;
-        sprite_size_ext(g_rt, o, &ow, &oh);
-        if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh))
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (al <= br && ar >= bl && at <= bb && ab >= bt)
             return (double)o->id;
     }
     return -4;
@@ -299,9 +320,9 @@ double gml_instance_position(double x, double y, double object_index) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow = 16, oh = 16;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (x >= o->x && x < o->x + ow && y >= o->y && y < o->y + oh)
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (x >= bl && x <= br && y >= bt && y <= bb)
             return (double)o->id;
     }
     return -4;
@@ -309,21 +330,29 @@ double gml_instance_position(double x, double y, double object_index) {
 
 double gml_get_x(void) { return g_self ? g_self->x : 0; }
 double gml_get_y(void) { return g_self ? g_self->y : 0; }
-double gml_get_bbox_left(void) { return g_self ? g_self->x : 0; }
+double gml_get_bbox_left(void) {
+    if (!g_self) return 0;
+    double l, t, r, b;
+    gm82_instance_get_bbox(g_rt, g_self, g_self->x, g_self->y, &l, &t, &r, &b);
+    return l;
+}
 double gml_get_bbox_right(void) {
     if (!g_self) return 0;
-    int32_t sw = 16;
-    if (g_rt && g_rt->sprites && g_self->sprite_index >= 0 && g_self->sprite_index < g_rt->sprites->count)
-        sw = g_rt->sprites->frames[g_self->sprite_index].width;
-    return g_self->x + sw - 1;
+    double l, t, r, b;
+    gm82_instance_get_bbox(g_rt, g_self, g_self->x, g_self->y, &l, &t, &r, &b);
+    return r;
 }
-double gml_get_bbox_top(void) { return g_self ? g_self->y : 0; }
+double gml_get_bbox_top(void) {
+    if (!g_self) return 0;
+    double l, t, r, b;
+    gm82_instance_get_bbox(g_rt, g_self, g_self->x, g_self->y, &l, &t, &r, &b);
+    return t;
+}
 double gml_get_bbox_bottom(void) {
     if (!g_self) return 0;
-    int32_t sh = 16;
-    if (g_rt && g_rt->sprites && g_self->sprite_index >= 0 && g_self->sprite_index < g_rt->sprites->count)
-        sh = g_rt->sprites->frames[g_self->sprite_index].height;
-    return g_self->y + sh - 1;
+    double l, t, r, b;
+    gm82_instance_get_bbox(g_rt, g_self, g_self->x, g_self->y, &l, &t, &r, &b);
+    return b;
 }
 void gml_set_x(double v) { if (g_self) g_self->x = v; }
 void gml_set_y(double v) { if (g_self) g_self->y = v; }
@@ -513,9 +542,9 @@ double gml_collision_rectangle(double x1, double y1, double x2, double y2, doubl
         if (!o->alive) continue;
         if (notme && o == g_self) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (aabb_overlap(x1, y1, x2-x1, y2-y1, o->x, o->y, ow, oh))
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (x1 <= br && x2 >= bl && y1 <= bb && y2 >= bt)
             return (double)o->id;
     }
     return -4;
@@ -531,10 +560,10 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
         if (!o->alive) continue;
         if (notme && o == g_self) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        double cx = o->x + ow / 2.0;
-        double cy = o->y + oh / 2.0;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        double cx = (bl + br) / 2.0;
+        double cy = (bt + bb) / 2.0;
         double dx = cx - xc, dy = cy - yc;
         if (dx * dx + dy * dy <= rad_sq)
             return (double)o->id;
@@ -542,16 +571,16 @@ double gml_collision_circle(double xc, double yc, double rad, double obj, double
     return -4;
 }
 
-static bool line_intersects_aabb(double x1, double y1, double x2, double y2, double rx, double ry, double rw, double rh) {
+static bool line_intersects_bbox(double x1, double y1, double x2, double y2, double bl, double bt, double br, double bb) {
     double min_x = x1 < x2 ? x1 : x2, max_x = x1 < x2 ? x2 : x1;
     double min_y = y1 < y2 ? y1 : y2, max_y = y1 < y2 ? y2 : y1;
-    if (max_x < rx || min_x > rx + rw || max_y < ry || min_y > ry + rh) return false;
+    if (max_x < bl || min_x > br || max_y < bt || min_y > bb) return false;
     /* Check 16 steps along segment */
     for (int i = 0; i <= 16; i++) {
         double t = i / 16.0;
         double px = x1 + t * (x2 - x1);
         double py = y1 + t * (y2 - y1);
-        if (px >= rx && px <= rx + rw && py >= ry && py <= ry + rh) return true;
+        if (px >= bl && px <= br && py >= bt && py <= bb) return true;
     }
     return false;
 }
@@ -565,9 +594,9 @@ double gml_collision_line(double x1, double y1, double x2, double y2, double obj
         if (!o->alive) continue;
         if (notme && o == g_self) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (line_intersects_aabb(x1, y1, x2, y2, o->x, o->y, ow, oh))
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (line_intersects_bbox(x1, y1, x2, y2, bl, bt, br, bb))
             return (double)o->id;
     }
     return -4;
@@ -589,10 +618,10 @@ double gml_collision_ellipse(double x1, double y1, double x2, double y2, double 
         if (!o->alive) continue;
         if (notme && o == g_self) continue;
         if (oi >= 0 && o->object_index != oi) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        double ox = o->x + ow / 2.0;
-        double oy = o->y + oh / 2.0;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        double ox = (bl + br) / 2.0;
+        double oy = (bt + bb) / 2.0;
         double dx = (ox - cx) / rx;
         double dy = (oy - cy) / ry;
         if (dx * dx + dy * dy <= 1.0)
@@ -608,28 +637,28 @@ double gml_collision_point(double x, double y, double obj, double prec, double n
 double gml_place_free(double x, double y) {
     /* GM8: true iff no collision with a *solid object* at (x,y). Tiles are not objects. */
     if (!g_rt || !g_self) return 1;
-    int32_t sw, sh;
-    sprite_size(g_rt, g_self->sprite_index, &sw, &sh);
+    double al, at, ar, ab;
+    gm82_instance_get_bbox(g_rt, g_self, x, y, &al, &at, &ar, &ab);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self || !o->solid) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 0;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (al <= br && ar >= bl && at <= bb && ab >= bt) return 0;
     }
     return 1;
 }
 
 double gml_place_empty(double x, double y) {
     if (!g_rt || !g_self) return 1;
-    int32_t sw, sh;
-    sprite_size(g_rt, g_self->sprite_index, &sw, &sh);
+    double al, at, ar, ab;
+    gm82_instance_get_bbox(g_rt, g_self, x, y, &al, &at, &ar, &ab);
     for (int i = 0; i < g_rt->instance_count; i++) {
         gm82_instance *o = &g_rt->instances[i];
         if (!o->alive || o == g_self) continue;
-        int32_t ow, oh;
-        sprite_size(g_rt, o->sprite_index, &ow, &oh);
-        if (aabb_overlap(x, y, sw, sh, o->x, o->y, ow, oh)) return 0;
+        double bl, bt, br, bb;
+        gm82_instance_get_bbox(g_rt, o, o->x, o->y, &bl, &bt, &br, &bb);
+        if (al <= br && ar >= bl && at <= bb && ab >= bt) return 0;
     }
     return 1;
 }
@@ -1304,6 +1333,62 @@ void gml_draw_text_color(double x, double y, const char *str,
     g_draw_color = (uint32_t)c1;
     gml_draw_text(x, y, str);
     g_draw_color = old;
+}
+
+void gml_draw_text_transformed(double x, double y, const char *str, double xscale, double yscale, double angle) {
+    (void)xscale; (void)yscale; (void)angle;
+    gml_draw_text(x, y, str);
+}
+
+void gml_draw_sprite_part(double sprite, double subimg, double left, double top, double width, double height, double x, double y) {
+    gml_draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, 1.0, 1.0, 16777215, 1.0);
+}
+
+void gml_draw_sprite_part_ext(double sprite, double subimg, double left, double top, double width, double height, double x, double y, double xscale, double yscale, double color, double alpha) {
+    (void)subimg;
+    if (!g_draw_buf || !g_rt || !g_rt->sprites) return;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return;
+    const gm82_decoded_frame *fr = &g_rt->sprites->frames[si];
+    if (!fr->rgba) return;
+
+    int base_w = fr->width;
+    int base_h = fr->height;
+    int l = (int)left, t = (int)top, w = (int)width, h = (int)height;
+    if (l < 0) l = 0; if (t < 0) t = 0;
+    if (l >= base_w || t >= base_h || w <= 0 || h <= 0) return;
+    if (l + w > base_w) w = base_w - l;
+    if (t + h > base_h) h = base_h - t;
+
+    int dw = (int)(w * (xscale != 0 ? fabs(xscale) : 1.0));
+    int dh = (int)(h * (yscale != 0 ? fabs(yscale) : 1.0));
+    if (dw < 1) dw = 1; if (dh < 1) dh = 1;
+
+    int dx0 = (int)x, dy0 = (int)y;
+    double a = alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha);
+    uint32_t c = (uint32_t)color;
+    uint8_t cr = (c >> 16) & 255, cg = (c >> 8) & 255, cb = c & 255;
+
+    for (int dy_idx = 0; dy_idx < dh; dy_idx++) {
+        int dy = dy0 + dy_idx;
+        if (dy < 0 || dy >= g_draw_h) continue;
+        int sy = t + (dy_idx * h) / dh;
+        for (int dx_idx = 0; dx_idx < dw; dx_idx++) {
+            int dx = dx0 + dx_idx;
+            if (dx < 0 || dx >= g_draw_w) continue;
+            int sx = l + (dx_idx * w) / dw;
+            const uint8_t *s = fr->rgba + ((size_t)sy * (size_t)base_w + (size_t)sx) * 4;
+            if (s[3] == 0) continue;
+            uint8_t *d = g_draw_buf + ((size_t)dy * (size_t)g_draw_w + (size_t)dx) * 4;
+            uint8_t sr = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[0] * cr) / 255) : s[0];
+            uint8_t sg_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[1] * cg) / 255) : s[1];
+            uint8_t sb_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[2] * cb) / 255) : s[2];
+            d[0] = (uint8_t)(d[0] * (1.0 - a) + sr * a);
+            d[1] = (uint8_t)(d[1] * (1.0 - a) + sg_val * a);
+            d[2] = (uint8_t)(d[2] * (1.0 - a) + sb_val * a);
+            d[3] = 255;
+        }
+    }
 }
 
 #define GM82_SURFACE_MAX 32
