@@ -672,6 +672,44 @@ static bool parse_primary(gml_parser *p, double *out) {
             gml_draw_sprite_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:1, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:16777215, (nargs>=9)?args[8]:1.0);
             *out = 1; return true;
         }
+        if (strcmp(id, "draw_sprite_part") == 0) {
+            gml_draw_sprite_part(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:16, (nargs>=6)?args[5]:16, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_part_ext") == 0) {
+            gml_draw_sprite_part_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:16, (nargs>=6)?args[5]:16, (nargs>=7)?args[6]:0, (nargs>=8)?args[7]:0, (nargs>=9)?args[8]:1, (nargs>=10)?args[9]:1, (nargs>=11)?args[10]:16777215, (nargs>=12)?args[11]:1);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_tiled") == 0) {
+            gml_draw_sprite_tiled(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_sprite_tiled_ext") == 0) {
+            gml_draw_sprite_tiled_ext(arg, (nargs>=2)?args[1]:0, (nargs>=3)?args[2]:0, (nargs>=4)?args[3]:0, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:1, (nargs>=7)?args[6]:16777215, (nargs>=8)?args[7]:1);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_text_transformed") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text_transformed(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:1, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:0);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "draw_text_transformed_color") == 0) {
+            char tmp[256];
+            double sarg = (nargs >= 3) ? args[2] : 0.0;
+            const char *txt = get_str_val(sarg, tmp, sizeof(tmp));
+            gml_draw_text_transformed_color(arg, (nargs>=2)?args[1]:0, txt, (nargs>=4)?args[3]:1, (nargs>=5)?args[4]:1, (nargs>=6)?args[5]:0, (nargs>=7)?args[6]:16777215, (nargs>=8)?args[7]:16777215, (nargs>=9)?args[8]:16777215, (nargs>=10)?args[9]:16777215, (nargs>=11)?args[10]:1);
+            *out = 1; return true;
+        }
+        if (strcmp(id, "game_save") == 0) {
+            char tmp[256];
+            *out = gml_game_save(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
+        if (strcmp(id, "game_load") == 0) {
+            char tmp[256];
+            *out = gml_game_load(get_str_val(arg, tmp, sizeof(tmp))); return true;
+        }
         if (strcmp(id, "draw_set_color") == 0) {
             gml_draw_set_color(arg); *out = 1; return true;
         }

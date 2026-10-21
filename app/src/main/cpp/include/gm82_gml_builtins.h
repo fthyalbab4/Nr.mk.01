@@ -455,6 +455,16 @@ double gml_filename_dir(const char *fname, char *out, size_t out_sz);
 double gml_filename_ext(const char *fname, char *out, size_t out_sz);
 double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
 
+/* Sub-sprite, Tiled & Transformed Drawing, Game Save/Load */
+void gml_draw_sprite_part(double sprite, double subimg, double left, double top, double width, double height, double x, double y);
+void gml_draw_sprite_part_ext(double sprite, double subimg, double left, double top, double width, double height, double x, double y, double xscale, double yscale, double color, double alpha);
+void gml_draw_sprite_tiled(double sprite, double subimg, double x, double y);
+void gml_draw_sprite_tiled_ext(double sprite, double subimg, double x, double y, double xscale, double yscale, double color, double alpha);
+void gml_draw_text_transformed(double x, double y, const char *str, double xscale, double yscale, double angle);
+void gml_draw_text_transformed_color(double x, double y, const char *str, double xscale, double yscale, double angle, double c1, double c2, double c3, double c4, double alpha);
+double gml_game_save(const char *fname);
+double gml_game_load(const char *fname);
+
 /* Geometry and Binary File I/O */
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
 double gml_file_bin_open(const char *path, double mode);

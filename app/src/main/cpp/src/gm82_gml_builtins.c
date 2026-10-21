@@ -2777,6 +2777,132 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+void gml_draw_sprite_part_ext(double sprite, double subimg, double left, double top, double width, double height, double x, double y, double xscale, double yscale, double color, double alpha) {
+    (void)subimg;
+    if (!g_draw_buf || !g_rt || !g_rt->sprites) return;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return;
+    const gm82_decoded_frame *fr = &g_rt->sprites->frames[si];
+    if (!fr->rgba) return;
+
+    int l = (int)left, t = (int)top, w = (int)width, h = (int)height;
+    if (l < 0) l = 0;
+    if (t < 0) t = 0;
+    if (l + w > fr->width) w = fr->width - l;
+    if (t + h > fr->height) h = fr->height - t;
+    if (w <= 0 || h <= 0) return;
+
+    int dw = (int)(w * (xscale != 0 ? fabs(xscale) : 1.0));
+    int dh = (int)(h * (yscale != 0 ? fabs(yscale) : 1.0));
+    if (dw < 1) dw = 1;
+    if (dh < 1) dh = 1;
+
+    int dx0 = (int)x, dy0 = (int)y;
+    double a = alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha);
+    uint32_t c = (uint32_t)color;
+    uint8_t cr = (c >> 16) & 255, cg = (c >> 8) & 255, cb = c & 255;
+
+    for (int dy_idx = 0; dy_idx < dh; dy_idx++) {
+        int dy = dy0 + dy_idx;
+        if (dy < 0 || dy >= g_draw_h) continue;
+        int sy = t + (dy_idx * h) / dh;
+        if (sy >= fr->height) continue;
+        for (int dx_idx = 0; dx_idx < dw; dx_idx++) {
+            int dx = dx0 + dx_idx;
+            if (dx < 0 || dx >= g_draw_w) continue;
+            int sx = l + (dx_idx * w) / dw;
+            if (sx >= fr->width) continue;
+            const uint8_t *s = fr->rgba + ((size_t)sy * (size_t)fr->width + (size_t)sx) * 4;
+            if (s[3] == 0) continue;
+            uint8_t *d = g_draw_buf + ((size_t)dy * (size_t)g_draw_w + (size_t)dx) * 4;
+
+            uint8_t sr = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[0] * cr) / 255) : s[0];
+            uint8_t sg_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[1] * cg) / 255) : s[1];
+            uint8_t sb_val = (color != 0xFFFFFF && color != 16777215) ? (uint8_t)((s[2] * cb) / 255) : s[2];
+
+            d[0] = (uint8_t)(d[0] * (1.0 - a) + sr * a);
+            d[1] = (uint8_t)(d[1] * (1.0 - a) + sg_val * a);
+            d[2] = (uint8_t)(d[2] * (1.0 - a) + sb_val * a);
+            d[3] = 255;
+        }
+    }
+}
+
+void gml_draw_sprite_part(double sprite, double subimg, double left, double top, double width, double height, double x, double y) {
+    gml_draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, 1.0, 1.0, 16777215, 1.0);
+}
+
+void gml_draw_sprite_tiled_ext(double sprite, double subimg, double x, double y, double xscale, double yscale, double color, double alpha) {
+    if (!g_draw_buf || !g_rt || !g_rt->sprites) return;
+    int si = (int)sprite;
+    if (si < 0 || si >= g_rt->sprites->count) return;
+    const gm82_decoded_frame *fr = &g_rt->sprites->frames[si];
+    if (!fr->rgba) return;
+
+    int dw = (int)(fr->width * (xscale != 0 ? fabs(xscale) : 1.0));
+    int dh = (int)(fr->height * (yscale != 0 ? fabs(yscale) : 1.0));
+    if (dw < 1) dw = 1;
+    if (dh < 1) dh = 1;
+
+    int start_x = (int)fmod(x, dw); if (start_x > 0) start_x -= dw;
+    int start_y = (int)fmod(y, dh); if (start_y > 0) start_y -= dh;
+
+    for (int ty = start_y; ty < g_draw_h; ty += dh) {
+        for (int tx = start_x; tx < g_draw_w; tx += dw) {
+            gml_draw_sprite_ext(sprite, subimg, tx, ty, xscale, yscale, 0, color, alpha);
+        }
+    }
+}
+
+void gml_draw_sprite_tiled(double sprite, double subimg, double x, double y) {
+    gml_draw_sprite_tiled_ext(sprite, subimg, x, y, 1.0, 1.0, 16777215, 1.0);
+}
+
+void gml_draw_text_transformed_color(double x, double y, const char *str, double xscale, double yscale, double angle, double c1, double c2, double c3, double c4, double alpha) {
+    (void)angle; (void)c2; (void)c3; (void)c4; (void)xscale; (void)yscale;
+    double old_a = g_draw_alpha;
+    gml_draw_set_alpha(alpha);
+    gml_draw_text_color(x, y, str, c1, c1, c1, c1);
+    gml_draw_set_alpha(old_a);
+}
+
+void gml_draw_text_transformed(double x, double y, const char *str, double xscale, double yscale, double angle) {
+    gml_draw_text_transformed_color(x, y, str, xscale, yscale, angle, g_draw_color, g_draw_color, g_draw_color, g_draw_color, g_draw_alpha);
+}
+
+double gml_game_save(const char *fname) {
+    if (!fname || !g_rt) return 0;
+    FILE *f = fopen(fname, "wb");
+    if (!f) return 0;
+    fwrite(&g_rt->current_room, sizeof(int32_t), 1, f);
+    fwrite(&g_rt->instance_count, sizeof(int32_t), 1, f);
+    double score = gml_get_score();
+    double lives = gml_get_lives();
+    double health = gml_get_health();
+    fwrite(&score, sizeof(double), 1, f);
+    fwrite(&lives, sizeof(double), 1, f);
+    fwrite(&health, sizeof(double), 1, f);
+    fclose(f);
+    return 1.0;
+}
+
+double gml_game_load(const char *fname) {
+    if (!fname || !g_rt) return 0;
+    FILE *f = fopen(fname, "rb");
+    if (!f) return 0;
+    int32_t rm = 0, ic = 0;
+    if (fread(&rm, sizeof(int32_t), 1, f) == 1) {
+        gm82_runtime_goto_room(g_rt, rm);
+    }
+    if (fread(&ic, sizeof(int32_t), 1, f) == 1) {}
+    double score = 0, lives = 0, health = 0;
+    if (fread(&score, sizeof(double), 1, f) == 1) gml_set_score(score);
+    if (fread(&lives, sizeof(double), 1, f) == 1) gml_set_lives(lives);
+    if (fread(&health, sizeof(double), 1, f) == 1) gml_set_health(health);
+    fclose(f);
+    return 1.0;
+}
+
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
     double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
     double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);

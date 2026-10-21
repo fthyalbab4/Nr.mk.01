@@ -173,6 +173,14 @@ else if(!strcmp(n->text,"ds_grid_get_min")&&c==5){r=gml_value_real(gml_ds_grid_g
 else if(!strcmp(n->text,"ds_grid_get_mean")&&c==5){r=gml_value_real(gml_ds_grid_get_mean(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"draw_self")&&c==0){gml_draw_self();r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_sprite_ext")&&c==9){gml_draw_sprite_ext(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_part")&&c==8){gml_draw_sprite_part(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_part_ext")&&c==12){gml_draw_sprite_part_ext(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]),num(a[9]),num(a[10]),num(a[11]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_tiled")&&c==4){gml_draw_sprite_tiled(num(a[0]),num(a[1]),num(a[2]),num(a[3]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_sprite_tiled_ext")&&c==8){gml_draw_sprite_tiled_ext(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_text_transformed")&&c==6){gml_draw_text_transformed(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]),num(a[5]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_text_transformed_color")&&c==11){gml_draw_text_transformed_color(num(a[0]),num(a[1]),text_of(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]),num(a[9]),num(a[10]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"game_save")&&c==1){r=gml_value_real(gml_game_save(text_of(a[0])));}
+else if(!strcmp(n->text,"game_load")&&c==1){r=gml_value_real(gml_game_load(text_of(a[0])));}
 else if(!strcmp(n->text,"move_snap")&&c==2){r=gml_value_real(gml_move_snap(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"place_snapped")&&c==2){r=gml_value_real(gml_place_snapped(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"instance_position")&&c==3){r=gml_value_real(gml_instance_position(num(a[0]),num(a[1]),num(a[2])));}
