@@ -259,6 +259,29 @@ else if(!strcmp(n->text,"hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]
 else if(!strcmp(n->text,"ds_grid_multiply_region")&&c==6){r=gml_value_real(gml_ds_grid_multiply_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"string_insert")&&c==3){char outbuf[1024];gml_string_insert(text_of(a[0]),text_of(a[1]),num(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"string_delete")&&c==3){char outbuf[1024];gml_string_delete(text_of(a[0]),num(a[1]),num(a[2]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"file_rename")&&c==2){r=gml_value_real(gml_file_rename(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"directory_rename")&&c==2){r=gml_value_real(gml_directory_rename(text_of(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"filename_name")&&c==1){char outbuf[512];gml_filename_name(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_path")&&c==1){char outbuf[512];gml_filename_path(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_dir")&&c==1){char outbuf[512];gml_filename_dir(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_ext")&&c==1){char outbuf[512];gml_filename_ext(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"filename_change_ext")&&c==2){char outbuf[512];gml_filename_change_ext(text_of(a[0]),text_of(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"ds_grid_add_region")&&c==6){r=gml_value_real(gml_ds_grid_add_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_list_sort")&&c==2){r=gml_value_real(gml_ds_list_sort(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_shuffle")&&c==1){r=gml_value_real(gml_ds_list_shuffle(num(a[0])));}
+else if(!strcmp(n->text,"draw_ellipse")&&c==5){gml_draw_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_ellipse_color")&&c==7){gml_draw_ellipse_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"ds_map_find_first")&&c==1){r=gml_value_real(gml_ds_map_find_first(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_find_next")&&c==2){r=gml_value_real(gml_ds_map_find_next(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"point_in_triangle")&&c==8){r=gml_value_real(gml_point_in_triangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
+else if(!strcmp(n->text,"file_bin_open")&&c==2){r=gml_value_real(gml_file_bin_open(text_of(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"file_bin_close")&&c==1){r=gml_value_real(gml_file_bin_close(num(a[0])));}
+else if(!strcmp(n->text,"file_bin_size")&&c==1){r=gml_value_real(gml_file_bin_size(num(a[0])));}
+else if(!strcmp(n->text,"file_bin_pos")&&c==1){r=gml_value_real(gml_file_bin_pos(num(a[0])));}
+else if(!strcmp(n->text,"file_bin_seek")&&c==2){r=gml_value_real(gml_file_bin_seek(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"file_bin_read_byte")&&c==1){r=gml_value_real(gml_file_bin_read_byte(num(a[0])));}
+else if(!strcmp(n->text,"file_bin_write_byte")&&c==2){r=gml_value_real(gml_file_bin_write_byte(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"string_hash_to_newline")&&c==1){char outbuf[1024];gml_string_hash_to_newline(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"choose")&&c>=1){size_t idx=(size_t)(rand()%c);r=copyv(&a[idx]);}
 else if(!strcmp(n->text,"random_range")&&c==2){r=gml_value_real(gml_random_range(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"irandom")&&c==1){r=gml_value_real(gml_irandom(num(a[0])));}
@@ -275,7 +298,13 @@ else if(!strcmp(n->text,"string_width_ext")&&c==3){r=gml_value_real(gml_string_w
 else if(!strcmp(n->text,"string_height_ext")&&c==3){r=gml_value_real(gml_string_height_ext(text_of(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"math_hypot")&&c==2){r=gml_value_real(gml_math_hypot(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"deg_to_rad")&&c==1){r=gml_value_real(gml_deg_to_rad(num(a[0])));}
+else if(!strcmp(n->text,"degtorad")&&c==1){r=gml_value_real(gml_deg_to_rad(num(a[0])));}
 else if(!strcmp(n->text,"rad_to_deg")&&c==1){r=gml_value_real(gml_rad_to_deg(num(a[0])));}
+else if(!strcmp(n->text,"radtodeg")&&c==1){r=gml_value_real(gml_rad_to_deg(num(a[0])));}
+else if(!strcmp(n->text,"point_direction")&&c==4){r=gml_value_real(gml_point_direction(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"point_distance")&&c==4){r=gml_value_real(gml_point_distance(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"lengthdir_x")&&c==2){r=gml_value_real(gml_lengthdir_x(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"lengthdir_y")&&c==2){r=gml_value_real(gml_lengthdir_y(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"math_min")&&c==2){r=gml_value_real(gml_math_min(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"math_max")&&c==2){r=gml_value_real(gml_math_max(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"draw_line_width")&&c==5){gml_draw_line_width(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]));r=gml_value_real(1);}

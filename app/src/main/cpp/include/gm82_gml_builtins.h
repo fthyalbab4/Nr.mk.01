@@ -447,6 +447,32 @@ double gml_instance_activate_region(double left, double top, double width, doubl
 double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
 double gml_math_hypot(double a, double b);
+double gml_file_rename(const char *oldname, const char *newname);
+double gml_directory_rename(const char *oldname, const char *newname);
+double gml_filename_name(const char *fname, char *out, size_t out_sz);
+double gml_filename_path(const char *fname, char *out, size_t out_sz);
+double gml_filename_dir(const char *fname, char *out, size_t out_sz);
+double gml_filename_ext(const char *fname, char *out, size_t out_sz);
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz);
+
+/* Geometry and Binary File I/O */
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_list_shuffle(double id);
+void   gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline);
+void   gml_draw_ellipse_color(double x1, double y1, double x2, double y2, double col1, double col2, double outline);
+double gml_ds_map_find_first(double id);
+double gml_ds_map_find_next(double id, double key);
+
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_file_bin_open(const char *path, double mode);
+double gml_file_bin_close(double id);
+double gml_file_bin_size(double id);
+double gml_file_bin_pos(double id);
+double gml_file_bin_seek(double id, double pos);
+double gml_file_bin_read_byte(double id);
+double gml_file_bin_write_byte(double id, double byte);
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
 
 #ifdef __cplusplus
 }

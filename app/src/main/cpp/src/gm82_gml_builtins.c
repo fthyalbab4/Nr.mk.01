@@ -2777,6 +2777,291 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_ds_grid_add_region(double id, double x1, double y1, double x2, double y2, double val) {
+    int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return 0;
+    for (int y = gy1; y <= gy2; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = gx1; x <= gx2; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            g_ds_grids[i].data[y * g_ds_grids[i].w + x] += val;
+        }
+    }
+    return 1.0;
+}
+
+static int cmp_dbl_asc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da > db) - (da < db);
+}
+static int cmp_dbl_desc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da < db) - (da > db);
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    qsort(g_ds_lists[i].data, g_ds_lists[i].size, sizeof(double), ascending ? cmp_dbl_asc : cmp_dbl_desc);
+    return 1.0;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used || g_ds_lists[i].size <= 1) return 0;
+    for (int j = g_ds_lists[i].size - 1; j > 0; j--) {
+        int k = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[k];
+        g_ds_lists[i].data[k] = tmp;
+    }
+    return 1.0;
+}
+
+void gml_draw_ellipse(double x1, double y1, double x2, double y2, double outline) {
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) return;
+    int min_x = (int)floor(x1), max_x = (int)ceil(x2);
+    int min_y = (int)floor(y1), max_y = (int)ceil(y2);
+    for (int y = min_y; y <= max_y; y++) {
+        for (int x = min_x; x <= max_x; x++) {
+            double dx = (x - cx) / rx;
+            double dy = (y - cy) / ry;
+            double d2 = dx * dx + dy * dy;
+            if (outline) {
+                double inner_dx = (x - cx) / (rx > 1 ? rx - 1 : rx);
+                double inner_dy = (y - cy) / (ry > 1 ? ry - 1 : ry);
+                double inner_d2 = inner_dx * inner_dx + inner_dy * inner_dy;
+                if (d2 <= 1.0 && inner_d2 >= 1.0) put_px(x, y);
+            } else {
+                if (d2 <= 1.0) put_px(x, y);
+            }
+        }
+    }
+}
+
+void gml_draw_ellipse_color(double x1, double y1, double x2, double y2, double col1, double col2, double outline) {
+    (void)col2;
+    gml_draw_set_color(col1);
+    gml_draw_ellipse(x1, y1, x2, y2, outline);
+}
+
+double gml_ds_map_find_first(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used || g_ds_maps[i].size == 0) return 0;
+    return g_ds_maps[i].keys[0];
+}
+
+double gml_ds_map_find_next(double id, double key) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    for (int j = 0; j < g_ds_maps[i].size; j++) {
+        if (g_ds_maps[i].keys[j] == key) {
+            if (j + 1 < g_ds_maps[i].size) return g_ds_maps[i].keys[j + 1];
+            break;
+        }
+    }
+    return 0;
+}
+
+double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
+    double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
+    double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);
+    double d3 = (px - x1) * (y3 - y1) - (x3 - x1) * (py - y1);
+    bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos) ? 1.0 : 0.0;
+}
+
+#define GM82_BIN_FILE_MAX 8
+typedef struct {
+    int used;
+    FILE *fp;
+    int mode; /* 0=read, 1=write, 2=read/write */
+} gm82_bin_file;
+static gm82_bin_file g_bin_files[GM82_BIN_FILE_MAX];
+
+double gml_file_bin_open(const char *path, double mode) {
+    if (!path) return -1;
+    int m = (int)mode;
+    const char *fmode = "rb";
+    if (m == 1) fmode = "wb";
+    else if (m == 2) fmode = "r+b";
+    for (int i = 0; i < GM82_BIN_FILE_MAX; i++) {
+        if (g_bin_files[i].used) continue;
+        FILE *f = fopen(path, fmode);
+        if (!f && m == 2) f = fopen(path, "w+b");
+        if (!f) return -1;
+        g_bin_files[i].used = 1;
+        g_bin_files[i].fp = f;
+        g_bin_files[i].mode = m;
+        return (double)i;
+    }
+    return -1;
+}
+
+double gml_file_bin_close(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    fclose(g_bin_files[i].fp);
+    memset(&g_bin_files[i], 0, sizeof(g_bin_files[i]));
+    return 1;
+}
+
+double gml_file_bin_size(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    long cur = ftell(g_bin_files[i].fp);
+    fseek(g_bin_files[i].fp, 0, SEEK_END);
+    long sz = ftell(g_bin_files[i].fp);
+    fseek(g_bin_files[i].fp, cur, SEEK_SET);
+    return (double)sz;
+}
+
+double gml_file_bin_pos(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    return (double)ftell(g_bin_files[i].fp);
+}
+
+double gml_file_bin_seek(double id, double pos) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    long p = (long)pos;
+    if (p < 0) p = 0;
+    return (fseek(g_bin_files[i].fp, p, SEEK_SET) == 0) ? 1.0 : 0.0;
+}
+
+double gml_file_bin_read_byte(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    int b = fgetc(g_bin_files[i].fp);
+    return (b == EOF) ? 0.0 : (double)b;
+}
+
+double gml_file_bin_write_byte(double id, double byte) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_BIN_FILE_MAX || !g_bin_files[i].used) return 0;
+    unsigned char b = (unsigned char)byte;
+    return (fputc(b, g_bin_files[i].fp) != EOF) ? 1.0 : 0.0;
+}
+
+double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!str) return 0;
+    size_t k = 0;
+    for (size_t i = 0; str[i] && k + 1 < out_sz; i++) {
+        if (str[i] == '\\' && str[i+1] == '#') {
+            out[k++] = '#';
+            i++;
+        } else if (str[i] == '#') {
+            out[k++] = '\n';
+        } else {
+            out[k++] = str[i];
+        }
+    }
+    out[k] = 0;
+    return (double)k;
+}
+
+double gml_file_rename(const char *oldname, const char *newname) {
+    if (!oldname || !newname) return 0.0;
+    return rename(oldname, newname) == 0 ? 1.0 : 0.0;
+}
+
+double gml_directory_rename(const char *oldname, const char *newname) {
+    if (!oldname || !newname) return 0.0;
+    return rename(oldname, newname) == 0 ? 1.0 : 0.0;
+}
+
+double gml_filename_name(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = fname;
+    if (slash && slash >= p) p = slash + 1;
+    if (bslash && bslash >= p) p = bslash + 1;
+    strncpy(out, p, out_sz - 1);
+    out[out_sz - 1] = 0;
+    return (double)strlen(out);
+}
+
+double gml_filename_path(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = NULL;
+    if (slash && (!bslash || slash > bslash)) p = slash;
+    else if (bslash) p = bslash;
+    if (p) {
+        size_t len = (size_t)(p - fname + 1);
+        if (len >= out_sz) len = out_sz - 1;
+        memcpy(out, fname, len);
+        out[len] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_dir(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    const char *slash = strrchr(fname, '/');
+    const char *bslash = strrchr(fname, '\\');
+    const char *p = NULL;
+    if (slash && (!bslash || slash > bslash)) p = slash;
+    else if (bslash) p = bslash;
+    if (p) {
+        size_t len = (size_t)(p - fname);
+        if (len >= out_sz) len = out_sz - 1;
+        memcpy(out, fname, len);
+        out[len] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_ext(const char *fname, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    char namebuf[256];
+    gml_filename_name(fname, namebuf, sizeof(namebuf));
+    const char *dot = strrchr(namebuf, '.');
+    if (dot) {
+        strncpy(out, dot, out_sz - 1);
+        out[out_sz - 1] = 0;
+    }
+    return (double)strlen(out);
+}
+
+double gml_filename_change_ext(const char *fname, const char *newext, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0;
+    out[0] = 0;
+    if (!fname) return 0;
+    char extbuf[64];
+    gml_filename_ext(fname, extbuf, sizeof(extbuf));
+    size_t flen = strlen(fname);
+    size_t elen = strlen(extbuf);
+    size_t base_len = (flen >= elen) ? (flen - elen) : flen;
+    if (base_len >= out_sz) base_len = out_sz - 1;
+    memcpy(out, fname, base_len);
+    out[base_len] = 0;
+    if (newext) {
+        strncat(out, newext, out_sz - strlen(out) - 1);
+    }
+    return (double)strlen(out);
+}
+
 static int g_window_fullscreen = 0;
 
 double gml_window_get_fullscreen(void) {
