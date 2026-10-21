@@ -129,6 +129,8 @@ else if(!strcmp(n->text,"ds_list_clear")&&c==1){r=gml_value_real(gml_ds_list_cle
 else if(!strcmp(n->text,"ds_list_delete")&&c==2){r=gml_value_real(gml_ds_list_delete(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_list_find_index")&&c==2){r=gml_value_real(gml_ds_list_find_index(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_list_empty")&&c==1){r=gml_value_real(gml_ds_list_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_sort")&&c==2){r=gml_value_real(gml_ds_list_sort(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_list_shuffle")&&c==1){r=gml_value_real(gml_ds_list_shuffle(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_create")&&c==0){r=gml_value_real(gml_ds_map_create());}
 else if(!strcmp(n->text,"ds_map_destroy")&&c==1){r=gml_value_real(gml_ds_map_destroy(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_add")&&c==3){r=gml_value_real(gml_ds_map_add(num(a[0]),num(a[1]),num(a[2])));}
@@ -267,6 +269,8 @@ else if(!strcmp(n->text,"filename_dir")&&c==1){char outbuf[512];gml_filename_dir
 else if(!strcmp(n->text,"filename_ext")&&c==1){char outbuf[512];gml_filename_ext(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"filename_change_ext")&&c==2){char outbuf[512];gml_filename_change_ext(text_of(a[0]),text_of(a[1]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
 else if(!strcmp(n->text,"point_in_triangle")&&c==8){r=gml_value_real(gml_point_in_triangle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
+else if(!strcmp(n->text,"point_in_ellipse")&&c==6){r=gml_value_real(gml_point_in_ellipse(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"string_pos_ext")&&c==3){r=gml_value_real(gml_string_pos_ext(text_of(a[0]),text_of(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"file_bin_open")&&c==2){r=gml_value_real(gml_file_bin_open(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"file_bin_close")&&c==1){r=gml_value_real(gml_file_bin_close(num(a[0])));}
 else if(!strcmp(n->text,"file_bin_size")&&c==1){r=gml_value_real(gml_file_bin_size(num(a[0])));}

@@ -119,6 +119,8 @@ double gml_ds_list_clear(double id);
 double gml_ds_list_delete(double id, double pos);
 double gml_ds_list_find_index(double id, double value);
 double gml_ds_list_empty(double id);
+double gml_ds_list_sort(double id, double ascend);
+double gml_ds_list_shuffle(double id);
 
 /* ds_map (numeric keys only) */
 double gml_ds_map_create(void);
@@ -457,6 +459,8 @@ double gml_filename_change_ext(const char *fname, const char *newext, char *out,
 
 /* Geometry and Binary File I/O */
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3);
+double gml_point_in_ellipse(double px, double py, double x1, double y1, double x2, double y2);
+double gml_string_pos_ext(const char *substr, const char *str, double pos);
 double gml_file_bin_open(const char *path, double mode);
 double gml_file_bin_close(double id);
 double gml_file_bin_size(double id);

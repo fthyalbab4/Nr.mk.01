@@ -1510,6 +1510,44 @@ double gml_ds_list_empty(double id) {
     return gml_ds_list_size(id) == 0 ? 1.0 : 0.0;
 }
 
+static int comp_asc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    if (da < db) return -1;
+    if (da > db) return 1;
+    return 0;
+}
+
+static int comp_desc(const void *a, const void *b) {
+    double da = *(const double *)a;
+    double db = *(const double *)b;
+    if (da > db) return -1;
+    if (da < db) return 1;
+    return 0;
+}
+
+double gml_ds_list_sort(double id, double ascend) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (g_ds_lists[i].size > 1) {
+        qsort(g_ds_lists[i].data, (size_t)g_ds_lists[i].size, sizeof(double), (ascend != 0) ? comp_asc : comp_desc);
+    }
+    return 1;
+}
+
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int n = g_ds_lists[i].size;
+    for (int k = n - 1; k > 0; k--) {
+        int j = rand() % (k + 1);
+        double tmp = g_ds_lists[i].data[k];
+        g_ds_lists[i].data[k] = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = tmp;
+    }
+    return 1;
+}
+
 #define GM82_DS_MAP_MAX 16
 #define GM82_DS_MAP_CAP 128
 typedef struct {
@@ -2784,6 +2822,32 @@ double gml_point_in_triangle(double px, double py, double x1, double y1, double 
     bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
     bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
     return !(has_neg && has_pos) ? 1.0 : 0.0;
+}
+
+double gml_point_in_ellipse(double px, double py, double x1, double y1, double x2, double y2) {
+    if (x1 > x2) { double t = x1; x1 = x2; x2 = t; }
+    if (y1 > y2) { double t = y1; y1 = y2; y2 = t; }
+    double cx = (x1 + x2) / 2.0;
+    double cy = (y1 + y2) / 2.0;
+    double rx = (x2 - x1) / 2.0;
+    double ry = (y2 - y1) / 2.0;
+    if (rx <= 0 || ry <= 0) {
+        return (px == cx && py == cy) ? 1.0 : 0.0;
+    }
+    double dx = (px - cx) / rx;
+    double dy = (py - cy) / ry;
+    return (dx * dx + dy * dy <= 1.0) ? 1.0 : 0.0;
+}
+
+double gml_string_pos_ext(const char *substr, const char *str, double pos) {
+    if (!substr || !str || !substr[0]) return 0;
+    int p = (int)pos;
+    if (p < 1) p = 1;
+    size_t len = strlen(str);
+    if ((size_t)(p - 1) >= len) return 0;
+    const char *start = str + (p - 1);
+    const char *found = strstr(start, substr);
+    return found ? (double)(found - str + 1) : 0;
 }
 
 #define GM82_BIN_FILE_MAX 8
