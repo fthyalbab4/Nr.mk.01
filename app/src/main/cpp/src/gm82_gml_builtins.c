@@ -816,9 +816,9 @@ static void put_px(int x, int y) {
     double a = g_draw_alpha;
     if (a < 0) a = 0;
     if (a > 1) a = 1;
-    uint8_t sr = (g_draw_color >> 16) & 255;
+    uint8_t sr = g_draw_color & 255;
     uint8_t sg = (g_draw_color >> 8) & 255;
-    uint8_t sb = g_draw_color & 255;
+    uint8_t sb = (g_draw_color >> 16) & 255;
     d[0] = (uint8_t)(d[0] * (1.0 - a) + sr * a);
     d[1] = (uint8_t)(d[1] * (1.0 - a) + sg * a);
     d[2] = (uint8_t)(d[2] * (1.0 - a) + sb * a);
@@ -2333,6 +2333,73 @@ double gml_ds_grid_value_x(double id, double x1, double y1, double x2, double y2
     }
     return -1.0;
 }
+
+double gml_ds_grid_value_disk_exists(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0.0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return 1.0;
+            }
+        }
+    }
+    return 0.0;
+}
+
+double gml_ds_grid_value_disk_x(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return -1.0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)x;
+            }
+        }
+    }
+    return -1.0;
+}
+
+double gml_ds_grid_value_disk_y(double id, double xm, double ym, double r, double val) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return -1.0;
+    int r2 = rad * rad;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                if (g_ds_grids[i].data[y * g_ds_grids[i].w + x] == val) return (double)y;
+            }
+        }
+    }
+    return -1.0;
+}
+
+double gml_draw_getpixel(double x, double y) {
+    int px = (int)x, py = (int)y;
+    if (!g_draw_buf || px < 0 || py < 0 || px >= g_draw_w || py >= g_draw_h) return 0.0;
+    const uint8_t *p = g_draw_buf + ((size_t)py * (size_t)g_draw_w + (size_t)px) * 4;
+    uint32_t col = (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16);
+    return (double)col;
+}
+
+double gml_draw_getpixel_ext(double x, double y) {
+    int px = (int)x, py = (int)y;
+    if (!g_draw_buf || px < 0 || py < 0 || px >= g_draw_w || py >= g_draw_h) return 0.0;
+    const uint8_t *p = g_draw_buf + ((size_t)py * (size_t)g_draw_w + (size_t)px) * 4;
+    uint32_t col = (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+    return (double)col;
+}
 double gml_ds_grid_value_y(double id, double x1, double y1, double x2, double y2, double val) {
     int i = (int)id, gx1 = (int)x1, gy1 = (int)y1, gx2 = (int)x2, gy2 = (int)y2;
     if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used) return -1.0;
@@ -2405,6 +2472,23 @@ double gml_date_get_second(double datetime) {
     time_t t = (time_t)datetime;
     struct tm *tm = localtime(&t);
     return tm ? tm->tm_sec : 0;
+}
+
+double gml_date_is_leap_year(double datetime) {
+    int yr = (int)gml_date_get_year(datetime);
+    if ((yr % 4 == 0 && yr % 100 != 0) || (yr % 400 == 0)) return 1.0;
+    return 0.0;
+}
+
+double gml_date_days_in_month(double datetime) {
+    int mo = (int)gml_date_get_month(datetime);
+    if (mo == 2) return gml_date_is_leap_year(datetime) ? 29.0 : 28.0;
+    if (mo == 4 || mo == 6 || mo == 9 || mo == 11) return 30.0;
+    return 31.0;
+}
+
+double gml_date_days_in_year(double datetime) {
+    return gml_date_is_leap_year(datetime) ? 366.0 : 365.0;
 }
 double gml_current_time(void) { return gml_date_current_datetime(); }
 double gml_current_year(void) { return gml_date_get_year(gml_current_time()); }

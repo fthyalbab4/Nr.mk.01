@@ -254,6 +254,11 @@ else if(!strcmp(n->text,"file_text_readln")&&c==1){r=gml_value_real(gml_file_tex
 else if(!strcmp(n->text,"ds_grid_value_exists")&&c==6){r=gml_value_real(gml_ds_grid_value_exists(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_grid_value_x")&&c==6){r=gml_value_real(gml_ds_grid_value_x(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_grid_value_y")&&c==6){r=gml_value_real(gml_ds_grid_value_y(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"ds_grid_value_disk_exists")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_exists(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_value_disk_x")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_x(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_value_disk_y")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_y(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"draw_getpixel")&&c==2){r=gml_value_real(gml_draw_getpixel(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"draw_getpixel_ext")&&c==2){r=gml_value_real(gml_draw_getpixel_ext(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"point_in_circle")&&c==5){r=gml_value_real(gml_point_in_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"draw_circle_color")&&c==6){gml_draw_circle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"draw_rectangle_color")&&c==9){gml_draw_rectangle_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7]),num(a[8]));r=gml_value_real(1);}
@@ -361,6 +366,9 @@ else if(!strcmp(n->text,"date_get_day")&&c==1){r=gml_value_real(gml_date_get_day
 else if(!strcmp(n->text,"date_get_hour")&&c==1){r=gml_value_real(gml_date_get_hour(num(a[0])));}
 else if(!strcmp(n->text,"date_get_minute")&&c==1){r=gml_value_real(gml_date_get_minute(num(a[0])));}
 else if(!strcmp(n->text,"date_get_second")&&c==1){r=gml_value_real(gml_date_get_second(num(a[0])));}
+else if(!strcmp(n->text,"date_is_leap_year")&&c==1){r=gml_value_real(gml_date_is_leap_year(num(a[0])));}
+else if(!strcmp(n->text,"date_days_in_month")&&c==1){r=gml_value_real(gml_date_days_in_month(num(a[0])));}
+else if(!strcmp(n->text,"date_days_in_year")&&c==1){r=gml_value_real(gml_date_days_in_year(num(a[0])));}
 else if(!strcmp(n->text,"current_time")&&c==0){r=gml_value_real(gml_current_time());}
 else if(!strcmp(n->text,"current_year")&&c==0){r=gml_value_real(gml_current_year());}
 else if(!strcmp(n->text,"current_month")&&c==0){r=gml_value_real(gml_current_month());}
