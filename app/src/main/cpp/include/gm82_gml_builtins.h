@@ -157,6 +157,9 @@ double gml_ds_priority_destroy(double id);
 double gml_ds_priority_add(double id, double value, double priority);
 double gml_ds_priority_delete_max(double id);
 double gml_ds_priority_find_max(double id);
+double gml_ds_priority_delete_min(double id);
+double gml_ds_priority_find_min(double id);
+double gml_ds_priority_clear(double id);
 double gml_ds_priority_size(double id);
 double gml_ds_priority_empty(double id);
 
