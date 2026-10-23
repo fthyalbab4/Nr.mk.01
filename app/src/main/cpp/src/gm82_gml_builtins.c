@@ -2661,17 +2661,74 @@ double gml_angle_difference(double dest, double src) {
 }
 
 
+static int g_win_x = 0, g_win_y = 0;
 static int g_win_w = 640, g_win_h = 480;
 static char g_win_caption[128] = "Game Runner";
+static char g_clipboard_buf[1024] = "";
 
 double gml_display_get_width(void) { return (double)g_win_w; }
 double gml_display_get_height(void) { return (double)g_win_h; }
+double gml_window_get_x(void) { return (double)g_win_x; }
+double gml_window_get_y(void) { return (double)g_win_y; }
 double gml_window_get_width(void) { return (double)g_win_w; }
 double gml_window_get_height(void) { return (double)g_win_h; }
+
+double gml_window_set_position(double x, double y) {
+    g_win_x = (int)x;
+    g_win_y = (int)y;
+    return 1.0;
+}
+
+double gml_window_set_size(double w, double h) {
+    if (w > 0) g_win_w = (int)w;
+    if (h > 0) g_win_h = (int)h;
+    return 1.0;
+}
 
 void gm82_window_set_size(int w, int h) {
     if (w > 0) g_win_w = w;
     if (h > 0) g_win_h = h;
+}
+
+double gml_parameter_count(void) { return 0.0; }
+
+double gml_parameter_string(double index, char *out, size_t out_sz) {
+    (void)index;
+    if (out && out_sz > 0) out[0] = '\0';
+    return 0.0;
+}
+
+double gml_environment_get_variable(const char *name, char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0.0;
+    out[0] = '\0';
+    if (!name) return 0.0;
+    const char *v = getenv(name);
+    if (v) {
+        strncpy(out, v, out_sz - 1);
+        out[out_sz - 1] = '\0';
+        return 1.0;
+    }
+    return 0.0;
+}
+
+double gml_clipboard_has_text(void) {
+    return g_clipboard_buf[0] != '\0' ? 1.0 : 0.0;
+}
+
+double gml_clipboard_get_text(char *out, size_t out_sz) {
+    if (!out || out_sz == 0) return 0.0;
+    strncpy(out, g_clipboard_buf, out_sz - 1);
+    out[out_sz - 1] = '\0';
+    return 1.0;
+}
+
+double gml_clipboard_set_text(const char *text) {
+    if (!text) g_clipboard_buf[0] = '\0';
+    else {
+        strncpy(g_clipboard_buf, text, sizeof(g_clipboard_buf) - 1);
+        g_clipboard_buf[sizeof(g_clipboard_buf) - 1] = '\0';
+    }
+    return 1.0;
 }
 
 double gml_window_set_caption(const char *caption) {
