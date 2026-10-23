@@ -129,6 +129,8 @@ else if(!strcmp(n->text,"ds_list_clear")&&c==1){r=gml_value_real(gml_ds_list_cle
 else if(!strcmp(n->text,"ds_list_delete")&&c==2){r=gml_value_real(gml_ds_list_delete(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_list_find_index")&&c==2){r=gml_value_real(gml_ds_list_find_index(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_list_empty")&&c==1){r=gml_value_real(gml_ds_list_empty(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_shuffle")&&c==1){r=gml_value_real(gml_ds_list_shuffle(num(a[0])));}
+else if(!strcmp(n->text,"ds_list_sort")&&c==2){r=gml_value_real(gml_ds_list_sort(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_map_create")&&c==0){r=gml_value_real(gml_ds_map_create());}
 else if(!strcmp(n->text,"ds_map_destroy")&&c==1){r=gml_value_real(gml_ds_map_destroy(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_add")&&c==3){r=gml_value_real(gml_ds_map_add(num(a[0]),num(a[1]),num(a[2])));}
@@ -137,6 +139,8 @@ else if(!strcmp(n->text,"ds_map_exists")&&c==2){r=gml_value_real(gml_ds_map_exis
 else if(!strcmp(n->text,"ds_map_size")&&c==1){r=gml_value_real(gml_ds_map_size(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_clear")&&c==1){r=gml_value_real(gml_ds_map_clear(num(a[0])));}
 else if(!strcmp(n->text,"ds_map_delete")&&c==2){r=gml_value_real(gml_ds_map_delete(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"ds_map_find_first")&&c==1){r=gml_value_real(gml_ds_map_find_first(num(a[0])));}
+else if(!strcmp(n->text,"ds_map_find_next")&&c==2){r=gml_value_real(gml_ds_map_find_next(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_stack_create")&&c==0){r=gml_value_real(gml_ds_stack_create());}
 else if(!strcmp(n->text,"ds_stack_destroy")&&c==1){r=gml_value_real(gml_ds_stack_destroy(num(a[0])));}
 else if(!strcmp(n->text,"ds_stack_push")&&c==2){r=gml_value_real(gml_ds_stack_push(num(a[0]),num(a[1])));}
@@ -239,6 +243,8 @@ else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_
 else if(!strcmp(n->text,"ds_grid_set_region")&&c==6){r=gml_value_real(gml_ds_grid_set_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_grid_set_disk")&&c==5){r=gml_value_real(gml_ds_grid_set_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_add_disk")&&c==5){r=gml_value_real(gml_ds_grid_add_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_set_grid_region")&&c==8){r=gml_value_real(gml_ds_grid_set_grid_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]),num(a[6]),num(a[7])));}
+else if(!strcmp(n->text,"draw_line_color")&&c==6){gml_draw_line_color(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"instance_activate_region")&&c==5){r=gml_value_real(gml_instance_activate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"instance_deactivate_region")&&c==6){r=gml_value_real(gml_instance_deactivate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"display_get_width")&&c==0){r=gml_value_real(gml_display_get_width());}

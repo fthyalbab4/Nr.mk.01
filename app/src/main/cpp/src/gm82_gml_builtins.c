@@ -2822,6 +2822,81 @@ double gml_instance_deactivate_object(double object_index) {
     return 1.0;
 }
 
+double gml_ds_list_shuffle(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    int sz = g_ds_lists[i].size;
+    for (int j = sz - 1; j > 0; j--) {
+        int r = rand() % (j + 1);
+        double tmp = g_ds_lists[i].data[j];
+        g_ds_lists[i].data[j] = g_ds_lists[i].data[r];
+        g_ds_lists[i].data[r] = tmp;
+    }
+    return 1;
+}
+
+static int cmp_asc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da > db) - (da < db);
+}
+
+static int cmp_desc(const void *a, const void *b) {
+    double da = *(const double *)a, db = *(const double *)b;
+    return (da < db) - (da > db);
+}
+
+double gml_ds_list_sort(double id, double ascending) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
+    if (g_ds_lists[i].size > 1) {
+        qsort(g_ds_lists[i].data, (size_t)g_ds_lists[i].size, sizeof(double), ascending ? cmp_asc : cmp_desc);
+    }
+    return 1;
+}
+
+double gml_ds_map_find_first(double id) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    if (g_ds_maps[i].size <= 0) return 0;
+    return g_ds_maps[i].keys[0];
+}
+
+double gml_ds_map_find_next(double id, double key) {
+    int i = (int)id;
+    if (i < 0 || i >= GM82_DS_MAP_MAX || !g_ds_maps[i].used) return 0;
+    for (int j = 0; j < g_ds_maps[i].size - 1; j++) {
+        if (g_ds_maps[i].keys[j] == key) return g_ds_maps[i].keys[j + 1];
+    }
+    return 0;
+}
+
+void gml_draw_line_color(double x1, double y1, double x2, double y2, double col1, double col2) {
+    (void)col2;
+    gml_draw_set_color(col1);
+    gml_draw_line(x1, y1, x2, y2);
+}
+
+double gml_ds_grid_set_grid_region(double id, double source_id, double x1, double y1, double x2, double y2, double xpos, double ypos) {
+    int dest_idx = (int)id;
+    int src_idx = (int)source_id;
+    if (dest_idx < 0 || dest_idx >= GM82_DS_GRID_MAX || !g_ds_grids[dest_idx].used) return 0;
+    if (src_idx < 0 || src_idx >= GM82_DS_GRID_MAX || !g_ds_grids[src_idx].used) return 0;
+
+    int sx1 = (int)x1, sy1 = (int)y1, sx2 = (int)x2, sy2 = (int)y2;
+    int dx0 = (int)xpos, dy0 = (int)ypos;
+
+    for (int sy = sy1; sy <= sy2; sy++) {
+        for (int sx = sx1; sx <= sx2; sx++) {
+            if (sx < 0 || sx >= g_ds_grids[src_idx].w || sy < 0 || sy >= g_ds_grids[src_idx].h) continue;
+            int dx = dx0 + (sx - sx1);
+            int dy = dy0 + (sy - sy1);
+            if (dx < 0 || dx >= g_ds_grids[dest_idx].w || dy < 0 || dy >= g_ds_grids[dest_idx].h) continue;
+            g_ds_grids[dest_idx].data[dy * g_ds_grids[dest_idx].w + dx] = g_ds_grids[src_idx].data[sy * g_ds_grids[src_idx].w + sx];
+        }
+    }
+    return 1;
+}
+
 double gml_point_in_triangle(double px, double py, double x1, double y1, double x2, double y2, double x3, double y3) {
     double d1 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
     double d2 = (px - x3) * (y2 - y3) - (x2 - x3) * (py - y3);

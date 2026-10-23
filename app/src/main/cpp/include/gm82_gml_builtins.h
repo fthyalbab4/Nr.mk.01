@@ -470,6 +470,14 @@ double gml_file_bin_read_byte(double id);
 double gml_file_bin_write_byte(double id, double byte);
 double gml_string_hash_to_newline(const char *str, char *out, size_t out_sz);
 
+/* Data Structures & Drawing Additions v20 */
+double gml_ds_list_shuffle(double id);
+double gml_ds_list_sort(double id, double ascending);
+double gml_ds_map_find_first(double id);
+double gml_ds_map_find_next(double id, double key);
+void gml_draw_line_color(double x1, double y1, double x2, double y2, double col1, double col2);
+double gml_ds_grid_set_grid_region(double id, double source_id, double x1, double y1, double x2, double y2, double xpos, double ypos);
+
 #ifdef __cplusplus
 }
 #endif
