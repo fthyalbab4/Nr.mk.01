@@ -1,0 +1,24 @@
+name: Jules Hourly Task
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-jules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Invoke Jules Agent
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          api-key: ${{ secrets.JULES_API_KEY }}
+          prompt: " اطلع علي المشروع الاصلي في الروابط التاليه وشوف ناقصك ايه واتعلم منه وكملة وحط خطة تطوير شاملة وكامله لإكمال الcore and gml full support ونفذها خطوات متتابعة بدون هلوسه او تشوهات واصلح وجمع نسخة الاندرويد من كل هذه المستودعات وتاكد من آخر تحديثاتهم من النسخ الحاليه بشكل دوري كل ساعة انسخ كل الملفات اللي محتاجها من الريبوهات والمستودعات التاليه https://github.com/MahmoudMMorsy/NM.Maker.0..1.0
+
+https://github.com/fthyalbab279-afk/NM.Maker.0..1.0.2
+
+https://github.com/GM82Project"
+          

@@ -13,6 +13,8 @@ typedef struct {
     char     name[64];
     int32_t  width;
     int32_t  height;
+    int32_t  xoffset;
+    int32_t  yoffset;
     uint8_t *rgba;       /* width*height*4, caller frees via list_free */
     size_t   rgba_size;
 } gm82_decoded_frame;
