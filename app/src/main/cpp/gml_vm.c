@@ -285,6 +285,16 @@ else if(!strcmp(n->text,"irandom_range")&&c==2){r=gml_value_real(gml_irandom_ran
 else if(!strcmp(n->text,"motion_set")&&c==2){gml_motion_set(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"motion_add")&&c==2){gml_motion_add(num(a[0]),num(a[1]));r=gml_value_real(1);}
 else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(a[0]),num(a[1]),num(a[2]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"window_get_x")&&c==0){r=gml_value_real(gml_window_get_x());}
+else if(!strcmp(n->text,"window_get_y")&&c==0){r=gml_value_real(gml_window_get_y());}
+else if(!strcmp(n->text,"window_set_position")&&c==2){r=gml_value_real(gml_window_set_position(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"window_set_size")&&c==2){r=gml_value_real(gml_window_set_size(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"parameter_count")&&c==0){r=gml_value_real(gml_parameter_count());}
+else if(!strcmp(n->text,"parameter_string")&&c==1){char outbuf[512];gml_parameter_string(num(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"environment_get_variable")&&c==1){char outbuf[512];gml_environment_get_variable(text_of(a[0]),outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"clipboard_has_text")&&c==0){r=gml_value_real(gml_clipboard_has_text());}
+else if(!strcmp(n->text,"clipboard_get_text")&&c==0){char outbuf[1024];gml_clipboard_get_text(outbuf,sizeof outbuf);r=gml_value_string(outbuf);}
+else if(!strcmp(n->text,"clipboard_set_text")&&c==1){r=gml_value_real(gml_clipboard_set_text(text_of(a[0])));}
 else if(!strcmp(n->text,"window_get_fullscreen")&&c==0){r=gml_value_real(gml_window_get_fullscreen());}
 else if(!strcmp(n->text,"window_set_fullscreen")&&c==1){r=gml_value_real(gml_window_set_fullscreen(num(a[0])));}
 else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
