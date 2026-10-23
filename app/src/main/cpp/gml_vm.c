@@ -288,6 +288,7 @@ else if(!strcmp(n->text,"move_towards_point")&&c==3){gml_move_towards_point(num(
 else if(!strcmp(n->text,"window_get_fullscreen")&&c==0){r=gml_value_real(gml_window_get_fullscreen());}
 else if(!strcmp(n->text,"window_set_fullscreen")&&c==1){r=gml_value_real(gml_window_set_fullscreen(num(a[0])));}
 else if(!strcmp(n->text,"window_set_caption")&&c==1){r=gml_value_real(gml_window_set_caption(text_of(a[0])));}
+else if(!strcmp(n->text,"window_get_caption")&&c==0){r=gml_value_string(gml_window_get_caption());}
 else if(!strcmp(n->text,"ds_grid_get_mean")&&c==5){r=gml_value_real(gml_ds_grid_get_mean(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"distance_to_point")&&c==2){r=gml_value_real(gml_distance_to_point(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"ds_grid_copy")&&c==2){r=gml_value_real(gml_ds_grid_copy(num(a[0]),num(a[1])));}
