@@ -455,6 +455,11 @@ double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, d
 double gml_ds_grid_copy(double id, double source_id);
 double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double val);
 double gml_ds_grid_add_disk(double id, double xm, double ym, double r, double val);
+double gml_ds_grid_multiply_disk(double id, double xm, double ym, double r, double val);
+double gml_ds_grid_get_disk_min(double id, double xm, double ym, double r);
+double gml_ds_grid_get_disk_max(double id, double xm, double ym, double r);
+double gml_ds_grid_get_disk_mean(double id, double xm, double ym, double r);
+double gml_ds_grid_get_disk_sum(double id, double xm, double ym, double r);
 double gml_instance_activate_region(double left, double top, double width, double height, double inside);
 double gml_instance_deactivate_region(double left, double top, double width, double height, double inside, double notme);
 double gml_string_repeat_ext(const char *str, double count, char *out, size_t out_sz);
