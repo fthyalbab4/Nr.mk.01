@@ -373,11 +373,85 @@ else if(!strcmp(n->text,"current_time")&&c==0){r=gml_value_real(gml_current_time
 else if(!strcmp(n->text,"current_year")&&c==0){r=gml_value_real(gml_current_year());}
 else if(!strcmp(n->text,"current_month")&&c==0){r=gml_value_real(gml_current_month());}
 else if(!strcmp(n->text,"current_day")&&c==0){r=gml_value_real(gml_current_day());}
+else if(!strcmp(n->text,"instance_create")&&c==3){r=gml_value_real(gml_instance_create(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_destroy")&&c==0){gml_instance_destroy();r=gml_value_real(1);}
+else if(!strcmp(n->text,"instance_exists")&&c==1){r=gml_value_real(gml_instance_exists(num(a[0])));}
+else if(!strcmp(n->text,"instance_nearest")&&c==3){r=gml_value_real(gml_instance_nearest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_furthest")&&c==3){r=gml_value_real(gml_instance_furthest(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_place")&&c==3){r=gml_value_real(gml_instance_place(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"instance_find")&&c==2){r=gml_value_real(gml_instance_find(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"instance_number")&&c==1){r=gml_value_real(gml_instance_number(num(a[0])));}
+else if(!strcmp(n->text,"position_destroy")&&c==2){r=gml_value_real(gml_position_destroy(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"position_meeting")&&c==3){r=gml_value_real(gml_position_meeting(num(a[0]),num(a[1]),num(a[2])));}
+else if(!strcmp(n->text,"distance_to_object")&&c==1){r=gml_value_real(gml_distance_to_object(num(a[0])));}
+else if(!strcmp(n->text,"place_empty")&&c==2){r=gml_value_real(gml_place_empty(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"place_free")&&c==2){r=gml_value_real(gml_place_free(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_contact_solid")&&c==2){r=gml_value_real(gml_move_contact_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_outside_solid")&&c==2){r=gml_value_real(gml_move_outside_solid(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_outside_all")&&c==2){r=gml_value_real(gml_move_outside_all(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"move_bounce_solid")&&c==1){r=gml_value_real(gml_move_bounce_solid(num(a[0])));}
+else if(!strcmp(n->text,"move_bounce_all")&&c==1){r=gml_value_real(gml_move_bounce_all(num(a[0])));}
+else if(!strcmp(n->text,"move_random")&&c==2){r=gml_value_real(gml_move_random(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"sound_play")&&c==1){r=gml_value_real(gml_sound_play(num(a[0])));}
+else if(!strcmp(n->text,"sound_stop")&&c==1){r=gml_value_real(gml_sound_stop(num(a[0])));}
+else if(!strcmp(n->text,"sound_isplaying")&&c==1){r=gml_value_real(gml_sound_isplaying(num(a[0])));}
+else if(!strcmp(n->text,"sound_volume")&&c==2){r=gml_value_real(gml_sound_volume(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"sound_pan")&&c==2){r=gml_value_real(gml_sound_pan(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"sound_pitch")&&c==2){r=gml_value_real(gml_sound_pitch(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"draw_sprite")&&c>=3){gml_draw_sprite(num(a[0]),c>3?num(a[2]):num(a[1]),c>3?num(a[3]):num(a[2]));r=gml_value_real(1);}
+else if(!strcmp(n->text,"draw_clear")&&c==1){r=gml_value_real(gml_draw_clear(num(a[0])));}
+else if(!strcmp(n->text,"get_timer")&&c==0){r=gml_value_real(gml_get_timer());}
+else if(!strcmp(n->text,"delta_time")&&c==0){r=gml_value_real(gml_delta_time());}
+else if(!strcmp(n->text,"room_goto")&&c==1){r=gml_value_real(gml_room_goto(num(a[0])));}
+else if(!strcmp(n->text,"room_goto_next")&&c==0){r=gml_value_real(gml_room_goto_next());}
+else if(!strcmp(n->text,"room_goto_previous")&&c==0){r=gml_value_real(gml_room_goto_previous());}
+else if(!strcmp(n->text,"room_restart")&&c==0){r=gml_value_real(gml_room_restart());}
+else if(!strcmp(n->text,"game_end")&&c==0){r=gml_value_real(gml_game_end());}
+else if(!strcmp(n->text,"game_restart")&&c==0){r=gml_value_real(gml_game_restart());}
+else if(!strcmp(n->text,"game_has_ended")&&c==0){r=gml_value_real(gml_game_has_ended());}
+else if(!strcmp(n->text,"mouse_x")&&c==0){r=gml_value_real(gml_mouse_x());}
+else if(!strcmp(n->text,"mouse_y")&&c==0){r=gml_value_real(gml_mouse_y());}
+else if(!strcmp(n->text,"mouse_check_button")&&c==1){r=gml_value_real(gml_mouse_check_button(num(a[0])));}
+else if(!strcmp(n->text,"mouse_check_button_pressed")&&c==1){r=gml_value_real(gml_mouse_check_button_pressed(num(a[0])));}
+else if(!strcmp(n->text,"path_start")&&c==4){r=gml_value_real(gml_path_start(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"path_end")&&c==0){r=gml_value_real(gml_path_end());}
+else if(!strcmp(n->text,"path_get_number")&&c==0){r=gml_value_real(gml_path_get_number());}
+else if(!strcmp(n->text,"timeline_start")&&c==4){r=gml_value_real(gml_timeline_start(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"timeline_stop")&&c==0){r=gml_value_real(gml_timeline_stop());}
+else if(!strcmp(n->text,"script_exists")&&c==1){r=gml_value_real(gml_script_exists(num(a[0])));}
+else if(!strcmp(n->text,"script_execute")&&c==1){r=gml_value_real(gml_script_execute(num(a[0])));}
+else if(!strcmp(n->text,"alarm_get")&&c==1){r=gml_value_real(gml_alarm_get(num(a[0])));}
+else if(!strcmp(n->text,"alarm_set")&&c==2){r=gml_value_real(gml_alarm_set(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"alarm_set_script")&&c==2){r=gml_value_real(gml_alarm_set_script(num(a[0]),text_of(a[1])));}
+else if(!strcmp(n->text,"keyboard_key")&&c==0){r=gml_value_real(gml_keyboard_key());}
+else if(!strcmp(n->text,"keyboard_lastchar")&&c==0){r=gml_value_real(gml_keyboard_lastchar());}
 else if(vm->native_call && vm->native_call(vm->native_userdata,n->text,a,c,&r)){}
 else if(vm->script_call && vm->script_call(vm->script_userdata,n->text,a,c,&r)){}
 else snprintf(vm->error,sizeof vm->error,"unknown function: %s",n->text);
 for(size_t i=0;i<c;i++)gml_value_free(&a[i]);return r;}
-static gml_value eval(gml_vm*vm,const gml_ast*n){if(!n)return undef();switch(n->kind){case GML_AST_NUMBER:return gml_value_real(n->number);case GML_AST_STRING:return gml_value_string(n->text);case GML_AST_NAME:{gml_value named=gml_vm_get(vm,n->text);if(named.kind==GML_V_UNDEFINED&&vm->name_resolve){gml_value resolved=undef();if(vm->name_resolve(vm->name_userdata,n->text,&resolved)){gml_value_free(&named);return resolved;}gml_value_free(&resolved);}return named;}case GML_AST_INDEX:return eval_index(vm,n);case GML_AST_MEMBER:return eval_member(vm,n);case GML_AST_CALL:return call(vm,n);case GML_AST_TERNARY:{gml_value condition=eval(vm,n->left);int choose_yes=truth(condition);gml_value_free(&condition);return eval(vm,choose_yes?n->right:n->items[0]);}case GML_AST_UNARY:{gml_value a=eval(vm,n->left);double x=num(a);gml_value r=(n->op==GML_T_NOT)?gml_value_bool(!truth(a)):gml_value_real(n->op==GML_T_MINUS?-x:x);gml_value_free(&a);return r;}case GML_AST_ASSIGN:{gml_value r=eval(vm,n->right);if(n->left&&n->left->kind==GML_AST_NAME)gml_vm_set(vm,n->left->text,r);else if(n->left&&n->left->kind==GML_AST_MEMBER&&n->left->left&&n->left->left->kind==GML_AST_NAME&&!strcmp(n->left->left->text,"self")){if(vm->member_set)vm->member_set(vm->member_userdata,n->left->text,&r);}else if(n->left&&n->left->kind==GML_AST_INDEX&&n->left->left&&n->left->left->kind==GML_AST_NAME){gml_value*base=named_slot(vm,n->left->left->text);gml_value idx=eval(vm,n->left->right);size_t i=num(idx)<0?0:(size_t)num(idx);if(base&&base->kind==GML_V_ARRAY&&base->array&&i<base->array->count){gml_value_free(&base->array->items[i]);base->array->items[i]=copyv(&r);}gml_value_free(&idx);}return r;}case GML_AST_BINARY:{
+static gml_value eval(gml_vm*vm,const gml_ast*n){if(!n)return undef();switch(n->kind){case GML_AST_NUMBER:return gml_value_real(n->number);case GML_AST_STRING:return gml_value_string(n->text);case GML_AST_NAME:{
+ gml_value named=gml_vm_get(vm,n->text);
+ if(named.kind==GML_V_UNDEFINED){
+  if(!strcmp(n->text,"mouse_x"))return gml_value_real(gml_mouse_x());
+  if(!strcmp(n->text,"mouse_y"))return gml_value_real(gml_mouse_y());
+  if(!strcmp(n->text,"score"))return gml_value_real(gml_get_score());
+  if(!strcmp(n->text,"lives"))return gml_value_real(gml_get_lives());
+  if(!strcmp(n->text,"health"))return gml_value_real(gml_get_health());
+  if(!strcmp(n->text,"room"))return gml_value_real(gml_room());
+  if(!strcmp(n->text,"room_width"))return gml_value_real(gml_room_width());
+  if(!strcmp(n->text,"room_height"))return gml_value_real(gml_room_height());
+  if(!strcmp(n->text,"room_speed"))return gml_value_real(gml_room_speed());
+  if(vm->name_resolve){
+   gml_value resolved=undef();
+   if(vm->name_resolve(vm->name_userdata,n->text,&resolved)){
+    gml_value_free(&named);
+    return resolved;
+   }
+   gml_value_free(&resolved);
+  }
+ }
+ return named;
+}case GML_AST_INDEX:return eval_index(vm,n);case GML_AST_MEMBER:return eval_member(vm,n);case GML_AST_CALL:return call(vm,n);case GML_AST_TERNARY:{gml_value condition=eval(vm,n->left);int choose_yes=truth(condition);gml_value_free(&condition);return eval(vm,choose_yes?n->right:n->items[0]);}case GML_AST_UNARY:{gml_value a=eval(vm,n->left);double x=num(a);gml_value r=(n->op==GML_T_NOT)?gml_value_bool(!truth(a)):gml_value_real(n->op==GML_T_MINUS?-x:x);gml_value_free(&a);return r;}case GML_AST_ASSIGN:{gml_value r=eval(vm,n->right);if(n->left&&n->left->kind==GML_AST_NAME)gml_vm_set(vm,n->left->text,r);else if(n->left&&n->left->kind==GML_AST_MEMBER&&n->left->left&&n->left->left->kind==GML_AST_NAME&&!strcmp(n->left->left->text,"self")){if(vm->member_set)vm->member_set(vm->member_userdata,n->left->text,&r);}else if(n->left&&n->left->kind==GML_AST_INDEX&&n->left->left&&n->left->left->kind==GML_AST_NAME){gml_value*base=named_slot(vm,n->left->left->text);gml_value idx=eval(vm,n->left->right);size_t i=num(idx)<0?0:(size_t)num(idx);if(base&&base->kind==GML_V_ARRAY&&base->array&&i<base->array->count){gml_value_free(&base->array->items[i]);base->array->items[i]=copyv(&r);}gml_value_free(&idx);}return r;}case GML_AST_BINARY:{
  gml_value a=eval(vm,n->left);
  if(n->op==GML_T_AND){
   int left_truth=truth(a);
