@@ -239,6 +239,11 @@ else if(!strcmp(n->text,"instance_activate_object")&&c==1){r=gml_value_real(gml_
 else if(!strcmp(n->text,"ds_grid_set_region")&&c==6){r=gml_value_real(gml_ds_grid_set_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_grid_set_disk")&&c==5){r=gml_value_real(gml_ds_grid_set_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_add_disk")&&c==5){r=gml_value_real(gml_ds_grid_add_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_multiply_disk")&&c==5){r=gml_value_real(gml_ds_grid_multiply_disk(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_min")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_min(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_max")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_max(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_mean")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_mean(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_sum")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_sum(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"instance_activate_region")&&c==5){r=gml_value_real(gml_instance_activate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"instance_deactivate_region")&&c==6){r=gml_value_real(gml_instance_deactivate_region(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"display_get_width")&&c==0){r=gml_value_real(gml_display_get_width());}
