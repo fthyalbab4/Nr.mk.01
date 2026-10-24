@@ -80,6 +80,7 @@ else if(!strcmp(n->text,"string_lettersdigits")&&c==1){char outbuf[512];gml_stri
 else if(!strcmp(n->text,"string_ord_at")&&c==2){r=gml_value_real(gml_string_ord_at(text_of(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"angle_difference")&&c==2){r=gml_value_real(gml_angle_difference(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"dot_product")&&c==4){r=gml_value_real(gml_dot_product(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"dot_product_normal")&&c==4){r=gml_value_real(gml_dot_product_normal(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"real")&&c==1){r=gml_value_real(a[0].kind==GML_V_STRING?atof(text_of(a[0])):num(a[0]));}
 else if(!strcmp(n->text,"ord")&&c==1){const char*s=text_of(a[0]);r=gml_value_real(s&&s[0]?(double)(unsigned char)s[0]:0.0);}
 else if(!strcmp(n->text,"chr")&&c==1){char ch[2]={(char)(unsigned char)num(a[0]),0};r=gml_value_string(ch);}
@@ -226,6 +227,7 @@ else if(!strcmp(n->text,"file_find_next")&&c==0){r=gml_value_string(gml_file_fin
 else if(!strcmp(n->text,"file_find_close")&&c==0){gml_file_find_close();r=gml_value_real(0);}
 else if(!strcmp(n->text,"point_distance_3d")&&c==6){r=gml_value_real(gml_point_distance_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"dot_product_3d")&&c==6){r=gml_value_real(gml_dot_product_3d(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
+else if(!strcmp(n->text,"dot_product_3d_normal")&&c==6){r=gml_value_real(gml_dot_product_3d_normal(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4]),num(a[5])));}
 else if(!strcmp(n->text,"ds_list_insert")&&c==3){r=gml_value_real(gml_ds_list_insert(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ds_list_replace")&&c==3){r=gml_value_real(gml_ds_list_replace(num(a[0]),num(a[1]),num(a[2])));}
 else if(!strcmp(n->text,"ds_map_replace")&&c==3){r=gml_value_real(gml_ds_map_replace(num(a[0]),num(a[1]),num(a[2])));}
@@ -257,6 +259,10 @@ else if(!strcmp(n->text,"ds_grid_value_y")&&c==6){r=gml_value_real(gml_ds_grid_v
 else if(!strcmp(n->text,"ds_grid_value_disk_exists")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_exists(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_value_disk_x")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_x(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
 else if(!strcmp(n->text,"ds_grid_value_disk_y")&&c==5){r=gml_value_real(gml_ds_grid_value_disk_y(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_sum")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_sum(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_max")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_max(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_min")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_min(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
+else if(!strcmp(n->text,"ds_grid_get_disk_mean")&&c==4){r=gml_value_real(gml_ds_grid_get_disk_mean(num(a[0]),num(a[1]),num(a[2]),num(a[3])));}
 else if(!strcmp(n->text,"draw_getpixel")&&c==2){r=gml_value_real(gml_draw_getpixel(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"draw_getpixel_ext")&&c==2){r=gml_value_real(gml_draw_getpixel_ext(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"point_in_circle")&&c==5){r=gml_value_real(gml_point_in_circle(num(a[0]),num(a[1]),num(a[2]),num(a[3]),num(a[4])));}
@@ -369,6 +375,15 @@ else if(!strcmp(n->text,"date_get_second")&&c==1){r=gml_value_real(gml_date_get_
 else if(!strcmp(n->text,"date_is_leap_year")&&c==1){r=gml_value_real(gml_date_is_leap_year(num(a[0])));}
 else if(!strcmp(n->text,"date_days_in_month")&&c==1){r=gml_value_real(gml_date_days_in_month(num(a[0])));}
 else if(!strcmp(n->text,"date_days_in_year")&&c==1){r=gml_value_real(gml_date_days_in_year(num(a[0])));}
+else if(!strcmp(n->text,"date_compare_datetime")&&c==2){r=gml_value_real(gml_date_compare_datetime(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_compare_date")&&c==2){r=gml_value_real(gml_date_compare_date(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_compare_time")&&c==2){r=gml_value_real(gml_date_compare_time(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_year_span")&&c==2){r=gml_value_real(gml_date_year_span(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_month_span")&&c==2){r=gml_value_real(gml_date_month_span(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_day_span")&&c==2){r=gml_value_real(gml_date_day_span(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_hour_span")&&c==2){r=gml_value_real(gml_date_hour_span(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_minute_span")&&c==2){r=gml_value_real(gml_date_minute_span(num(a[0]),num(a[1])));}
+else if(!strcmp(n->text,"date_second_span")&&c==2){r=gml_value_real(gml_date_second_span(num(a[0]),num(a[1])));}
 else if(!strcmp(n->text,"current_time")&&c==0){r=gml_value_real(gml_current_time());}
 else if(!strcmp(n->text,"current_year")&&c==0){r=gml_value_real(gml_current_year());}
 else if(!strcmp(n->text,"current_month")&&c==0){r=gml_value_real(gml_current_month());}

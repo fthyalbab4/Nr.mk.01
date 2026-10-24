@@ -2490,6 +2490,56 @@ double gml_date_days_in_month(double datetime) {
 double gml_date_days_in_year(double datetime) {
     return gml_date_is_leap_year(datetime) ? 366.0 : 365.0;
 }
+
+double gml_date_compare_datetime(double date1, double date2) {
+    if (date1 < date2) return -1.0;
+    if (date1 > date2) return 1.0;
+    return 0.0;
+}
+
+double gml_date_compare_date(double date1, double date2) {
+    double y1 = gml_date_get_year(date1), y2 = gml_date_get_year(date2);
+    if (y1 != y2) return y1 < y2 ? -1.0 : 1.0;
+    double m1 = gml_date_get_month(date1), m2 = gml_date_get_month(date2);
+    if (m1 != m2) return m1 < m2 ? -1.0 : 1.0;
+    double d1 = gml_date_get_day(date1), d2 = gml_date_get_day(date2);
+    if (d1 != d2) return d1 < d2 ? -1.0 : 1.0;
+    return 0.0;
+}
+
+double gml_date_compare_time(double date1, double date2) {
+    double h1 = gml_date_get_hour(date1), h2 = gml_date_get_hour(date2);
+    if (h1 != h2) return h1 < h2 ? -1.0 : 1.0;
+    double m1 = gml_date_get_minute(date1), m2 = gml_date_get_minute(date2);
+    if (m1 != m2) return m1 < m2 ? -1.0 : 1.0;
+    double s1 = gml_date_get_second(date1), s2 = gml_date_get_second(date2);
+    if (s1 != s2) return s1 < s2 ? -1.0 : 1.0;
+    return 0.0;
+}
+
+double gml_date_second_span(double date1, double date2) {
+    return fabs(date2 - date1);
+}
+
+double gml_date_minute_span(double date1, double date2) {
+    return fabs(date2 - date1) / 60.0;
+}
+
+double gml_date_hour_span(double date1, double date2) {
+    return fabs(date2 - date1) / 3600.0;
+}
+
+double gml_date_day_span(double date1, double date2) {
+    return fabs(date2 - date1) / 86400.0;
+}
+
+double gml_date_month_span(double date1, double date2) {
+    return fabs(date2 - date1) / (86400.0 * 30.4375);
+}
+
+double gml_date_year_span(double date1, double date2) {
+    return fabs(date2 - date1) / (86400.0 * 365.25);
+}
 double gml_current_time(void) { return gml_date_current_datetime(); }
 double gml_current_year(void) { return gml_date_get_year(gml_current_time()); }
 double gml_current_month(void) { return gml_date_get_month(gml_current_time()); }
@@ -2854,6 +2904,20 @@ double gml_dot_product_3d(double x1, double y1, double z1, double x2, double y2,
     return x1 * x2 + y1 * y2 + z1 * z2;
 }
 
+double gml_dot_product_normal(double x1, double y1, double x2, double y2) {
+    double l1 = sqrt(x1 * x1 + y1 * y1);
+    double l2 = sqrt(x2 * x2 + y2 * y2);
+    if (l1 == 0.0 || l2 == 0.0) return 0.0;
+    return (x1 * x2 + y1 * y2) / (l1 * l2);
+}
+
+double gml_dot_product_3d_normal(double x1, double y1, double z1, double x2, double y2, double z2) {
+    double l1 = sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+    double l2 = sqrt(x2 * x2 + y2 * y2 + z2 * z2);
+    if (l1 == 0.0 || l2 == 0.0) return 0.0;
+    return (x1 * x2 + y1 * y2 + z1 * z2) / (l1 * l2);
+}
+
 double gml_ds_list_insert(double id, double pos, double val) {
     int i = (int)id, p = (int)pos;
     if (i < 0 || i >= GM82_DS_LIST_MAX || !g_ds_lists[i].used) return 0;
@@ -3155,6 +3219,82 @@ double gml_ds_grid_set_disk(double id, double xm, double ym, double r, double va
         }
     }
     return 1.0;
+}
+
+double gml_ds_grid_get_disk_sum(double id, double xm, double ym, double r) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0.0;
+    int r2 = rad * rad;
+    double sum = 0.0;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                sum += g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+            }
+        }
+    }
+    return sum;
+}
+
+double gml_ds_grid_get_disk_max(double id, double xm, double ym, double r) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0.0;
+    int r2 = rad * rad;
+    double max_v = -1e300;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                double v = g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+                if (v > max_v) max_v = v;
+            }
+        }
+    }
+    return max_v == -1e300 ? 0.0 : max_v;
+}
+
+double gml_ds_grid_get_disk_min(double id, double xm, double ym, double r) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0.0;
+    int r2 = rad * rad;
+    double min_v = 1e300;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                double v = g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+                if (v < min_v) min_v = v;
+            }
+        }
+    }
+    return min_v == 1e300 ? 0.0 : min_v;
+}
+
+double gml_ds_grid_get_disk_mean(double id, double xm, double ym, double r) {
+    int i = (int)id, cx = (int)xm, cy = (int)ym, rad = (int)r;
+    if (i < 0 || i >= GM82_DS_GRID_MAX || !g_ds_grids[i].used || rad < 0) return 0.0;
+    int r2 = rad * rad;
+    double sum = 0.0;
+    int count = 0;
+    for (int y = cy - rad; y <= cy + rad; y++) {
+        if (y < 0 || y >= g_ds_grids[i].h) continue;
+        for (int x = cx - rad; x <= cx + rad; x++) {
+            if (x < 0 || x >= g_ds_grids[i].w) continue;
+            int dx = x - cx, dy = y - cy;
+            if (dx * dx + dy * dy <= r2) {
+                sum += g_ds_grids[i].data[y * g_ds_grids[i].w + x];
+                count++;
+            }
+        }
+    }
+    return count > 0 ? sum / (double)count : 0.0;
 }
 
 double gml_ds_grid_multiply_region(double id, double x1, double y1, double x2, double y2, double val) {
